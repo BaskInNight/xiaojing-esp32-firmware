@@ -1,0 +1,87 @@
+# 小净 ESP-IDF 默认配置
+# Phase 0: 安全基线 — 默认 FAKE 输出，PTC 禁用
+# 不要直接编辑 sdkconfig；修改此文件后运行 idf.py set-target esp32s3
+
+# 目标芯片
+CONFIG_IDF_TARGET="esp32s3"
+
+# Flash: 16MB, QIO 80MHz
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+
+# 自定义分区表
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"
+
+# PSRAM: 8MB Octal (OPI) 80MHz
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_BOOT_INIT=y
+
+# NimBLE (BLE 小程序协议)
+CONFIG_BT_ENABLED=y
+CONFIG_BT_NIMBLE_ENABLED=y
+# Keep the NimBLE host/controller pools in external RAM. Without this, BLE
+# consumes enough contiguous internal memory to starve TLS and I2S DMA after
+# repeated voice cycles. These defaults make the fix survive a clean build.
+CONFIG_BT_NIMBLE_MEM_ALLOC_MODE_EXTERNAL=y
+CONFIG_BT_NIMBLE_MEM_OPTIMIZATION=y
+CONFIG_BT_CTRL_BLE_MAX_ACT=2
+
+# BLE + Wi-Fi + dual wake coexistence, validated on ESP32-S3 N16R8.
+CONFIG_ESP_WIFI_STATIC_RX_BUFFER_NUM=2
+CONFIG_ESP_WIFI_RX_BA_WIN=4
+CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ=240
+CONFIG_ESP32S3_DEFAULT_CPU_FREQ_MHZ=240
+CONFIG_SPIRAM_MALLOC_RESERVE_INTERNAL=16384
+CONFIG_FREERTOS_TASK_CREATE_ALLOW_EXT_MEM=y
+# cha_task / gesture / audio / voice 任务栈放 PSRAM 必须启用：否则 EXT_RAM_BSS_ATTR
+# 展开为空，这些栈仍占内部 DRAM，BLE 控制器 init 需要大块连续内部内存会失败重启。
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
+
+# Phase 9 dual-wake backend: the ESP-SR branch must embed the actual
+# "小爱同学" WakeNet9 model.  The Edge Impulse model is linked separately.
+CONFIG_SR_WN_WN9_XIAOAITONGXUE=y
+
+# FreeRTOS
+CONFIG_FREERTOS_HZ=100
+CONFIG_FREERTOS_CHECK_STACKOVERFLOW_CANARY=y
+
+# Task WDT
+CONFIG_ESP_TASK_WDT_EN=y
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=10
+
+# 日志默认级别
+CONFIG_LOG_DEFAULT_LEVEL_INFO=y
+
+# Coredump: 写入 Flash，ELF 格式，CRC32 校验
+# 大小取决于最大任务栈深度（非平均栈），CAPTURE_DRAM 还包含 .bss/.data/heap。
+# Phase 0 按 1MiB 保守预算；Phase 10/11 故障注入后再次校准。
+CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH=y
+CONFIG_ESP_COREDUMP_DATA_FORMAT_ELF=y
+CONFIG_ESP_COREDUMP_CHECKSUM_CRC32=y
+CONFIG_ESP_COREDUMP_MAX_TASKS_NUM=32
+CONFIG_ESP_COREDUMP_CHECK_BOOT=y
+CONFIG_ESP_COREDUMP_CAPTURE_DRAM=y
+CONFIG_ESP_COREDUMP_LOGS=y
+CONFIG_XIAOJING_OUTPUT_MODE_REAL=y
+# Coupled hot-air module (single 220VAC relay, MCP GPA7): enables GPA7 output
+# (relay) in mcp23017_driver and the HOT AIR display/safety capability.
+CONFIG_XIAOJING_HOT_AIR_MODULE_ENABLED=y
+CONFIG_XIAOJING_BOARD_IDENTITY_CONFIRMED=y
+CONFIG_XIAOJING_VOICE_ENABLED=y
+CONFIG_XIAOJING_DISPLAY_ENABLED=y
+CONFIG_LV_FONT_SIMSUN_16_CJK=y
+CONFIG_LV_FONT_DEFAULT_SIMSUN_16_CJK=y
+CONFIG_LV_COLOR_16_SWAP=y
+# Voice requests stream tens of kilobytes over TLS while I2S, display and
+# Wi-Fi also use internal DMA memory. Software AES avoids transient GDMA
+# descriptor allocation failures without changing TLS security.
+# CONFIG_MBEDTLS_HARDWARE_AES is not set
+# Keep TLS records small enough for BLE+Wi-Fi+audio coexistence. The request
+# body and response remain in PSRAM; this only bounds the mbedTLS record RAM.
+CONFIG_MBEDTLS_SSL_IN_CONTENT_LEN=4096
+CONFIG_MBEDTLS_SSL_OUT_CONTENT_LEN=4096

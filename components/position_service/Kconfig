@@ -1,0 +1,10 @@
+menu "Position Service"
+
+    config POS_SERVICE_TEST_HOOKS
+        bool "Enable test hooks (barrier injection for concurrency tests)"
+        default n
+        help
+            Compile position_service.c with barrier hook points for
+            deterministic concurrency testing. Only enable in test builds.
+
+endmenu

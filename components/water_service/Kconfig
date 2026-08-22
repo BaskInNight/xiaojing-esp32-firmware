@@ -1,0 +1,10 @@
+menu "Water Service"
+
+    config WATER_SERVICE_TEST_HOOKS
+        bool "Enable test hooks (barrier injection for water service tests)"
+        default n
+        help
+            Compile water_service.c with hook points for
+            deterministic testing. Only enable in test builds.
+
+endmenu

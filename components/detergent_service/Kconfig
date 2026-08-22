@@ -1,0 +1,10 @@
+menu "Detergent Service"
+
+    config DETERGENT_SERVICE_TEST_HOOKS
+        bool "Enable test hooks for detergent service tests"
+        default n
+        help
+            Compile detergent_service.c with hook points for
+            deterministic testing. Only enable in test builds.
+
+endmenu

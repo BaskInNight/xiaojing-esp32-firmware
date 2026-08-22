@@ -1,0 +1,10 @@
+menu "Dry Service"
+
+    config DRY_SERVICE_TEST_HOOKS
+        bool "Enable test hooks (barrier injection for dry service tests)"
+        default n
+        help
+            Compile dry_service.c with hook points for
+            deterministic testing. Only enable in test builds.
+
+endmenu

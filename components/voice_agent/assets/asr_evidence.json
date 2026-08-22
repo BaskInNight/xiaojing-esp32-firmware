@@ -1,0 +1,175 @@
+{
+  "version": "1.0",
+  "generated": "2026-08-02T19:26:21",
+  "model": "mimo-v2.5",
+  "endpoint": "https://api.xiaomimimo.com/v1/chat/completions",
+  "total": 9,
+  "passed": 9,
+  "assets": [
+    {
+      "logical_id": "accepted",
+      "target_text": "\u597d\u7684\uff0c\u5df2\u5f00\u59cb\u5904\u7406\u3002",
+      "asr_transcript": "\u597d\u7684\uff0c\u5df2\u5f00\u59cb\u5904\u7406",
+      "asr_normalized": "\u597d\u7684\u5df2\u5f00\u59cb\u5904\u7406",
+      "required_keywords": [
+        "\u597d",
+        "\u5f00\u59cb",
+        "\u5904\u7406"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:25:38",
+      "wav_sha256": "a706852e7ea7069bf98af423f5b4433144a3d6d98ea6d7545a6ba28ac8f0112f"
+    },
+    {
+      "logical_id": "rejected",
+      "target_text": "\u8fd9\u4e2a\u8bf7\u6c42\u6682\u65f6\u65e0\u6cd5\u6267\u884c\u3002",
+      "asr_transcript": "\u8fd9\u4e2a\u8bf7\u6c42\u6682\u65f6\u65e0\u6cd5\u6267\u884c",
+      "asr_normalized": "\u8fd9\u4e2a\u8bf7\u6c42\u6682\u65f6\u65e0\u6cd5\u6267\u884c",
+      "required_keywords": [
+        "\u8bf7\u6c42",
+        "\u6682\u65f6",
+        "\u65e0\u6cd5",
+        "\u6267\u884c"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:25:42",
+      "wav_sha256": "c958358b22a5d7ef75d4e01b0b8fe2db8bc14ed7f41b0e85100eeb18895abf02"
+    },
+    {
+      "logical_id": "error",
+      "target_text": "\u62b1\u6b49\uff0c\u5904\u7406\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002",
+      "asr_transcript": "\u62b1\u6b49\uff0c\u5904\u7406\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002",
+      "asr_normalized": "\u62b1\u6b49\u5904\u7406\u5931\u8d25\u8bf7\u7a0d\u540e\u91cd\u8bd5",
+      "required_keywords": [
+        "\u5904\u7406\u5931\u8d25",
+        "\u7a0d\u540e",
+        "\u91cd\u8bd5"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:25:46",
+      "wav_sha256": "84d04ee0c8183b7aba976e4daf47d4963c41ebdcd06bca0ed4b1416089333f9c"
+    },
+    {
+      "logical_id": "backend_xiaojing",
+      "target_text": "\u5df2\u5207\u6362\u5230\u5c0f\u51c0\u5524\u9192\u6a21\u5f0f\u3002",
+      "asr_transcript": "\u5df2\u5207\u6362\u5230\u5c0f\u9759\u5524\u9192\u6a21\u5f0f",
+      "asr_normalized": "\u5df2\u5207\u6362\u5230\u5c0f\u9759\u5524\u9192\u6a21\u5f0f",
+      "required_keywords": [
+        "\u5207\u6362",
+        "\u5524\u9192",
+        "\u6a21\u5f0f"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [
+        "\u5c0f\u51c0",
+        "\u5c0f\u9759"
+      ],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:25:54",
+      "wav_sha256": "2d74c925ce0f2c64edd45591f9146767d1be5435654cc74535fdf7d26ebfe469"
+    },
+    {
+      "logical_id": "backend_esp_sr",
+      "target_text": "\u5df2\u5207\u6362\u5230\u5c0f\u7231\u540c\u5b66\u5524\u9192\u6a21\u5f0f\u3002",
+      "asr_transcript": "\u5df2\u5207\u6362\u5230\u5c0f\u7231\u540c\u5b66\u5524\u9192\u6a21\u5f0f",
+      "asr_normalized": "\u5df2\u5207\u6362\u5230\u5c0f\u7231\u540c\u5b66\u5524\u9192\u6a21\u5f0f",
+      "required_keywords": [
+        "\u5207\u6362",
+        "\u5c0f\u7231\u540c\u5b66",
+        "\u5524\u9192",
+        "\u6a21\u5f0f"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:25:58",
+      "wav_sha256": "4b8394b73601450a1ee131ff128aec8e56c9f09d8822e31381030db475b817ae"
+    },
+    {
+      "logical_id": "ptt_ready",
+      "target_text": "\u6211\u5728\uff0c\u8bf7\u8bf4\u3002",
+      "asr_transcript": "\u6211\u5728\uff0c\u8bf7\u8bf4",
+      "asr_normalized": "\u6211\u5728\u8bf7\u8bf4",
+      "required_keywords": [
+        "\u6211\u5728",
+        "\u8bf7\u8bf4"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:26:03",
+      "wav_sha256": "02927d2cca828473f3f3b2d24e93483cf7e57a1e9e6f7a06165615fe71eed98a"
+    },
+    {
+      "logical_id": "chat_thinking",
+      "target_text": "\u597d\u7684\uff0c\u8ba9\u6211\u60f3\u4e00\u60f3\u3002",
+      "asr_transcript": "\u597d\u7684\uff0c\u8ba9\u6211\u60f3\u4e00\u60f3",
+      "asr_normalized": "\u597d\u7684\u8ba9\u6211\u60f3\u4e00\u60f3",
+      "required_keywords": [
+        "\u60f3\u4e00\u60f3"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:26:07",
+      "wav_sha256": "2d33ea19aa4aafabdadffc9c040e45507e80fe0eefa0e9cecc81cdfa6cecc5bf"
+    },
+    {
+      "logical_id": "need_confirmation",
+      "target_text": "\u8bf7\u786e\u8ba4\u662f\u5426\u5f00\u59cb\u6267\u884c\u3002",
+      "asr_transcript": "\u8bf7\u786e\u8ba4\u662f\u5426\u5f00\u59cb\u6267\u884c",
+      "asr_normalized": "\u8bf7\u786e\u8ba4\u662f\u5426\u5f00\u59cb\u6267\u884c",
+      "required_keywords": [
+        "\u786e\u8ba4",
+        "\u5f00\u59cb",
+        "\u6267\u884c"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:26:11",
+      "wav_sha256": "b783aa67aed5ba0a93a6127f79e926a0ea81c8f03f6920f40c6a1955dc9f348e"
+    },
+    {
+      "logical_id": "network_unavailable",
+      "target_text": "\u7f51\u7edc\u6682\u4e0d\u53ef\u7528\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5\u3002",
+      "asr_transcript": "\u7f51\u7edc\u6682\u4e0d\u53ef\u7528\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5",
+      "asr_normalized": "\u7f51\u7edc\u6682\u4e0d\u53ef\u7528\u8bf7\u7a0d\u540e\u91cd\u8bd5",
+      "required_keywords": [
+        "\u7f51\u7edc",
+        "\u6682\u4e0d\u53ef\u7528",
+        "\u7a0d\u540e",
+        "\u91cd\u8bd5"
+      ],
+      "required_keywords_found": true,
+      "alternatives": [],
+      "alternative_found": true,
+      "verified": true,
+      "http_status": 200,
+      "timestamp": "2026-08-02T19:26:20",
+      "wav_sha256": "328aa1f51a188b805eb784804793b23741e1042b41b7553197511fe023230356"
+    }
+  ]
+}

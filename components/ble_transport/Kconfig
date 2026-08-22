@@ -1,0 +1,10 @@
+menu "BLE Transport Configuration"
+
+    config BLE_TRANSPORT_TEST_HOOKS
+        bool "Enable BLE transport test hooks"
+        default n
+        help
+            Enable the fake NimBLE boundary and deterministic failure hooks
+            used by the unit-test firmware. Must remain disabled in production.
+
+endmenu

@@ -1,0 +1,10 @@
+menu "UV Service"
+
+    config UV_SERVICE_TEST_HOOKS
+        bool "Enable test hooks for UV service tests"
+        default n
+        help
+            Compile uv_service.c with hook points for
+            deterministic testing. Only enable in test builds.
+
+endmenu

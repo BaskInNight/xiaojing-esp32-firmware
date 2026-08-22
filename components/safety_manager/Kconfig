@@ -1,0 +1,11 @@
+menu "Safety Manager"
+
+    config SAFETY_MGR_TEST_HOOKS
+        bool "Enable test hooks for safety_manager"
+        default n
+        help
+            Compile safety_manager.c with test helper functions
+            (test_set_inputs, test_get_inputs, test_reset).
+            Only enable in test builds.
+
+endmenu

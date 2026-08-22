@@ -1,0 +1,10 @@
+menu "Wash Executor"
+
+    config WASH_EXEC_TEST_HOOKS
+        bool "Enable test hooks for wash executor"
+        default n
+        help
+            Enable test hooks that allow injecting events
+            and inspecting internal state for testing.
+
+endmenu

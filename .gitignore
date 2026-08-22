@@ -1,0 +1,39 @@
+# ESP-IDF generated files
+build/
+build_*/
+managed_components/
+dependencies.lock
+sdkconfig.old
+sdkconfig.ci
+
+# Local credentials
+main/include/voice_secrets.h
+
+# Test and tool outputs
+Testing/
+tmp/
+*.log
+*.err
+*.out
+*.pid
+*.jobid
+*.bin
+*.elf
+*.map
+build_output*.txt
+build_log*.txt
+ninja_output.txt
+probe_*.txt
+round*_run*.txt
+runner_output.txt
+test_output*.txt
+
+# Editor and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Python caches
+__pycache__/
+*.pyc
