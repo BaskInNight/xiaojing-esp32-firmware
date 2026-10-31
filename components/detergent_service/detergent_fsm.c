@@ -47,9 +47,11 @@ esp_err_t detergent_fsm_begin_request(detergent_fsm_ctx_t *ctx,
     if (req->duration_ms == 0 || req->duration_ms > max_single_ms) {
         return ESP_ERR_INVALID_ARG;
     }
+    if (req->competition_demo && req->duration_ms != 5000) return ESP_ERR_INVALID_ARG;
 
     ctx->request_id = req->request_id;
     ctx->duration_ms = req->duration_ms;
+    ctx->competition_demo = req->competition_demo;
     ctx->state = DETERGENT_FSM_VALIDATING;
     ctx->state_enter_ms = now_ms;
     ctx->tick_ms = now_ms;

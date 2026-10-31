@@ -189,6 +189,9 @@ typedef struct {
     uint32_t demo_generation;
     int64_t demo_deadline_ms;
     bool demo_dry_phase;
+    bool demo_dose_phase;
+    safety_operation_t demo_dose_valve;
+    int64_t demo_dose_deadline_ms;
 } safety_inputs_t;
 
 /* ---- Safety Snapshot ---- */

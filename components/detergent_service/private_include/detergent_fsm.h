@@ -92,6 +92,7 @@ typedef struct {
     detergent_fsm_state_t state;
     machine_request_id_t request_id;
     uint32_t duration_ms;
+    bool competition_demo;
 
     detergent_output_state_t output_state;
     uint32_t state_enter_ms;

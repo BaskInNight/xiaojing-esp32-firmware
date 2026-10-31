@@ -8,6 +8,7 @@
 #include "bl50_fsm.h"
 #include "uv_fsm.h"
 #include "competition_demo.h"
+#include "detergent_fsm.h"
 
 static safety_inputs_t inputs(void)
 {
@@ -68,6 +69,71 @@ static void test_policy(void)
     assert(!allowed(&s, SAFETY_OP_UV, true)); assert(allowed(&s, SAFETY_OP_UV, false));
     s.fault_active = false; s.emergency_stop_active = true;
     assert(!allowed(&s, SAFETY_OP_BL50, true)); assert(allowed(&s, SAFETY_OP_BL50, false));
+}
+
+static void test_water_dose_policy(void)
+{
+    safety_inputs_t s = inputs();
+    s.position = DRUM_POS_0; s.mcp_outputs.uv = true;
+    s.demo_dose_phase = true; s.demo_dose_deadline_ms = 11000;
+    s.demo_dose_valve = SAFETY_OP_SOURCE_INLET_VALVE;
+    assert(allowed(&s, SAFETY_OP_SOURCE_INLET_VALVE, true));
+    assert(!allowed(&s, SAFETY_OP_TRANSFER_VALVE, true));
+    assert(!allowed(&s, SAFETY_OP_DETERGENT_PUMP, true));
+    assert(!allowed(&s, SAFETY_OP_BL50, true));
+    assert(!allowed(&s, SAFETY_OP_POSITION_MOTOR, true));
+    s.mcp_outputs.source_inlet_valve = true;
+    safety_reject_reason_t reason; safety_interlock_config_t c = config();
+    assert(safety_validate_active(&s, &c, SAFETY_OP_UV, DRUM_POS_0, &reason));
+    s.mcp_outputs.source_inlet_valve = false;
+    s.demo_dose_valve = SAFETY_OP_TRANSFER_VALVE;
+    assert(allowed(&s, SAFETY_OP_TRANSFER_VALVE, true));
+    s.mcp_outputs.transfer_valve = true;
+    assert(allowed(&s, SAFETY_OP_DETERGENT_PUMP, true));
+    s.mcp_outputs.detergent_pump = true;
+    assert(safety_validate_active(&s, &c, SAFETY_OP_UV, DRUM_POS_0, &reason));
+    assert(!allowed(&s, SAFETY_OP_SOURCE_INLET_VALVE, true));
+    assert(!allowed(&s, SAFETY_OP_POSITION_MOTOR, true));
+    s.mcp_outputs.transfer_valve = false;
+    assert(allowed(&s, SAFETY_OP_TRANSFER_VALVE, true)); /* Either actor may turn ON first. */
+    s.mcp_known_mask &= ~(1U << SAFE_OUTPUT_UV);
+    assert(!allowed(&s, SAFETY_OP_TRANSFER_VALVE, true));
+    s.mcp_known_mask = (1U << SAFE_OUTPUT_COUNT) - 1U;
+    s.position_sample_ms = 0;
+    assert(!allowed(&s, SAFETY_OP_TRANSFER_VALVE, true));
+    assert(!safety_validate_active(&s, &c, SAFETY_OP_UV, DRUM_POS_0, &reason));
+    s.position_sample_ms = s.now_ms;
+    s.now_ms = s.demo_dose_deadline_ms;
+    assert(!allowed(&s, SAFETY_OP_TRANSFER_VALVE, true));
+    assert(!allowed(&s, SAFETY_OP_DETERGENT_PUMP, true));
+    assert(!safety_validate_active(&s, &c, SAFETY_OP_UV, DRUM_POS_0, &reason));
+    s.emergency_stop_active = true;
+    assert(allowed(&s, SAFETY_OP_TRANSFER_VALVE, false));
+    assert(allowed(&s, SAFETY_OP_DETERGENT_PUMP, false));
+    s = inputs(); s.position = DRUM_POS_0; s.demo_program_id = 0; s.mcp_outputs.uv = true;
+    assert(!allowed(&s, SAFETY_OP_DETERGENT_PUMP, true)); /* Ordinary policy unchanged. */
+}
+
+static void test_five_second_dose(void)
+{
+    detergent_params_t config = {.max_single_ms = 10000};
+    detergent_fsm_ctx_t f; detergent_fsm_init(&f, &config);
+    detergent_request_t request = {.request_id = 55, .duration_ms = 4999, .competition_demo = true};
+    assert(detergent_fsm_begin_request(&f, &request, 10000, 0) == ESP_ERR_INVALID_ARG);
+    request.duration_ms = 5000;
+    assert(detergent_fsm_begin_request(&f, &request, 10000, 0) == ESP_OK);
+    detergent_fsm_event_t e = {.type = DETERGENT_EVT_TICK, .now_ms = 100,
+        .position = DRUM_POS_0, .position_valid = true, .position_fresh = true, .position_stable = true};
+    detergent_fsm_output_t out;
+    detergent_fsm_tick(&f, &e, &out);
+    assert(out.action == DETERGENT_ACTION_PUMP_ON);
+    e = (detergent_fsm_event_t){.type = DETERGENT_EVT_ACTION_RESULT, .now_ms = 100,
+        .action_result_action = DETERGENT_ACTION_PUMP_ON, .action_result_ok = true};
+    detergent_fsm_tick(&f, &e, &out);
+    e = (detergent_fsm_event_t){.type = DETERGENT_EVT_TICK, .now_ms = 5099};
+    detergent_fsm_tick(&f, &e, &out); assert(out.action == DETERGENT_ACTION_NONE);
+    e.now_ms = 5100;
+    detergent_fsm_tick(&f, &e, &out); assert(out.action == DETERGENT_ACTION_PUMP_OFF);
 }
 
 static void test_stop(void)
@@ -226,7 +292,8 @@ int main(void)
     assert(competition_demo_event_fault(&failure) == FAULT_BL50_HOME_TIMEOUT);
     failure.fault.code = FAULT_NONE; failure.result = SERVICE_RESULT_TIMEOUT;
     assert(competition_demo_event_fault(&failure) == FAULT_PROGRAM_TIMEOUT);
-    test_policy(); test_stop(); test_stop_during_loading(); test_button(); test_tumble(); test_uv_indicator();
+    test_policy(); test_water_dose_policy(); test_five_second_dose();
+    test_stop(); test_stop_during_loading(); test_button(); test_tumble(); test_uv_indicator();
     puts("competition policy, cancel acknowledgement, stale terminal, debounce, tumble: PASS");
     return 0;
 }

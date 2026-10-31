@@ -118,7 +118,7 @@ planner_report_t competition_demo_build_program(uint32_t program_id, wash_progra
     memset(out, 0, sizeof(*out));
     out->program_id = program_id;
     out->kind = WASH_PROGRAM_DEMO;
-    out->estimated_total_ms = 166000;
+    out->estimated_total_ms = 176000;
     out->step_count = 3;
     out->steps[0] = (wash_step_t){ .step_id = 0, .type = STEP_MOVE_POSITION,
         .required_position = DRUM_POS_45, .timeout_ms = 31000,

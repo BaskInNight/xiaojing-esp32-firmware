@@ -99,6 +99,8 @@ static void detergent_service_auto_init(void) { detergent_service_global_init();
 
 static esp_err_t apply_pump_on(void)
 {
+    if (s_rt.fsm.competition_demo && !safety_manager_demo_dose_allowed(SAFETY_OP_DETERGENT_PUMP))
+        return ESP_ERR_INVALID_STATE;
     safety_request_t req = { .operation = SAFETY_OP_DETERGENT_PUMP, .enable = true,
         .request_id = s_rt.fsm.request_id, .required_position = DRUM_POS_0, .source = APP_SOURCE_SYSTEM };
     return safety_manager_apply(&req);
@@ -263,7 +265,8 @@ static void detergent_task(void *arg)
         uint32_t now_ms = (uint32_t)(xTaskGetTickCount() * portTICK_PERIOD_MS);
         if (s_rt.fsm.state == DETERGENT_FSM_RUNNING) {
             bool aa = false; safety_reject_reason_t ar = SAFETY_REJECT_NONE;
-            if (safety_manager_validate_active(SAFETY_OP_DETERGENT_PUMP, DRUM_POS_0, &aa, &ar) != ESP_OK || !aa) {
+            if ((s_rt.fsm.competition_demo && !safety_manager_demo_dose_allowed(SAFETY_OP_DETERGENT_PUMP)) ||
+                safety_manager_validate_active(SAFETY_OP_DETERGENT_PUMP, DRUM_POS_0, &aa, &ar) != ESP_OK || !aa) {
                 detergent_fsm_event_t em = { .type = DETERGENT_EVT_EMERGENCY, .now_ms = now_ms };
                 detergent_fsm_output_t eo; detergent_fsm_tick(&s_rt.fsm, &em, &eo); process_fsm_output(&eo, now_ms);
                 vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(TICK_INTERVAL_MS)); continue;
@@ -430,6 +433,8 @@ esp_err_t detergent_service_stop(void)
 esp_err_t detergent_service_run_async(const detergent_request_t *request)
 {
     if (!request) return ESP_ERR_INVALID_ARG;
+    if (request->competition_demo && (request->duration_ms != 5000 ||
+        !safety_manager_demo_dose_allowed(SAFETY_OP_DETERGENT_PUMP))) return ESP_ERR_INVALID_STATE;
     xSemaphoreTake(s_lc_mtx, portMAX_DELAY);
     if (s_rt.lifecycle != LC_RUNNING || !s_rt.cmd_queue) { xSemaphoreGive(s_lc_mtx); return ESP_ERR_INVALID_STATE; }
     xSemaphoreGive(s_lc_mtx);

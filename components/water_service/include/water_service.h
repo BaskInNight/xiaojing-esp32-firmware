@@ -131,6 +131,8 @@ esp_err_t water_service_actuator_valve_test(
 
 /* 立即关闭指定板测阀（BLE 断线 / 急停）。非阻塞，best-effort。 */
 esp_err_t water_service_actuator_valve_close(water_actuator_valve_t valve);
+/* Trusted dry demonstration: fixed 5s, requires live owned 0-degree dose lease. */
+esp_err_t water_service_demo_valve_run(water_actuator_valve_t valve, machine_request_id_t request_id);
 
 /* ---- Lifecycle ---- */
 

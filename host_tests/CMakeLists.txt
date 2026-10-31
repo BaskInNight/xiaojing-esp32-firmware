@@ -268,8 +268,10 @@ add_executable(test_competition_demo
     ../components/button_service/button_debounce.c
     ../components/bl50_service/bl50_fsm.c
     ../components/uv_service/uv_fsm.c
+    ../components/detergent_service/detergent_fsm.c
 )
 target_include_directories(test_competition_demo PRIVATE ${SHIMS_DIR} ${COMPONENT_INCLUDES}
     ../components/program_control/include
-    ../components/bl50_service/include ../components/bl50_service/private_include)
+    ../components/bl50_service/include ../components/bl50_service/private_include
+    ../components/detergent_service/include ../components/detergent_service/private_include)
 add_test(NAME competition_demo_tests COMMAND test_competition_demo)

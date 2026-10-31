@@ -49,6 +49,7 @@ typedef enum {
 typedef struct {
     machine_request_id_t request_id;
     uint32_t duration_ms;
+    bool competition_demo;
 } detergent_request_t;
 
 /* ---- Snapshot ---- */

@@ -45,6 +45,7 @@ typedef struct {
             water_actuator_valve_t valve;
             machine_request_id_t request_id;
             uint32_t duration_ms;
+            bool competition_demo;
         } act_test;
     };
 } water_cmd_t;
@@ -86,6 +87,7 @@ typedef struct {
 
     /* 受控单阀板测状态 — 仅 water 任务写（单写者）。 */
     bool act_test_active;
+    bool act_test_demo;
     water_actuator_valve_t act_test_valve;
     machine_request_id_t act_test_request_id;
     uint32_t act_test_duration_ms;
@@ -300,9 +302,13 @@ static safety_operation_t act_test_op(water_actuator_valve_t valve)
 }
 
 static void act_test_open(machine_request_id_t rid, water_actuator_valve_t valve,
-                          uint32_t duration_ms)
+                          uint32_t duration_ms, bool competition_demo)
 {
-    esp_err_t err = apply_valve(act_test_op(valve), true, rid);
+    s_wctx.act_test_request_id = rid;
+    s_wctx.act_test_valve = valve;
+    s_wctx.act_test_demo = competition_demo;
+    esp_err_t err = competition_demo && !safety_manager_demo_dose_allowed(act_test_op(valve))
+        ? ESP_ERR_INVALID_STATE : apply_valve(act_test_op(valve), true, rid);
     if (err != ESP_OK) {
         s_wctx.act_test_state = WATER_ACT_TEST_FAULT;
         ESP_LOGE(TAG, "ACT_TEST open valve=%d rid=%" PRIu32 " err=0x%x",
@@ -487,7 +493,7 @@ static void water_task(void *arg)
                     !atomic_load(&s_wctx.stop_requested) &&
                     !atomic_load(&s_wctx.shutdown_draining)) {
                     act_test_open(cmd.act_test.request_id, cmd.act_test.valve,
-                                  cmd.act_test.duration_ms);
+                                  cmd.act_test.duration_ms, cmd.act_test.competition_demo);
                 } else {
                     ESP_LOGW(TAG, "ACT_TEST rejected: not idle (state=%d act=%d)",
                              (int)s_wctx.fsm.state, s_wctx.act_test_active ? 1 : 0);
@@ -502,7 +508,15 @@ static void water_task(void *arg)
         if (s_wctx.act_test_active &&
             s_wctx.act_test_state == WATER_ACT_TEST_RUNNING) {
             int64_t now_ms = s_wctx.hal->now_ms();
-            if (now_ms - s_wctx.act_test_start_ms >=
+            bool allowed = true;
+            safety_reject_reason_t reason = SAFETY_REJECT_NONE;
+            if (s_wctx.act_test_demo &&
+                (!safety_manager_demo_dose_allowed(act_test_op(s_wctx.act_test_valve)) ||
+                 safety_manager_validate_active(act_test_op(s_wctx.act_test_valve), DRUM_POS_0,
+                    &allowed, &reason) != ESP_OK || !allowed)) {
+                act_test_close();
+                s_wctx.act_test_state = WATER_ACT_TEST_FAULT;
+            } else if (now_ms - s_wctx.act_test_start_ms >=
                 (int64_t)s_wctx.act_test_duration_ms) {
                 ESP_LOGI(TAG, "ACT_TEST duration elapsed (%" PRIu32 " ms), closing",
                          s_wctx.act_test_duration_ms);
@@ -901,15 +915,17 @@ esp_err_t water_service_emergency_close(void) {
 
 #define WATER_ACT_TEST_MAX_DURATION_MS 10000U
 
-esp_err_t water_service_actuator_valve_test(
+static esp_err_t queue_valve_test(
     water_actuator_valve_t valve, machine_request_id_t request_id,
-    uint32_t duration_ms)
+    uint32_t duration_ms, bool competition_demo)
 {
     if (valve != WATER_ACTUATOR_VALVE_SOURCE &&
         valve != WATER_ACTUATOR_VALVE_TRANSFER) return ESP_ERR_INVALID_ARG;
     if (request_id == MACHINE_REQUEST_ID_INVALID) return ESP_ERR_INVALID_ARG;
     if (duration_ms == 0U || duration_ms > WATER_ACT_TEST_MAX_DURATION_MS)
         return ESP_ERR_INVALID_ARG;
+    if (competition_demo && !safety_manager_demo_dose_allowed(act_test_op(valve)))
+        return ESP_ERR_INVALID_STATE;
 
     lc_lock();
     if (s_wctx.lifecycle != LC_RUNNING || !s_wctx.cmd_queue) {
@@ -919,9 +935,21 @@ esp_err_t water_service_actuator_valve_test(
     cmd.act_test.valve = valve;
     cmd.act_test.request_id = request_id;
     cmd.act_test.duration_ms = duration_ms;
+    cmd.act_test.competition_demo = competition_demo;
     BaseType_t ok = xQueueSend(s_wctx.cmd_queue, &cmd, pdMS_TO_TICKS(10));
     lc_unlock();
     return (ok == pdTRUE) ? ESP_OK : ESP_ERR_INVALID_STATE;
+}
+
+esp_err_t water_service_actuator_valve_test(water_actuator_valve_t valve,
+    machine_request_id_t request_id, uint32_t duration_ms)
+{
+    return queue_valve_test(valve, request_id, duration_ms, false);
+}
+
+esp_err_t water_service_demo_valve_run(water_actuator_valve_t valve, machine_request_id_t request_id)
+{
+    return queue_valve_test(valve, request_id, 5000, true);
 }
 
 esp_err_t water_service_actuator_valve_close(water_actuator_valve_t valve)

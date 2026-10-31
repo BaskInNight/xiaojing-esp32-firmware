@@ -145,6 +145,28 @@ static bool demo_outputs_off(const safety_inputs_t *in, bool allow_heat)
     return safety_all_mcp_known_off(&outputs, in->mcp_known_mask);
 }
 
+static bool demo_dose_live(const safety_inputs_t *in)
+{
+    return demo_live(in) && in->demo_dose_phase && in->now_ms < in->demo_dose_deadline_ms &&
+        (in->demo_dose_valve == SAFETY_OP_SOURCE_INLET_VALVE || in->demo_dose_valve == SAFETY_OP_TRANSFER_VALVE);
+}
+
+static bool demo_dose_outputs_off(const safety_inputs_t *in, safety_operation_t op)
+{
+    safety_mcp_output_state_t outputs = in->mcp_outputs;
+    if (!demo_dose_live(in)) return false;
+    outputs.uv = false;
+    if (op == SAFETY_OP_UV || op == SAFETY_OP_DETERGENT_PUMP) {
+        if (in->demo_dose_valve == SAFETY_OP_SOURCE_INLET_VALVE) outputs.source_inlet_valve = false;
+        else outputs.transfer_valve = false;
+    }
+    if (in->demo_dose_valve == SAFETY_OP_TRANSFER_VALVE &&
+        (op == SAFETY_OP_UV || op == SAFETY_OP_TRANSFER_VALVE)) outputs.detergent_pump = false;
+    return in->position == DRUM_POS_0 && !in->position_motor_moving &&
+        in->bl50_state_known && !in->bl50_running && !in->hot_air_on &&
+        safety_all_mcp_known_off(&outputs, in->mcp_known_mask);
+}
+
 bool safety_ptc_force_shutdown(const safety_inputs_t *inputs,
                                 const safety_interlock_config_t *config)
 {
@@ -330,7 +352,15 @@ void safety_interlock_check(const safety_inputs_t *inputs,
     /* A live demonstration owns the output set; unrelated ON requests stay closed. */
     if (demo_live(inputs) &&
         (op != SAFETY_OP_POSITION_MOTOR && op != SAFETY_OP_BL50 && op != SAFETY_OP_UV &&
-         !(op == SAFETY_OP_HOT_AIR_MODULE && inputs->demo_dry_phase))) {
+         !(op == SAFETY_OP_HOT_AIR_MODULE && inputs->demo_dry_phase) &&
+         !(demo_dose_live(inputs) && (op == inputs->demo_dose_valve ||
+           (op == SAFETY_OP_DETERGENT_PUMP && inputs->demo_dose_valve == SAFETY_OP_TRANSFER_VALVE))))) {
+        decision->reason = SAFETY_REJECT_INVALID_PARAM;
+        decision->interlock_mask = SAFETY_ILK_INVALID_PARAM;
+        return;
+    }
+    if (demo_live(inputs) && inputs->demo_dose_phase &&
+        (op == SAFETY_OP_POSITION_MOTOR || op == SAFETY_OP_BL50 || op == SAFETY_OP_HOT_AIR_MODULE)) {
         decision->reason = SAFETY_REJECT_INVALID_PARAM;
         decision->interlock_mask = SAFETY_ILK_INVALID_PARAM;
         return;
@@ -409,7 +439,8 @@ void safety_interlock_check(const safety_inputs_t *inputs,
             decision->interlock_mask = SAFETY_ILK_VALVE_CONFLICT;
             return;
         }
-        if (!safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask)) {
+        if (!(demo_dose_live(inputs) ? demo_dose_outputs_off(inputs, op) :
+              safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask))) {
             decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
             decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
             return;
@@ -437,7 +468,8 @@ void safety_interlock_check(const safety_inputs_t *inputs,
             decision->interlock_mask = SAFETY_ILK_VALVE_CONFLICT;
             return;
         }
-        if (!safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask)) {
+        if (!(demo_dose_live(inputs) ? demo_dose_outputs_off(inputs, op) :
+              safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask))) {
             decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
             decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
             return;
@@ -487,7 +519,8 @@ void safety_interlock_check(const safety_inputs_t *inputs,
             decision->interlock_mask = SAFETY_ILK_POSITION_MOVING;
             return;
         }
-        if (!safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask)) {
+        if (!(demo_dose_live(inputs) ? demo_dose_outputs_off(inputs, op) :
+              safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask))) {
             decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
             decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
             return;
@@ -498,7 +531,8 @@ void safety_interlock_check(const safety_inputs_t *inputs,
 
     case SAFETY_OP_UV: {
         if (demo_live(inputs)) {
-            decision->allowed = demo_outputs_off(inputs, true);
+            decision->allowed = inputs->demo_dose_phase ? demo_dose_outputs_off(inputs, op) :
+                demo_outputs_off(inputs, true);
             if (!decision->allowed) {
                 decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
                 decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
@@ -740,8 +774,16 @@ bool safety_validate_active(const safety_inputs_t *inputs,
 
     /* 2. Position check (fresh + known + stable + correct) */
     if (operation == SAFETY_OP_UV && demo_live(inputs)) {
+        if (inputs->demo_dose_phase) {
+            safety_decision_t pose = {0};
+            if (!check_position_fresh_and_known(inputs, config, &pose)) {
+                *reason = pose.reason;
+                return false;
+            }
+        }
         if (!safety_mcp_output_is_known(inputs->mcp_known_mask, SAFE_OUTPUT_UV) ||
-            !inputs->mcp_outputs.uv || !demo_outputs_off(inputs, true)) {
+            !inputs->mcp_outputs.uv || !(inputs->demo_dose_phase ?
+                demo_dose_outputs_off(inputs, SAFETY_OP_UV) : demo_outputs_off(inputs, true))) {
             *reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
             return false;
         }

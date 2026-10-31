@@ -703,6 +703,8 @@ esp_err_t safety_manager_demo_begin(uint32_t program_id, uint32_t generation)
     s_rt.inputs.demo_generation = generation;
     s_rt.inputs.demo_deadline_ms = s_rt.hal->now_ms() + 180000;
     s_rt.inputs.demo_dry_phase = false;
+    s_rt.inputs.demo_dose_phase = false;
+    s_rt.inputs.demo_dose_deadline_ms = 0;
     api_unlock();
     return ESP_OK;
 }
@@ -734,6 +736,8 @@ esp_err_t safety_manager_demo_end(uint32_t program_id, uint32_t generation)
     s_rt.inputs.demo_generation = 0;
     s_rt.inputs.demo_deadline_ms = 0;
     s_rt.inputs.demo_dry_phase = false;
+    s_rt.inputs.demo_dose_phase = false;
+    s_rt.inputs.demo_dose_deadline_ms = 0;
     api_unlock();
     return ESP_OK;
 }
@@ -754,6 +758,55 @@ bool safety_manager_demo_active(void)
     bool allowed = s_rt.inputs.demo_program_id && s_rt.inputs.demo_generation &&
         s_rt.hal->now_ms() < s_rt.inputs.demo_deadline_ms &&
         !has_active_fault() && !s_rt.emergency_active;
+    api_unlock();
+    return allowed;
+}
+
+static bool demo_dose_pose_ok(int64_t now)
+{
+    return s_rt.inputs.position_sample_valid && s_rt.inputs.position_stable &&
+        s_rt.inputs.position == DRUM_POS_0 && !s_rt.inputs.position_motor_moving &&
+        s_rt.inputs.bl50_state_known && !s_rt.inputs.bl50_running &&
+        (s_rt.ilk_config.position_stale_timeout_ms == 0 ||
+         (uint32_t)(now - s_rt.inputs.position_sample_ms) < s_rt.ilk_config.position_stale_timeout_ms);
+}
+
+esp_err_t safety_manager_demo_dose(uint32_t program_id, uint32_t generation,
+    safety_operation_t valve, bool enabled)
+{
+    if (valve != SAFETY_OP_SOURCE_INLET_VALVE && valve != SAFETY_OP_TRANSFER_VALVE)
+        return ESP_ERR_INVALID_ARG;
+    esp_err_t err = api_lock_running();
+    if (err != ESP_OK) return err;
+    int64_t now = s_rt.hal->now_ms();
+    safety_mcp_output_state_t outputs = s_rt.inputs.mcp_outputs;
+    outputs.uv = false; /* The owned indicator remains on. Known mask still applies. */
+    if (s_rt.inputs.demo_program_id != program_id || s_rt.inputs.demo_generation != generation ||
+        !program_id || !generation ||
+        !safety_all_mcp_known_off(&outputs, s_rt.inputs.mcp_known_mask) ||
+        (enabled && (now >= s_rt.inputs.demo_deadline_ms || has_active_fault() ||
+            s_rt.emergency_active || s_rt.inputs.demo_dose_phase || s_rt.inputs.demo_dry_phase ||
+            !demo_dose_pose_ok(now) || s_rt.inputs.hot_air_on))) {
+        api_unlock();
+        return ESP_ERR_INVALID_STATE;
+    }
+    s_rt.inputs.demo_dose_phase = enabled;
+    s_rt.inputs.demo_dose_valve = valve;
+    s_rt.inputs.demo_dose_deadline_ms = enabled ? now + 10000 : 0;
+    api_unlock();
+    return ESP_OK;
+}
+
+bool safety_manager_demo_dose_allowed(safety_operation_t op)
+{
+    if (api_lock_running() != ESP_OK) return false;
+    int64_t now = s_rt.hal->now_ms();
+    bool allowed = s_rt.inputs.demo_program_id && s_rt.inputs.demo_generation &&
+        s_rt.inputs.demo_dose_phase && now < s_rt.inputs.demo_deadline_ms &&
+        now < s_rt.inputs.demo_dose_deadline_ms && !has_active_fault() && !s_rt.emergency_active &&
+        demo_dose_pose_ok(now) &&
+        (op == s_rt.inputs.demo_dose_valve ||
+         (op == SAFETY_OP_DETERGENT_PUMP && s_rt.inputs.demo_dose_valve == SAFETY_OP_TRANSFER_VALVE));
     api_unlock();
     return allowed;
 }

@@ -83,6 +83,9 @@ esp_err_t safety_manager_demo_dry(uint32_t program_id, uint32_t generation, bool
 esp_err_t safety_manager_demo_end(uint32_t program_id, uint32_t generation);
 bool safety_manager_demo_dry_allowed(void);
 bool safety_manager_demo_active(void);
+esp_err_t safety_manager_demo_dose(uint32_t program_id, uint32_t generation,
+    safety_operation_t valve, bool enabled);
+bool safety_manager_demo_dose_allowed(safety_operation_t operation);
 
 /* ---- Stop Hook ---- */
 

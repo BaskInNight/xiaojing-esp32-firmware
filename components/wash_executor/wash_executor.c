@@ -306,7 +306,7 @@ static void publish_snapshot(wash_executor_t *exec)
             status.progress_percent = demo.total_stages ?
                 (uint8_t)(demo.stage * 100U / (demo.total_stages + 1U)) : 0;
             status.elapsed_ms = demo.elapsed_ms;
-            status.remaining_ms = demo.elapsed_ms < 166000 ? 166000 - demo.elapsed_ms : 0;
+            status.remaining_ms = demo.elapsed_ms < 176000 ? 176000 - demo.elapsed_ms : 0;
             status.target_position = demo.target;
         }
     }

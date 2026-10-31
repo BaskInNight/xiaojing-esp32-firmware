@@ -7,6 +7,8 @@
 #include "bl50_service.h"
 #include "coupled_hot_air_service.h"
 #include "uv_service.h"
+#include "water_service.h"
+#include "detergent_service.h"
 #include "safety_manager.h"
 #include "esp_heap_caps.h"
 #include "esp_timer.h"
@@ -36,6 +38,10 @@ static void *callback_context;
 static uint32_t next_id = 0xd0000000U;
 /* Owned by worker, while its job is reserved. */
 static uint32_t position_id, motor_id, uv_id, heat_id;
+static uint32_t valve_id, detergent_id;
+static water_actuator_valve_t owned_valve;
+static bool detergent_done;
+static service_result_t detergent_result;
 static bool position_done, motor_done, uv_done, heat_done;
 static int64_t started_ms;
 static bool lease;
@@ -110,6 +116,80 @@ static void remember_terminal(const machine_event_t *e)
     if (e->type == MACHINE_EVENT_BL50_DONE && e->request_id == motor_id) motor_done = true;
     if (e->type == MACHINE_EVENT_UV_DONE && e->request_id == uv_id) uv_done = true;
     if (e->type == MACHINE_EVENT_HOT_AIR_DONE && e->request_id == heat_id) heat_done = true;
+    if (e->type == MACHINE_EVENT_DETERGENT_DONE && e->request_id == detergent_id) {
+        detergent_done = true;
+        detergent_result = e->result;
+        if (e->result != SERVICE_RESULT_OK && e->result != SERVICE_RESULT_CANCELED) {
+            failure_code = competition_demo_event_fault(e);
+            failure_detail = e->fault.detail;
+        }
+    }
+}
+
+static bool valve_closed(void)
+{
+    if (!valve_id) return true;
+    water_snapshot_t w;
+    return water_service_get_snapshot(&w) == ESP_OK && w.act_test_request_id == valve_id &&
+        !w.act_test_active && !w.source_valve_unknown && !w.transfer_valve_unknown &&
+        !w.source_valve_on && !w.transfer_valve_on &&
+        (w.act_test_state == WATER_ACT_TEST_COMPLETE || w.act_test_state == WATER_ACT_TEST_FAULT);
+}
+
+static esp_err_t timed_water_dose(water_actuator_valve_t valve, bool pump)
+{
+    safety_operation_t op = valve == WATER_ACTUATOR_VALVE_SOURCE ?
+        SAFETY_OP_SOURCE_INLET_VALVE : SAFETY_OP_TRANSFER_VALVE;
+    esp_err_t e = healthy(); if (e != ESP_OK) return e;
+    e = safety_manager_demo_dose(owner_token.program_id, owner_token.generation, op, true);
+    if (e != ESP_OK) return e;
+    ESP_LOGW(TAG, "DRY DEMO: valve=%u 5000ms pump=%u; water/flow volume checks bypassed (not calibrated ml)",
+        (unsigned)valve, (unsigned)pump);
+    owned_valve = valve; valve_id = child_id();
+    e = water_service_demo_valve_run(valve, valve_id);
+    if (e != ESP_OK) { valve_id = 0; return e; }
+    int64_t deadline = now_ms() + 9000;
+    int64_t start_deadline = now_ms() + 2000;
+    bool opened = false;
+    while (now_ms() < start_deadline) {
+        e = healthy(); if (e != ESP_OK) return e;
+        water_snapshot_t w;
+        if (water_service_get_snapshot(&w) == ESP_OK && w.act_test_request_id == valve_id) {
+            if (w.act_test_state == WATER_ACT_TEST_FAULT) { failure_code = FAULT_MCP_IO; return ESP_FAIL; }
+            if (w.act_test_active && w.act_test_state == WATER_ACT_TEST_RUNNING) {
+                opened = true; break;
+            }
+        }
+        pause_tick();
+    }
+    if (!opened) return ESP_ERR_TIMEOUT;
+    if (pump) {
+        detergent_request_t request = {.request_id = child_id(), .duration_ms = 5000, .competition_demo = true};
+        detergent_id = request.request_id; detergent_done = false;
+        e = detergent_service_run_async(&request);
+        if (e != ESP_OK) { detergent_id = 0; return e; }
+    }
+    while (now_ms() < deadline) {
+        e = healthy(); if (e != ESP_OK) return e;
+        if (!safety_manager_demo_dose_allowed(op)) return ESP_ERR_INVALID_STATE;
+        machine_event_t event;
+        while (xQueueReceive(events, &event, 0) == pdTRUE) remember_terminal(&event);
+        water_snapshot_t w;
+        if (water_service_get_snapshot(&w) != ESP_OK) return ESP_FAIL;
+        if (w.act_test_request_id == valve_id && w.act_test_state == WATER_ACT_TEST_FAULT) {
+            failure_code = FAULT_MCP_IO; return ESP_FAIL;
+        }
+        if (pump && detergent_done && detergent_result != SERVICE_RESULT_OK) return ESP_FAIL;
+        detergent_snapshot_t d;
+        bool pump_off = !pump || (detergent_done && detergent_service_get_snapshot(&d) == ESP_OK &&
+            d.request_id == detergent_id && d.output_state == 1 && d.terminal == DETERGENT_TERMINAL_COMPLETE);
+        if (valve_closed() && pump_off) {
+            ESP_LOGI(TAG, "DRY DEMO dose complete: both valves and pump OFF confirmed");
+            return safety_manager_demo_dose(owner_token.program_id, owner_token.generation, op, false);
+        }
+        pause_tick();
+    }
+    return ESP_ERR_TIMEOUT;
 }
 
 static esp_err_t wait_event(machine_event_type_t type, uint32_t id, uint32_t timeout)
@@ -260,24 +340,26 @@ static esp_err_t execute(void)
         RUN(2, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, wait_motor_idle());
     }
     RUN(3, WASH_PHASE_MOVE_POSITION, DRUM_POS_0, move(DRUM_POS_0));
-    RUN(4, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, motor(BL50_ACTION_PULSATOR, 40, 20000));
-    RUN(5, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, settle(3000));
-    RUN(6, WASH_PHASE_MOVE_POSITION, DRUM_POS_90, move(DRUM_POS_90));
-    RUN(7, WASH_PHASE_DRUM_WASH, DRUM_POS_90, motor(BL50_ACTION_DRUM, 30, 24000));
-    RUN(8, WASH_PHASE_DRUM_WASH, DRUM_POS_90, settle(3000));
-    RUN(9, WASH_PHASE_MOVE_POSITION, DRUM_POS_180, move(DRUM_POS_180));
-    RUN(10, WASH_PHASE_SPIN, DRUM_POS_180, motor(BL50_ACTION_SPIN, 80, 12000));
-    RUN(11, WASH_PHASE_SPIN, DRUM_POS_180, settle(3000));
-    RUN(12, WASH_PHASE_MOVE_POSITION, DRUM_POS_270, move(DRUM_POS_270));
-    RUN(13, WASH_PHASE_DRY, DRUM_POS_270, dry());
-    RUN(14, WASH_PHASE_DRY, DRUM_POS_270, settle(3000));
-    RUN(15, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, move(DRUM_POS_45));
+    RUN(4, WASH_PHASE_WATER_SOURCE_FILL, DRUM_POS_0, timed_water_dose(WATER_ACTUATOR_VALVE_SOURCE, false));
+    RUN(5, WASH_PHASE_WATER_TRANSFER, DRUM_POS_0, timed_water_dose(WATER_ACTUATOR_VALVE_TRANSFER, true));
+    RUN(6, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, motor(BL50_ACTION_PULSATOR, 40, 20000));
+    RUN(7, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, settle(3000));
+    RUN(8, WASH_PHASE_MOVE_POSITION, DRUM_POS_90, move(DRUM_POS_90));
+    RUN(9, WASH_PHASE_DRUM_WASH, DRUM_POS_90, motor(BL50_ACTION_DRUM, 30, 24000));
+    RUN(10, WASH_PHASE_DRUM_WASH, DRUM_POS_90, settle(3000));
+    RUN(11, WASH_PHASE_MOVE_POSITION, DRUM_POS_180, move(DRUM_POS_180));
+    RUN(12, WASH_PHASE_SPIN, DRUM_POS_180, motor(BL50_ACTION_SPIN, 80, 12000));
+    RUN(13, WASH_PHASE_SPIN, DRUM_POS_180, settle(3000));
+    RUN(14, WASH_PHASE_MOVE_POSITION, DRUM_POS_270, move(DRUM_POS_270));
+    RUN(15, WASH_PHASE_DRY, DRUM_POS_270, dry());
+    RUN(16, WASH_PHASE_DRY, DRUM_POS_270, settle(3000));
+    RUN(17, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, move(DRUM_POS_45));
     if (COMPETITION_DEMO_SHAFT_HOME_REQUIRED) {
-        RUN(16, WASH_PHASE_HOME_BL50, DRUM_POS_45, motor(BL50_ACTION_HOME, 40, 0));
+        RUN(18, WASH_PHASE_HOME_BL50, DRUM_POS_45, motor(BL50_ACTION_HOME, 40, 0));
     } else {
-        RUN(16, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, wait_motor_idle());
+        RUN(18, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, wait_motor_idle());
     }
-    stage(17, WASH_PHASE_DONE, DRUM_POS_45);
+    stage(19, WASH_PHASE_DONE, DRUM_POS_45);
 #undef RUN
     return ESP_OK;
 }
@@ -289,13 +371,16 @@ static bool cleanup(void)
     if (motor_id) (void)bl50_service_cancel(motor_id);
     if (position_id) (void)position_service_cancel(position_id);
     if (uv_id) (void)uv_service_cancel(uv_id);
+    if (detergent_id) (void)detergent_service_cancel(detergent_id);
+    if (valve_id) (void)water_service_actuator_valve_close(owned_valve);
     int64_t until = now_ms() + 3500;
     bool acknowledged = false;
     while (now_ms() < until) {
         machine_event_t event;
         while (xQueueReceive(events, &event, 0) == pdTRUE) remember_terminal(&event);
         acknowledged = (!position_id || position_done) && (!motor_id || motor_done) &&
-            (!uv_id || uv_done) && (!heat_id || heat_done);
+            (!uv_id || uv_done) && (!heat_id || heat_done) &&
+            (!detergent_id || detergent_done) && valve_closed();
         if (acknowledged && outputs_stopped()) break;
         pause_tick();
     }
@@ -319,6 +404,7 @@ static void worker(void *unused)
         xSemaphoreGive(lock);
         if (atomic_load(&shutdown_requested) && !active) break;
         position_id = motor_id = uv_id = heat_id = 0; lease = false;
+        valve_id = detergent_id = 0; detergent_done = false;
         position_done = motor_done = uv_done = heat_done = false;
         failure_code = failure_detail = 0;
         esp_err_t result = atomic_load(&cancel_requested) ? ESP_ERR_INVALID_STATE : execute();
@@ -382,7 +468,7 @@ esp_err_t competition_demo_submit(const void *token, size_t bytes,
     callback = terminal; callback_context = context;
     started_ms = now_ms();
     snapshot = (competition_demo_snapshot_t){ .active = true, .program_id = owner_token.program_id,
-        .generation = owner_token.generation, .total_stages = 17, .target = DRUM_POS_UNKNOWN };
+        .generation = owner_token.generation, .total_stages = 19, .target = DRUM_POS_UNKNOWN };
     xQueueReset(events);
     if (!task && xTaskCreateWithCaps(worker, "competition", 6144, NULL, 3, &task,
                                      MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) != pdPASS) {
@@ -429,7 +515,8 @@ void competition_demo_observe_event(const machine_event_t *event)
 {
     if (events && event && atomic_load(&job_reserved) &&
         (event->type == MACHINE_EVENT_POSITION_DONE || event->type == MACHINE_EVENT_BL50_DONE ||
-         event->type == MACHINE_EVENT_UV_DONE || event->type == MACHINE_EVENT_HOT_AIR_DONE)) {
+         event->type == MACHINE_EVENT_UV_DONE || event->type == MACHINE_EVENT_HOT_AIR_DONE ||
+         event->type == MACHINE_EVENT_DETERGENT_DONE)) {
         if (xQueueSend(events, event, 0) != pdTRUE) {
             ESP_LOGE(TAG, "terminal queue full; canceling demonstration");
             atomic_store(&event_failure, true);
