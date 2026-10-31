@@ -128,6 +128,9 @@ typedef struct {
     lv_obj_t *tl_motion;
     lv_obj_t *tl_motion_meta;
     lv_obj_t *tl_input_leds[6];
+    lv_obj_t *tl_inputs_title;
+    int16_t shown_input_target;
+    bool shown_input_target_active;
     lv_obj_t *tl_output_leds[6];
     lv_obj_t *tl_sys_mem;
     lv_obj_t *tl_sys_paj;
@@ -513,7 +516,18 @@ static void output_led_draw_event_cb(lv_event_t *event)
     lv_area_t coords;
     lv_obj_get_coords(obj, &coords);
 
-    if (st == 2U) {
+    if (st == DISPLAY_LED_TARGET) {
+        /* Current requested position: filled grey, distinct from inactive hollow circles. */
+        lv_draw_rect_dsc_t d;
+        lv_draw_rect_dsc_init(&d);
+        d.bg_color = lv_color_hex(0x8c929a);
+        d.bg_opa = LV_OPA_COVER;
+        d.border_color = lv_color_hex(CLR_WHITE);
+        d.border_width = 1;
+        d.border_opa = LV_OPA_COVER;
+        d.radius = LV_RADIUS_CIRCLE;
+        lv_draw_rect(ctx, &d, &coords);
+    } else if (st == 2U) {
         /* ON: 绿色实心圆 */
         lv_draw_rect_dsc_t d;
         lv_draw_rect_dsc_init(&d);
@@ -854,8 +868,9 @@ static void build_telemetry_page(void)
     lv_obj_t *inputs = card_create(page, 111, 100, 201, 48);
     lv_obj_set_style_pad_all(inputs, 0, 0);
     lv_obj_t *inputs_title = telemetry_label_create(inputs, "位置输入", CLR_CYAN);
+    s_rt.tl_inputs_title = inputs_title;
     lv_obj_set_pos(inputs_title, 3, 2);
-    lv_obj_set_size(inputs_title, 100, 14);
+    lv_obj_set_size(inputs_title, 195, 14);
     static const char *const input_names[6] = {
         "0", "45", "90", "180", "270", "BL"
     };
@@ -1242,6 +1257,35 @@ static void refresh_overview(const display_model_t *model)
     }
 }
 
+static void refresh_position_inputs(const display_telemetry_t *t)
+{
+    const uint8_t hall_bits[6] = {
+        XIAOJING_MCP_INT_HALL_0, XIAOJING_MCP_INT_HALL_45,
+        XIAOJING_MCP_INT_HALL_90, XIAOJING_MCP_INT_HALL_180,
+        XIAOJING_MCP_INT_HALL_270, XIAOJING_MCP_INT_HALL_BLDC
+    };
+    static const int16_t angles[6] = {0, 45, 90, 180, 270, -1};
+    bool fault = display_fault_active(t) || t->hall_fault;
+    bool target_active = t->position_target_active && t->hall_valid && !fault;
+    for (uint8_t i = 0; i < 6; ++i) {
+        bool active = (t->hall_stable_mask & hall_bits[i]) != 0;
+        uint8_t state = display_position_target_led_state(active, t->hall_valid, fault,
+            angles[i], t->target_position_degrees, target_active);
+        if (state != s_input_led_state[i]) {
+            s_input_led_state[i] = state;
+            lv_obj_invalidate(s_rt.tl_input_leds[i]);
+        }
+    }
+    if (target_active != s_rt.shown_input_target_active ||
+        (target_active && t->target_position_degrees != s_rt.shown_input_target)) {
+        if (target_active)
+            lv_label_set_text_fmt(s_rt.tl_inputs_title, "位置输入 目标%d", (int)t->target_position_degrees);
+        else lv_label_set_text(s_rt.tl_inputs_title, "位置输入");
+        s_rt.shown_input_target_active = target_active;
+        s_rt.shown_input_target = t->target_position_degrees;
+    }
+}
+
 static void refresh_telemetry(const display_model_t *model)
 {
     const display_telemetry_t *t = &model->telemetry;
@@ -1314,24 +1358,8 @@ static void refresh_telemetry(const display_model_t *model)
              (unsigned)t->bl50_pwm);
     lv_label_set_text(s_rt.tl_motion_meta, buf);
 
-    /* INPUTS: 六路霍尔 0/45/90/180/270/BL，来自 stable_hall_mask。
-     * 快照有效且新鲜：激活=实心 ON、未激活=空心 OFF；快照缺失/读取失败
-     * 才显示 UNKNOWN（黄框）；位置 FSM 故障=红叉。没有磁铁触发绝不是
-     * UNKNOWN（hall_valid 由快照可读性决定，而非掩码非零）。 */
+    refresh_position_inputs(t);
     bool output_fault = t->safety_fault;
-    bool input_fault = output_fault || t->hall_fault;
-    const uint8_t hall_bits[6] = {
-        XIAOJING_MCP_INT_HALL_0, XIAOJING_MCP_INT_HALL_45,
-        XIAOJING_MCP_INT_HALL_90, XIAOJING_MCP_INT_HALL_180,
-        XIAOJING_MCP_INT_HALL_270, XIAOJING_MCP_INT_HALL_BLDC
-    };
-    for (uint8_t i = 0; i < 6; ++i) {
-        bool active = (t->hall_stable_mask & hall_bits[i]) != 0U;
-        s_input_led_state[i] = display_position_led_state(active,
-                                                          t->hall_valid,
-                                                          input_fault);
-        lv_obj_invalidate(s_rt.tl_input_leds[i]);
-    }
 
     /* OUTPUTS: 形状+颜色双编码（ON/OFF/UNKNOWN/FAULT/UNSUPPORTED/COOLDOWN）。
      * 状态来自服务/HAL 快照（bootstrap 已用 safety MCP 实际状态融合），
@@ -1566,6 +1594,9 @@ static void refresh_ui(lv_timer_t *timer)
     xSemaphoreGive(s_model_lock);
     /* Faults bypass the normal four-second page-render throttle. */
     refresh_fault_popup(&model.telemetry);
+    /* Position cues update every 250ms; a 4s page throttle can miss an entire move. */
+    if (atomic_load_explicit(&s_current_page, memory_order_acquire) == DISPLAY_PAGE_TELEMETRY)
+        refresh_position_inputs(&model.telemetry);
 
     if ((tick % 100U) == 0U) {
         ESP_LOGI(TAG, "heartbeat tick=%" PRIu32 " phase=%u",

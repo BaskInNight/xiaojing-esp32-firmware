@@ -88,6 +88,7 @@ typedef enum {
     DISPLAY_LED_FAULT = 3,        /* 红色叉 × */
     DISPLAY_LED_UNSUPPORTED = 4,  /* 灰色 --（固件未支持/未初始化） */
     DISPLAY_LED_COOLDOWN = 5,     /* 蓝色锁定/倒计时（冷却中） */
+    DISPLAY_LED_TARGET = 6,       /* 灰色实心+亮边：当前换位目标，尚未触发 */
 } display_led_state_t;
 
 /* Service-independent, copy-only telemetry contract.  Tri-state outputs use
@@ -98,6 +99,7 @@ typedef struct {
     uint8_t wash_phase;
     int16_t position_degrees;
     int16_t target_position_degrees;
+    bool position_target_active; /* Actual position service MOVING/BRAKING, not its idle last target. */
     uint16_t current_step;
     uint16_t total_steps;
     uint32_t elapsed_ms;
@@ -236,6 +238,8 @@ uint8_t display_hot_air_led_state(uint8_t output_state, bool supported,
  * UNKNOWN; only a missing/invalid snapshot is UNKNOWN. */
 uint8_t display_position_led_state(bool active, bool snapshot_valid,
                                    bool fault);
+uint8_t display_position_target_led_state(bool active, bool snapshot_valid, bool fault,
+    int16_t sensor_degrees, int16_t target_degrees, bool target_active);
 
 #ifdef XIAOJING_TESTING
 void display_service_test_reset(void);

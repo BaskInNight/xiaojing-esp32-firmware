@@ -638,6 +638,8 @@ static void publish_display_telemetry(void)
     if (position_service_get_snapshot(&position) == ESP_OK) {
         telemetry.position_degrees = (int16_t)position.current;
         telemetry.target_position_degrees = (int16_t)position.target;
+        telemetry.position_target_active = position.state == POSITION_STATE_MOVING ||
+                                           position.state == POSITION_STATE_BRAKING;
         telemetry.position_pwm = position.pwm_percent;
         telemetry.hall_raw_mask = position.raw_hall_mask;
         telemetry.hall_stable_mask = position.stable_hall_mask;

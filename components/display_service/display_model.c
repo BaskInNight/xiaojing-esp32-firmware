@@ -300,6 +300,17 @@ uint8_t display_position_led_state(bool active, bool snapshot_valid,
     return active ? DISPLAY_LED_ON : DISPLAY_LED_OFF;
 }
 
+uint8_t display_position_target_led_state(bool active, bool snapshot_valid, bool fault,
+    int16_t sensor_degrees, int16_t target_degrees, bool target_active)
+{
+    uint8_t state = display_position_led_state(active, snapshot_valid, fault);
+    bool valid_angle = sensor_degrees == 0 || sensor_degrees == 45 || sensor_degrees == 90 ||
+                       sensor_degrees == 180 || sensor_degrees == 270;
+    if (state == DISPLAY_LED_OFF && target_active && valid_angle && sensor_degrees == target_degrees)
+        return DISPLAY_LED_TARGET;
+    return state;
+}
+
 /* UI-P2-1: strip a leading speaker prefix so the HMI never renders a duplicate
  * "你：你：…" / "小净：小净：…".  Skips optional ASCII whitespace before the
  * prefix, then the exact prefix bytes; returns the pointer just past the prefix,

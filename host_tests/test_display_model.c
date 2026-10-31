@@ -431,6 +431,23 @@ static void test_speaker_prefix_strip(void)
 
 int main(void)
 {
+    const int16_t angles[] = {0, 45, 90, 180, 270};
+    for (unsigned target = 0; target < 5; ++target) {
+        for (unsigned input = 0; input < 5; ++input) {
+            assert(display_position_target_led_state(false, true, false,
+                angles[input], angles[target], true) ==
+                (input == target ? DISPLAY_LED_TARGET : DISPLAY_LED_OFF));
+        }
+        assert(display_position_target_led_state(true, true, false,
+            angles[target], angles[target], true) == DISPLAY_LED_ON);
+        assert(display_position_target_led_state(false, false, false,
+            angles[target], angles[target], true) == DISPLAY_LED_UNKNOWN);
+        assert(display_position_target_led_state(false, true, true,
+            angles[target], angles[target], true) == DISPLAY_LED_FAULT);
+        assert(display_position_target_led_state(false, true, false,
+            angles[target], angles[target], false) == DISPLAY_LED_OFF);
+    }
+    assert(display_position_target_led_state(false, true, false, -1, -1, true) == DISPLAY_LED_OFF);
     display_telemetry_t fault = {0};
     char text[256];
     assert(!display_fault_active(&fault));
