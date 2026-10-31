@@ -120,6 +120,7 @@ typedef struct {
     bool gesture_available;
     bool safety_fault;
     bool executor_fault;
+    bool waiting_load;
     bool emergency_stop;
     uint16_t fault_code;
     uint32_t fault_detail;

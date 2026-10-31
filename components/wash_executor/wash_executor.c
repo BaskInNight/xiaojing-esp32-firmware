@@ -886,6 +886,7 @@ static void process_ingress_msg(wash_executor_t *exec, const ingress_msg_t *msg)
         core_event_t ev;
         memset(&ev, 0, sizeof(ev));
         ev.type = CORE_EVENT_LOAD_CONFIRMED;
+        ev.token = msg->token;
         process_core_event_and_drain(exec, &ev);
         publish_snapshot(exec);
         break;
@@ -1338,6 +1339,13 @@ esp_err_t wash_executor_confirm_load(wash_executor_t *exec)
     ingress_msg_t msg;
     memset(&msg, 0, sizeof(msg));
     msg.type = INGRESS_LOAD_CONFIRM;
+    if (xSemaphoreTake(exec->mutex, pdMS_TO_TICKS(100)) != pdTRUE) return ESP_ERR_TIMEOUT;
+    bool waiting = exec->published_snapshot.program_active &&
+        exec->published_snapshot.state == WASH_EXEC_STATE_WAIT_LOAD;
+    msg.token.program_id = exec->published_snapshot.program_id;
+    msg.token.generation = exec->published_snapshot.generation;
+    xSemaphoreGive(exec->mutex);
+    if (!waiting) return ESP_ERR_INVALID_STATE;
     if (xQueueSend(exec->queue_service, &msg, pdMS_TO_TICKS(100)) != pdTRUE)
         return ESP_ERR_TIMEOUT;
     wake_executor(exec);

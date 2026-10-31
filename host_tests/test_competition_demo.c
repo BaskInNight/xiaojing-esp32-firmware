@@ -75,14 +75,31 @@ static void test_stop(void)
     wash_program_t p;
     assert(competition_demo_build_program(0, &p).result == PLAN_RESULT_REJECTED);
     assert(competition_demo_build_program(42, &p).result == PLAN_RESULT_OK);
-    assert(p.step_count == 1 && p.steps[0].type == STEP_COMPETITION_DEMO);
-    assert(p.estimated_total_ms < 180000 && p.steps[0].timeout_ms >= 180000);
+    assert(p.step_count == 3 && p.steps[0].type == STEP_MOVE_POSITION);
+    assert(p.steps[0].required_position == DRUM_POS_45);
+    assert(p.steps[1].type == STEP_WAIT_LOAD_CONFIRM && p.steps[1].timeout_ms == 0);
+    assert(p.steps[2].type == STEP_COMPETITION_DEMO);
+    assert(p.estimated_total_ms < 180000 && p.steps[2].timeout_ms >= 180000);
     for (int failure = 0; failure < 2; ++failure) {
-        wash_executor_core_t c; core_init(&c); c.program = &p; c.total_steps = 1;
+        wash_executor_core_t c; core_init(&c); c.program = &p; c.total_steps = 3;
         core_cmd_t cmds[16]; core_event_t e = {.type = CORE_EVENT_PROGRAM_ACCEPTED};
         e.token.program_id = 42;
         assert(core_process_event(&c, &e, cmds, 16) == 1);
         e = (core_event_t){.type = CORE_EVENT_STEP_DISPATCH_OK};
+        core_process_event(&c, &e, cmds, 16);
+        e = (core_event_t){.type = CORE_EVENT_LOAD_CONFIRMED};
+        assert(core_process_event(&c, &e, cmds, 16) == 0); /* Early press cannot queue a confirmation. */
+        e = (core_event_t){.type = CORE_EVENT_SERVICE_TERMINAL,
+            .token = c.active_token, .success = true};
+        assert(core_process_event(&c, &e, cmds, 16) == 0);
+        assert(c.phase == CORE_PHASE_WAIT_LOAD && c.current_step_index == 1);
+        e = (core_event_t){.type = CORE_EVENT_LOAD_CONFIRMED};
+        assert(core_process_event(&c, &e, cmds, 16) == 0); /* Missing/stale generation is rejected. */
+        e.token.program_id = c.program_id; e.token.generation = c.generation;
+        assert(core_process_event(&c, &e, cmds, 16) == 1);
+        assert(cmds[0].type == CORE_CMD_DISPATCH_STEP && c.current_step_index == 2);
+        assert(core_process_event(&c, &e, cmds, 16) == 0); /* Repeated confirmation cannot advance twice. */
+        e.type = CORE_EVENT_STEP_DISPATCH_OK;
         core_process_event(&c, &e, cmds, 16);
         assert(!core_can_skip_current_step(&c));
         terminal_token_t stale = c.active_token;
@@ -105,6 +122,41 @@ static void test_stop(void)
         assert(terminal && !c.program_active);
         assert(core_process_event(&c, &e, cmds, 16) == 0);
     }
+}
+
+static void test_stop_during_loading(void)
+{
+    wash_program_t p; assert(competition_demo_build_program(43, &p).result == PLAN_RESULT_OK);
+    for (int abort = 0; abort < 2; ++abort) {
+        wash_executor_core_t c; core_init(&c); c.program = &p; c.total_steps = 3;
+        core_cmd_t commands[16];
+        core_event_t e = {.type = CORE_EVENT_PROGRAM_ACCEPTED}; e.token.program_id = 43;
+        core_process_event(&c, &e, commands, 16);
+        e.type = CORE_EVENT_STEP_DISPATCH_OK; core_process_event(&c, &e, commands, 16);
+        e = (core_event_t){.type = CORE_EVENT_SERVICE_TERMINAL,
+            .token = c.active_token, .success = true};
+        core_process_event(&c, &e, commands, 16);
+        assert(c.phase == CORE_PHASE_WAIT_LOAD);
+        e.type = abort ? CORE_EVENT_ABORT : CORE_EVENT_CANCEL;
+        assert(core_process_event(&c, &e, commands, 16) == 1);
+        assert(c.phase == CORE_PHASE_IDLE && !c.program_active);
+        assert(commands[0].type == CORE_CMD_PUBLISH_PROGRAM_TERMINAL);
+        assert(commands[0].terminal_result == (abort ? TERM_RESULT_ABORTED : TERM_RESULT_CANCELED));
+        e.type = CORE_EVENT_LOAD_CONFIRMED;
+        assert(core_process_event(&c, &e, commands, 16) == 0);
+    }
+    /* STOP while seeking the loading pose must stop there, never dispatch a reset move. */
+    wash_executor_core_t c; core_init(&c); c.program = &p; c.total_steps = 3;
+    core_cmd_t commands[16]; core_event_t e = {.type = CORE_EVENT_PROGRAM_ACCEPTED};
+    e.token.program_id = 43; core_process_event(&c, &e, commands, 16);
+    e.type = CORE_EVENT_STEP_DISPATCH_OK; core_process_event(&c, &e, commands, 16);
+    e.type = CORE_EVENT_CANCEL;
+    assert(core_process_event(&c, &e, commands, 16) == 1);
+    assert(commands[0].type == CORE_CMD_CANCEL_ACTIVE_STEP);
+    e = (core_event_t){.type = CORE_EVENT_SERVICE_TERMINAL, .token = c.cancel_token, .success = true};
+    assert(core_process_event(&c, &e, commands, 16) == 1);
+    assert(commands[0].type == CORE_CMD_PUBLISH_PROGRAM_TERMINAL);
+    assert(commands[0].terminal_result == TERM_RESULT_CANCELED && !c.program_active);
 }
 
 static void test_button(void)
@@ -174,7 +226,7 @@ int main(void)
     assert(competition_demo_event_fault(&failure) == FAULT_BL50_HOME_TIMEOUT);
     failure.fault.code = FAULT_NONE; failure.result = SERVICE_RESULT_TIMEOUT;
     assert(competition_demo_event_fault(&failure) == FAULT_PROGRAM_TIMEOUT);
-    test_policy(); test_stop(); test_button(); test_tumble(); test_uv_indicator();
+    test_policy(); test_stop(); test_stop_during_loading(); test_button(); test_tumble(); test_uv_indicator();
     puts("competition policy, cancel acknowledgement, stale terminal, debounce, tumble: PASS");
     return 0;
 }

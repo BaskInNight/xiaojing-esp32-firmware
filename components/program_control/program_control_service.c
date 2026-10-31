@@ -11,6 +11,7 @@
 #include "program_control.h"
 #include "program_control_core.h"
 #include <string.h>
+#include <inttypes.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_timer.h"
@@ -253,6 +254,16 @@ esp_err_t program_control_btn1(pc_btn1_event_t ev, pc_btn1_action_t *out_action)
     pc_btn1_action_t ba = pc_btn1_decide(ev, voice_active);
     esp_err_t result = ESP_OK;
     if (ba == PC_BTN1_ACTION_START) {
+        wash_exec_snapshot_t snap;
+        if (s_inst.executor && wash_executor_get_snapshot(s_inst.executor, &snap) == ESP_OK &&
+            snap.program_active && snap.state == WASH_EXEC_STATE_WAIT_LOAD) {
+            result = wash_executor_confirm_load(s_inst.executor);
+            ESP_LOGI(TAG, "BTN1 load confirmation: program=%" PRIu32 " result=%s",
+                snap.program_id, esp_err_to_name(result));
+            if (out_action) *out_action = ba;
+            unlock();
+            return result;
+        }
         pc_action_t action = pc_arbitrate(&s_inst.arbiter, PC_REQ_START_DEMO);
         if (action == PC_ACTION_START_DEMO) {
             result = execute_action(action);

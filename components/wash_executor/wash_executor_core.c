@@ -90,6 +90,14 @@ bool core_token_matches_reset(
  * Query helpers
  * ================================================================ */
 
+static bool is_competition_program(const wash_executor_core_t *core)
+{
+    if (!core->program || core->program->kind != WASH_PROGRAM_DEMO) return false;
+    for (uint16_t i = 0; i < core->total_steps && i < WASH_PROGRAM_MAX_STEPS; ++i)
+        if (core->program->steps[i].type == STEP_COMPETITION_DEMO) return true;
+    return false;
+}
+
 bool core_can_accept_program(const wash_executor_core_t *core)
 {
     return core->phase == CORE_PHASE_IDLE
@@ -366,8 +374,7 @@ static uint32_t handle_service_terminal(
                     core->phase = CORE_PHASE_IDLE;
                 }
             } else if (event->success) {
-                const wash_step_t *stopped = core_get_current_step(core);
-                if (stopped && stopped->type == STEP_COMPETITION_DEMO) {
+                if (is_competition_program(core)) {
                     /* A user STOP is not permission to initiate a return move. */
                     core->program_active = false;
                     core_cmd_t term = {0};
@@ -526,12 +533,30 @@ static uint32_t handle_step_timeout(
     return count;
 }
 
+static uint32_t stop_competition_load_wait(wash_executor_core_t *core,
+    core_cmd_t *cmds, uint32_t capacity, bool aborted)
+{
+    uint32_t count = 0;
+    core->program_active = false;
+    core->token_valid = core->cancel_token_valid = core->skip_in_progress = false;
+    core->phase = CORE_PHASE_IDLE;
+    core->last_event = aborted ? WASH_EXEC_EVENT_ABORTED : WASH_EXEC_EVENT_CANCELLED;
+    core_cmd_t terminal = { .type = CORE_CMD_PUBLISH_PROGRAM_TERMINAL,
+        .program_id = core->program_id, .terminal_success = false,
+        .terminal_result = aborted ? TERM_RESULT_ABORTED : TERM_RESULT_CANCELED,
+        .final_position_confirmed = false };
+    emit_cmd(cmds, &count, capacity, &terminal);
+    return count;
+}
+
 static uint32_t handle_cancel(
     wash_executor_core_t *core,
     core_cmd_t *cmds,
     uint32_t capacity)
 {
     uint32_t count = 0;
+    if (core->phase == CORE_PHASE_WAIT_LOAD && is_competition_program(core))
+        return stop_competition_load_wait(core, cmds, capacity, false);
     if (core->phase != CORE_PHASE_ACTIVE && core->phase != CORE_PHASE_DISPATCHING)
         return 0;
     /* Cancel is idempotent */
@@ -565,6 +590,8 @@ static uint32_t handle_abort(
 {
     uint32_t count = 0;
     if (!core->program_active) return 0;
+    if (core->phase == CORE_PHASE_WAIT_LOAD && is_competition_program(core))
+        return stop_competition_load_wait(core, cmds, capacity, true);
     /* Abort is idempotent — if already canceling/resetting, ignore */
     if (core->phase == CORE_PHASE_CANCELING || core->phase == CORE_PHASE_RESETTING)
         return 0;
@@ -671,11 +698,15 @@ static uint32_t handle_fault_ack(
 
 static uint32_t handle_load_confirmed(
     wash_executor_core_t *core,
+    const core_event_t *event,
     core_cmd_t *cmds,
     uint32_t capacity)
 {
     uint32_t count = 0;
     if (core->phase != CORE_PHASE_WAIT_LOAD) return 0;
+    if (is_competition_program(core) &&
+        (event->token.program_id != core->program_id || event->token.generation != core->generation))
+        return 0;
 
     advance_to_next_step(core);
     if (has_more_steps(core)) {
@@ -779,7 +810,7 @@ uint32_t core_process_event(
     case CORE_EVENT_FAULT_ACK:
         return handle_fault_ack(core, out_cmds, out_capacity);
     case CORE_EVENT_LOAD_CONFIRMED:
-        return handle_load_confirmed(core, out_cmds, out_capacity);
+        return handle_load_confirmed(core, event, out_cmds, out_capacity);
     case CORE_EVENT_UNLOAD_CONFIRMED:
         return handle_unload_confirmed(core, out_cmds, out_capacity);
     default:

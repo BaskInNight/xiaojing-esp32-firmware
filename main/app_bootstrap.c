@@ -607,6 +607,7 @@ static void publish_display_telemetry(void)
         telemetry.machine_state = display_machine_state_from_executor(
             exec_snapshot.state);
         telemetry.executor_fault = exec_snapshot.state == WASH_EXEC_STATE_FAULT;
+        telemetry.waiting_load = exec_snapshot.state == WASH_EXEC_STATE_WAIT_LOAD;
         competition_demo_snapshot_t demo_fault;
         if (telemetry.executor_fault && competition_demo_get_snapshot(&demo_fault) &&
             demo_fault.program_id == exec_snapshot.program_id &&

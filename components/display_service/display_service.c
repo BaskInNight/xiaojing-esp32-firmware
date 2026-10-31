@@ -95,6 +95,7 @@ typedef struct {
     uint8_t shown_fault_stage;
     bool shown_emergency;
     bool fault_popup_visible;
+    bool rendered_waiting_load;
     lv_obj_t *pages[DISPLAY_PAGE_COUNT];
     /* Per-page unified header widgets. */
     lv_obj_t *hdr_bar[DISPLAY_PAGE_COUNT];
@@ -1120,7 +1121,11 @@ static void refresh_overview(const display_model_t *model)
         return;
     }
 
-    if (washing) {
+    if (model->telemetry.waiting_load) {
+        lv_label_set_text(s_rt.ov_task_title, "45度装衣位");
+        lv_label_set_text(s_rt.ov_task_remaining, "等待确认");
+        lv_label_set_text(s_rt.ov_task_now, "装好后再按按钮1");
+    } else if (washing) {
         const char *step = model->wash_step[0] ? model->wash_step : "运行中";
         lv_label_set_text(s_rt.ov_task_title, step);
         lv_obj_set_style_text_color(s_rt.ov_task_title,
@@ -1573,10 +1578,15 @@ static void refresh_ui(lv_timer_t *timer)
                         requested_page < DISPLAY_PAGE_COUNT &&
                         requested_page != atomic_load_explicit(
                             &s_current_page, memory_order_acquire);
-    if (!page_pending && (tick % 16U) != 0U) return;
-    if (model.revision == s_rt.rendered_revision && !page_pending) return;
+    bool load_changed = model.telemetry.waiting_load != s_rt.rendered_waiting_load;
+    if (!page_pending && !load_changed && (tick % 16U) != 0U) return;
+    if (model.revision == s_rt.rendered_revision && !page_pending && !load_changed) return;
 
     int page_index = requested_page;
+    if (load_changed && model.telemetry.waiting_load) {
+        page_index = DISPLAY_PAGE_OVERVIEW;
+        atomic_store_explicit(&s_requested_page, page_index, memory_order_release);
+    }
     if (page_index < DISPLAY_PAGE_OVERVIEW || page_index >= DISPLAY_PAGE_COUNT) {
         page_index = DISPLAY_PAGE_OVERVIEW;
         if (model.voice_state != DISPLAY_VOICE_IDLE)
@@ -1598,6 +1608,7 @@ static void refresh_ui(lv_timer_t *timer)
     if (lv_scr_act() != target_page) lv_scr_load(target_page);
     atomic_store_explicit(&s_current_page, page_index, memory_order_release);
     s_rt.rendered_revision = model.revision;
+    s_rt.rendered_waiting_load = model.telemetry.waiting_load;
 }
 
 static esp_err_t hardware_prepare(void)

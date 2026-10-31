@@ -119,8 +119,13 @@ planner_report_t competition_demo_build_program(uint32_t program_id, wash_progra
     out->program_id = program_id;
     out->kind = WASH_PROGRAM_DEMO;
     out->estimated_total_ms = 166000;
-    out->step_count = 1;
-    out->steps[0] = (wash_step_t){ .type = STEP_COMPETITION_DEMO,
+    out->step_count = 3;
+    out->steps[0] = (wash_step_t){ .step_id = 0, .type = STEP_MOVE_POSITION,
+        .required_position = DRUM_POS_45, .timeout_ms = 31000,
+        .flags = WASH_STEP_FLAG_REQUIRED };
+    out->steps[1] = (wash_step_t){ .step_id = 1, .type = STEP_WAIT_LOAD_CONFIRM,
+        .required_position = DRUM_POS_45, .flags = WASH_STEP_FLAG_REQUIRED };
+    out->steps[2] = (wash_step_t){ .step_id = 2, .type = STEP_COMPETITION_DEMO,
         .required_position = DRUM_POS_UNKNOWN, .timeout_ms = 190000,
         .flags = WASH_STEP_FLAG_REQUIRED };
     report.result = PLAN_RESULT_OK;
