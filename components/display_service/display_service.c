@@ -87,6 +87,13 @@ typedef struct {
     lv_display_t *display;
     void *dma_reserve;
     lv_timer_t *refresh_timer;
+    lv_obj_t *fault_overlay;
+    lv_obj_t *fault_popup_title;
+    lv_obj_t *fault_popup_body;
+    uint16_t shown_fault_code;
+    uint32_t shown_fault_detail;
+    uint8_t shown_fault_stage;
+    bool shown_emergency;
     lv_obj_t *pages[DISPLAY_PAGE_COUNT];
     /* Per-page unified header widgets. */
     lv_obj_t *hdr_bar[DISPLAY_PAGE_COUNT];
@@ -990,24 +997,7 @@ static const char *phase_name(uint8_t phase)
  * the fault handling pipeline itself is untouched. */
 static const char *fault_short_text(uint16_t code)
 {
-    switch (code) {
-    case 1: return "霍尔冲突";
-    case 2: return "定位超时";
-    case 3: return "定位驱动";
-    case 4: return "进水无流";
-    case 5: return "进水低流";
-    case 6: return "进水超时";
-    case 7: return "液位无效";
-    case 8: return "SHT 无效";
-    case 11: return "MCP 输出";
-    case 14: return "I2C 总线";
-    case 15: return "BL50 驱动";
-    case 16: return "BL50 归位 IO";
-    case 17: return "BL50 归位超时";
-    case 18: return "程序超时";
-    case 19: return "内部故障";
-    default: return "故障详情";
-    }
+    return display_fault_name(code);
 }
 
 static void format_remaining(char *buffer, size_t capacity, uint32_t ms)
@@ -1045,8 +1035,7 @@ static void refresh_header(const display_model_t *model, int page_index)
     lv_obj_t *bar = s_rt.hdr_bar[page_index];
     lv_obj_t *pct = s_rt.hdr_pct[page_index];
     bool washing = model->washing;
-    bool fault = model->telemetry.safety_fault ||
-                 model->telemetry.emergency_stop;
+    bool fault = display_fault_active(&model->telemetry);
     bool paused = model->telemetry.machine_state == 6U;
     uint8_t progress = model->wash_progress;
     if (progress > 100U) progress = 100U;
@@ -1101,8 +1090,7 @@ static void refresh_header(const display_model_t *model, int page_index)
 
 static void refresh_overview(const display_model_t *model)
 {
-    bool fault = model->telemetry.safety_fault ||
-                 model->telemetry.emergency_stop;
+    bool fault = display_fault_active(&model->telemetry);
     bool washing = model->washing;
 
     lv_obj_add_flag(s_rt.ov_fault_title, LV_OBJ_FLAG_HIDDEN);
@@ -1474,6 +1462,67 @@ static void refresh_voice(const display_model_t *model)
     lv_label_set_text_fmt(s_rt.vo_reply, "小净：%s", reply);
 }
 
+/* Global top layer survives page changes; only the LVGL task touches widgets. */
+static void build_fault_popup(void)
+{
+    s_rt.fault_overlay = lv_obj_create(lv_layer_top());
+    lv_obj_t *overlay = s_rt.fault_overlay;
+    lv_obj_set_pos(overlay, 0, 0);
+    lv_obj_set_size(overlay, LCD_HRES, LCD_VRES);
+    lv_obj_set_style_pad_all(overlay, 0, 0);
+    lv_obj_set_style_border_width(overlay, 0, 0);
+    lv_obj_set_style_radius(overlay, 0, 0);
+    lv_obj_set_style_bg_color(overlay, lv_color_hex(0x000000), 0);
+    lv_obj_set_style_bg_opa(overlay, LV_OPA_70, 0);
+    lv_obj_clear_flag(overlay, LV_OBJ_FLAG_SCROLLABLE);
+    lv_obj_t *card = lv_obj_create(overlay);
+    lv_obj_set_pos(card, 10, 34);
+    lv_obj_set_size(card, 300, 184);
+    lv_obj_set_style_pad_all(card, 0, 0);
+    lv_obj_set_style_bg_color(card, lv_color_hex(CLR_BG_DEEP), 0);
+    lv_obj_set_style_bg_opa(card, LV_OPA_COVER, 0);
+    lv_obj_set_style_border_color(card, lv_color_hex(CLR_RED), 0);
+    lv_obj_set_style_border_width(card, 2, 0);
+    lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
+    s_rt.fault_popup_title = telemetry_label_create(card, "设备故障", CLR_RED);
+    lv_obj_set_pos(s_rt.fault_popup_title, 14, 12);
+    lv_obj_set_width(s_rt.fault_popup_title, 270);
+    s_rt.fault_popup_body = telemetry_label_create(card, "", CLR_WHITE);
+    lv_obj_set_pos(s_rt.fault_popup_body, 14, 42);
+    lv_obj_set_size(s_rt.fault_popup_body, 270, 126);
+    lv_label_set_long_mode(s_rt.fault_popup_body, LV_LABEL_LONG_WRAP);
+    lv_obj_set_style_text_line_space(s_rt.fault_popup_body, 5, 0);
+    lv_obj_add_flag(overlay, LV_OBJ_FLAG_HIDDEN);
+}
+
+static void refresh_fault_popup(const display_telemetry_t *t)
+{
+    if (!s_rt.fault_overlay) return;
+    bool hidden = lv_obj_has_flag(s_rt.fault_overlay, LV_OBJ_FLAG_HIDDEN);
+    if (!display_fault_active(t)) {
+        if (!hidden) {
+            lv_obj_add_flag(s_rt.fault_overlay, LV_OBJ_FLAG_HIDDEN);
+            ESP_LOGI(TAG, "Fault popup cleared: runtime fault released");
+        }
+        return;
+    }
+    if (!hidden && s_rt.shown_fault_code == t->fault_code &&
+        s_rt.shown_fault_detail == t->fault_detail && s_rt.shown_fault_stage == t->fault_stage &&
+        s_rt.shown_emergency == t->emergency_stop) return;
+    char message[256];
+    display_fault_message(t, message, sizeof(message));
+    lv_label_set_text(s_rt.fault_popup_title, t->emergency_stop ? "紧急停止" : "设备故障");
+    lv_label_set_text(s_rt.fault_popup_body, message);
+    lv_obj_clear_flag(s_rt.fault_overlay, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_move_foreground(s_rt.fault_overlay);
+    s_rt.shown_fault_code = t->fault_code;
+    s_rt.shown_fault_detail = t->fault_detail;
+    s_rt.shown_fault_stage = t->fault_stage;
+    s_rt.shown_emergency = t->emergency_stop;
+    ESP_LOGW(TAG, "Fault popup shown: E%u detail=%" PRIu32 " stage=%u",
+        (unsigned)t->fault_code, t->fault_detail, (unsigned)t->fault_stage);
+}
+
 static void refresh_ui(lv_timer_t *timer)
 {
     (void)timer;
@@ -1489,6 +1538,8 @@ static void refresh_ui(lv_timer_t *timer)
     display_model_t model;
     model = s_model;
     xSemaphoreGive(s_model_lock);
+    /* Faults bypass the normal four-second page-render throttle. */
+    refresh_fault_popup(&model.telemetry);
 
     if ((tick % 100U) == 0U) {
         ESP_LOGI(TAG, "heartbeat tick=%" PRIu32 " phase=%u",
@@ -1614,6 +1665,7 @@ static esp_err_t hardware_build_ui(void)
     build_overview_page();
     build_telemetry_page();
     build_voice_page();
+    build_fault_popup();
     lv_obj_t *home = s_rt.pages[DISPLAY_PAGE_OVERVIEW];
     lv_obj_set_style_bg_color(home, lv_color_hex(CLR_BG_DEEP), 0);
     lv_obj_set_style_bg_opa(home, LV_OPA_COVER, 0);
@@ -1643,6 +1695,11 @@ static esp_err_t hardware_stop(void)
         if (s_rt.refresh_timer) {
             lv_timer_del(s_rt.refresh_timer);
             s_rt.refresh_timer = NULL;
+        }
+        if (s_rt.fault_overlay) {
+            lv_obj_del(s_rt.fault_overlay);
+            s_rt.fault_overlay = NULL;
+            s_rt.fault_popup_title = s_rt.fault_popup_body = NULL;
         }
         if (s_rt.display) {
             TickType_t start = xTaskGetTickCount();

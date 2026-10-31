@@ -2,6 +2,50 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <inttypes.h>
+
+bool display_fault_active(const display_telemetry_t *t)
+{
+    return t && (t->executor_fault || t->safety_fault || t->emergency_stop);
+}
+
+const char *display_fault_name(uint16_t code)
+{
+    switch (code) {
+    case 0: return "请查看设备状态";
+    case 1: return "霍尔信号冲突";
+    case 2: return "换位超时";
+    case 3: return "换位驱动异常";
+    case 4: return "进水无流量";
+    case 5: return "进水流量过低";
+    case 6: return "进水超时";
+    case 7: return "液位信号无效";
+    case 8: return "温湿度信号无效";
+    case 9: return "烘干温度过高";
+    case 10: return "加热门禁拒绝";
+    case 11: return "扩展输出异常";
+    case 12: return "流量传感器异常";
+    case 13: return "流量计复位失败";
+    case 14: return "I2C 总线异常";
+    case 15: return "搅动电机异常";
+    case 16: return "主轴归零信号读取失败";
+    case 17: return "主轴归零超时";
+    case 18: return "程序运行超时";
+    case 19: return "内部控制异常";
+    default: return "未知故障";
+    }
+}
+
+void display_fault_message(const display_telemetry_t *t, char *text, size_t capacity)
+{
+    if (!text || !capacity) return;
+    if (!t) { text[0] = '\0'; return; }
+    const char *hint = t->fault_code == 17 ? "检查归零传感器与磁铁" :
+        t->fault_code == 16 ? "检查归零传感器接线" : "请检查设备与接线";
+    snprintf(text, capacity, "E%u  %s\n阶段 %u / 详情 %" PRIu32 "\n%s\n运行已中止，请停止使用",
+        (unsigned)t->fault_code, display_fault_name(t->fault_code),
+        (unsigned)t->fault_stage, t->fault_detail, hint);
+}
 
 /* Pure-C formatting / state-label helpers, host-testable (no LVGL/FreeRTOS
  * dependency).  The synchronized model itself lives in display_service.c. */

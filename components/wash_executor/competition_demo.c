@@ -16,6 +16,7 @@
 #include "freertos/queue.h"
 #include "freertos/semphr.h"
 #include <stdatomic.h>
+#include <inttypes.h>
 #include <string.h>
 
 static const char *TAG = "competition";
@@ -38,6 +39,7 @@ static uint32_t position_id, motor_id, uv_id, heat_id;
 static bool position_done, motor_done, uv_done, heat_done;
 static int64_t started_ms;
 static bool lease;
+static uint32_t failure_code, failure_detail;
 
 static int64_t now_ms(void) { return esp_timer_get_time() / 1000; }
 static void pause_tick(void) { vTaskDelay(pdMS_TO_TICKS(20) ? pdMS_TO_TICKS(20) : 1); }
@@ -71,8 +73,14 @@ static esp_err_t healthy(void)
     if (now_ms() - started_ms >= 180000) return ESP_ERR_TIMEOUT;
     if (atomic_load(&event_failure)) return ESP_FAIL;
     safety_snapshot_t s;
-    if (safety_manager_get_snapshot(&s) != ESP_OK || s.fault_active || s.emergency_stop_active)
+    if (safety_manager_get_snapshot(&s) != ESP_OK) return ESP_FAIL;
+    if (s.fault_active || s.emergency_stop_active) {
+        if (s.primary_fault.code != FAULT_NONE && !failure_code) {
+            failure_code = s.primary_fault.code;
+            failure_detail = s.primary_fault.detail;
+        }
         return ESP_FAIL;
+    }
     uv_snapshot_t u;
     if (uv_id && (uv_service_get_snapshot(&u) != ESP_OK ||
                   u.request_id != uv_id || u.output_state != 2))
@@ -112,8 +120,15 @@ static esp_err_t wait_event(machine_event_type_t type, uint32_t id, uint32_t tim
         machine_event_t event;
         while (xQueueReceive(events, &event, 0) == pdTRUE) {
             remember_terminal(&event);
-            if (event.type == type && event.request_id == id)
-                return event.result == SERVICE_RESULT_OK ? ESP_OK : ESP_FAIL;
+            if (event.type == type && event.request_id == id) {
+                if (event.result == SERVICE_RESULT_OK) return ESP_OK;
+                failure_code = competition_demo_event_fault(&event);
+                failure_detail = event.fault.detail;
+                ESP_LOGE(TAG, "child failed: service=%u request=%" PRIu32
+                    " result=%u fault=%" PRIu32 " detail=%" PRIu32,
+                    (unsigned)type, id, (unsigned)event.result, failure_code, failure_detail);
+                return ESP_FAIL;
+            }
         }
         pause_tick();
     }
@@ -237,7 +252,13 @@ static esp_err_t execute(void)
     if (!confirmed) return ESP_ERR_TIMEOUT;
 #define RUN(number, phase, target, call) do { stage(number, phase, target); e = (call); if (e != ESP_OK) return e; } while (0)
     RUN(1, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, move(DRUM_POS_45));
-    RUN(2, WASH_PHASE_HOME_BL50, DRUM_POS_45, motor(BL50_ACTION_HOME, 40, 0));
+    ESP_LOGI(TAG, "shaft HOME sensor required=%u; bucket position checks remain enabled",
+             (unsigned)COMPETITION_DEMO_SHAFT_HOME_REQUIRED);
+    if (COMPETITION_DEMO_SHAFT_HOME_REQUIRED) {
+        RUN(2, WASH_PHASE_HOME_BL50, DRUM_POS_45, motor(BL50_ACTION_HOME, 40, 0));
+    } else {
+        RUN(2, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, wait_motor_idle());
+    }
     RUN(3, WASH_PHASE_MOVE_POSITION, DRUM_POS_0, move(DRUM_POS_0));
     RUN(4, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, motor(BL50_ACTION_PULSATOR, 40, 20000));
     RUN(5, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, settle(3000));
@@ -251,7 +272,11 @@ static esp_err_t execute(void)
     RUN(13, WASH_PHASE_DRY, DRUM_POS_270, dry());
     RUN(14, WASH_PHASE_DRY, DRUM_POS_270, settle(3000));
     RUN(15, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, move(DRUM_POS_45));
-    RUN(16, WASH_PHASE_HOME_BL50, DRUM_POS_45, motor(BL50_ACTION_HOME, 40, 0));
+    if (COMPETITION_DEMO_SHAFT_HOME_REQUIRED) {
+        RUN(16, WASH_PHASE_HOME_BL50, DRUM_POS_45, motor(BL50_ACTION_HOME, 40, 0));
+    } else {
+        RUN(16, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, wait_motor_idle());
+    }
     stage(17, WASH_PHASE_DONE, DRUM_POS_45);
 #undef RUN
     return ESP_OK;
@@ -295,6 +320,7 @@ static void worker(void *unused)
         if (atomic_load(&shutdown_requested) && !active) break;
         position_id = motor_id = uv_id = heat_id = 0; lease = false;
         position_done = motor_done = uv_done = heat_done = false;
+        failure_code = failure_detail = 0;
         esp_err_t result = atomic_load(&cancel_requested) ? ESP_ERR_INVALID_STATE : execute();
         bool off = cleanup();
         if (result == ESP_OK) {
@@ -309,7 +335,14 @@ static void worker(void *unused)
         terminal_token_t terminal = canceled ? cancel_token : owner_token;
         snapshot.active = false;
         snapshot.completed = !canceled && result == ESP_OK && off;
-        snapshot.error_code = snapshot.completed || (canceled && off) ? 0 : (uint32_t)(off ? result : ESP_FAIL);
+        snapshot.error_code = snapshot.completed || (canceled && off) ? 0 :
+            (failure_code ? failure_code : result == ESP_ERR_TIMEOUT ? FAULT_PROGRAM_TIMEOUT : FAULT_INTERNAL);
+        snapshot.fault_detail = failure_detail;
+        if (snapshot.error_code)
+            ESP_LOGE(TAG, "demo failed: stage=%u phase=%u fault=%" PRIu32
+                " detail=%" PRIu32 " esp_err=%s outputs_off=%u",
+                snapshot.stage, (unsigned)snapshot.phase, snapshot.error_code,
+                snapshot.fault_detail, esp_err_to_name(result), (unsigned)off);
         snapshot.elapsed_ms = (uint32_t)(now_ms() - started_ms);
         atomic_store(&job_reserved, false);
         uint32_t error = snapshot.error_code;

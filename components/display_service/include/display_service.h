@@ -119,8 +119,12 @@ typedef struct {
     bool bucket_aligned;
     bool gesture_available;
     bool safety_fault;
+    bool executor_fault;
     bool emergency_stop;
     uint16_t fault_code;
+    uint32_t fault_detail;
+    uint8_t fault_stage;
+    uint8_t fault_phase;
     uint8_t position_pwm;
     uint8_t bl50_pwm;
     uint8_t fan_percent;
@@ -202,6 +206,9 @@ void display_backend_label(display_wake_backend_t committed, bool switching,
 const char *display_wifi_state_name(uint8_t state);
 const char *display_ble_state_name(uint8_t state);
 const char *display_voice_state_name(display_voice_state_t state);
+bool display_fault_active(const display_telemetry_t *telemetry);
+const char *display_fault_name(uint16_t code);
+void display_fault_message(const display_telemetry_t *telemetry, char *text, size_t capacity);
 /* Same-frame voice-cloud state from the current Wi-Fi link state: 2=网络就绪
  * (IP reachable, cloud NOT confirmed), 1=离线.  Never a fabricated READY. */
 uint8_t display_cloud_from_wifi(uint8_t wifi_state);

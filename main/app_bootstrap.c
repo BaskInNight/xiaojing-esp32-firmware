@@ -596,6 +596,7 @@ static void publish_display_telemetry(void)
         telemetry.uv_state = status.uv_on ? 2U : 1U;
         telemetry.detergent_state = status.detergent_pump_on ? 2U : 1U;
         telemetry.fault_code = (uint16_t)status.fault.code;
+        telemetry.fault_detail = status.fault.detail;
     }
 
     wash_executor_t *exec = wash_exec_bootstrap_get_executor();
@@ -605,6 +606,16 @@ static void publish_display_telemetry(void)
     if (exec_valid) {
         telemetry.machine_state = display_machine_state_from_executor(
             exec_snapshot.state);
+        telemetry.executor_fault = exec_snapshot.state == WASH_EXEC_STATE_FAULT;
+        competition_demo_snapshot_t demo_fault;
+        if (telemetry.executor_fault && competition_demo_get_snapshot(&demo_fault) &&
+            demo_fault.program_id == exec_snapshot.program_id &&
+            demo_fault.generation == exec_snapshot.generation && demo_fault.error_code) {
+            telemetry.fault_code = (uint16_t)demo_fault.error_code;
+            telemetry.fault_detail = demo_fault.fault_detail;
+            telemetry.fault_stage = demo_fault.stage;
+            telemetry.fault_phase = (uint8_t)demo_fault.phase;
+        }
         telemetry.current_step = exec_snapshot.completed_steps;
         telemetry.total_steps = exec_snapshot.total_steps;
     }
@@ -616,8 +627,10 @@ static void publish_display_telemetry(void)
         telemetry.safety_fault = safety.fault_active;
         telemetry.emergency_stop = safety.emergency_stop_active;
         telemetry.mcp_unknown_mask = safety.mcp_unknown_mask;
-        if (safety.fault_active)
+        if (safety.fault_active) {
             telemetry.fault_code = (uint16_t)safety.primary_fault.code;
+            telemetry.fault_detail = safety.primary_fault.detail;
+        }
     }
 
     position_snapshot_t position;

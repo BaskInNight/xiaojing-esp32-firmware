@@ -7,6 +7,10 @@
 #include "wash_executor.h"
 
 /* Trusted built-in program, not an arbitrary BLE/AI script interpreter. */
+#ifndef COMPETITION_DEMO_SHAFT_HOME_REQUIRED
+/* GPB5 shaft alignment is spare hardware in this prototype. Bucket halls remain required. */
+#define COMPETITION_DEMO_SHAFT_HOME_REQUIRED 0
+#endif
 typedef struct {
     bool active;
     bool completed;
@@ -18,7 +22,16 @@ typedef struct {
     wash_phase_t phase;
     drum_position_t target;
     uint32_t error_code;
+    uint32_t fault_detail;
 } competition_demo_snapshot_t;
+
+/* Preserve service identity when reporting a composite failure. */
+static inline uint32_t competition_demo_event_fault(const machine_event_t *event)
+{
+    if (event->fault.code > FAULT_NONE && event->fault.code <= FAULT_INTERNAL)
+        return (uint32_t)event->fault.code;
+    return event->result == SERVICE_RESULT_TIMEOUT ? FAULT_PROGRAM_TIMEOUT : FAULT_INTERNAL;
+}
 
 typedef void (*competition_demo_terminal_fn)(const void *token, bool success,
                                              uint32_t error, void *context);

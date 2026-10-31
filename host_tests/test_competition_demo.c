@@ -7,6 +7,7 @@
 #include "button_debounce.h"
 #include "bl50_fsm.h"
 #include "uv_fsm.h"
+#include "competition_demo.h"
 
 static safety_inputs_t inputs(void)
 {
@@ -167,6 +168,12 @@ static void test_uv_indicator(void)
 
 int main(void)
 {
+    assert(!COMPETITION_DEMO_SHAFT_HOME_REQUIRED);
+    machine_event_t failure = {.result = SERVICE_RESULT_FAULT,
+        .fault = {.code = FAULT_BL50_HOME_TIMEOUT, .detail = 10000}};
+    assert(competition_demo_event_fault(&failure) == FAULT_BL50_HOME_TIMEOUT);
+    failure.fault.code = FAULT_NONE; failure.result = SERVICE_RESULT_TIMEOUT;
+    assert(competition_demo_event_fault(&failure) == FAULT_PROGRAM_TIMEOUT);
     test_policy(); test_stop(); test_button(); test_tumble(); test_uv_indicator();
     puts("competition policy, cancel acknowledgement, stale terminal, debounce, tumble: PASS");
     return 0;

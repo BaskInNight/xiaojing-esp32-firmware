@@ -5,6 +5,7 @@
  */
 
 #include <stdio.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include "display_service.h"
@@ -430,6 +431,21 @@ static void test_speaker_prefix_strip(void)
 
 int main(void)
 {
+    display_telemetry_t fault = {0};
+    char text[256];
+    assert(!display_fault_active(&fault));
+    fault.executor_fault = true;
+    fault.fault_code = 17; fault.fault_detail = 10000; fault.fault_stage = 2;
+    assert(display_fault_active(&fault));
+    display_fault_message(&fault, text, sizeof(text));
+    assert(strstr(text, "E17") && strstr(text, "主轴归零超时") && strstr(text, "10000"));
+    fault.executor_fault = false; fault.safety_fault = true;
+    assert(display_fault_active(&fault));
+    fault.safety_fault = false; fault.emergency_stop = true;
+    assert(display_fault_active(&fault));
+    fault.emergency_stop = false;
+    assert(!display_fault_active(&fault));
+    assert(strcmp(display_fault_name(65000), "未知故障") == 0);
     test_page_structure();
     test_link_state_names();
     test_backend_matrix();
