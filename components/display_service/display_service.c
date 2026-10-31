@@ -94,6 +94,7 @@ typedef struct {
     uint32_t shown_fault_detail;
     uint8_t shown_fault_stage;
     bool shown_emergency;
+    bool fault_popup_visible;
     lv_obj_t *pages[DISPLAY_PAGE_COUNT];
     /* Per-page unified header widgets. */
     lv_obj_t *hdr_bar[DISPLAY_PAGE_COUNT];
@@ -1465,43 +1466,40 @@ static void refresh_voice(const display_model_t *model)
 /* Global top layer survives page changes; only the LVGL task touches widgets. */
 static void build_fault_popup(void)
 {
-    s_rt.fault_overlay = lv_obj_create(lv_layer_top());
-    lv_obj_t *overlay = s_rt.fault_overlay;
-    lv_obj_set_pos(overlay, 0, 0);
-    lv_obj_set_size(overlay, LCD_HRES, LCD_VRES);
-    lv_obj_set_style_pad_all(overlay, 0, 0);
-    lv_obj_set_style_border_width(overlay, 0, 0);
-    lv_obj_set_style_radius(overlay, 0, 0);
-    lv_obj_set_style_bg_color(overlay, lv_color_hex(0x000000), 0);
-    lv_obj_set_style_bg_opa(overlay, LV_OPA_70, 0);
-    lv_obj_clear_flag(overlay, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_t *card = lv_obj_create(overlay);
-    lv_obj_set_pos(card, 10, 34);
-    lv_obj_set_size(card, 300, 184);
-    lv_obj_set_style_pad_all(card, 0, 0);
-    lv_obj_set_style_bg_color(card, lv_color_hex(CLR_BG_DEEP), 0);
-    lv_obj_set_style_bg_opa(card, LV_OPA_COVER, 0);
-    lv_obj_set_style_border_color(card, lv_color_hex(CLR_RED), 0);
-    lv_obj_set_style_border_width(card, 2, 0);
-    lv_obj_clear_flag(card, LV_OBJ_FLAG_SCROLLABLE);
-    s_rt.fault_popup_title = telemetry_label_create(card, "设备故障", CLR_RED);
-    lv_obj_set_pos(s_rt.fault_popup_title, 14, 12);
-    lv_obj_set_width(s_rt.fault_popup_title, 270);
-    s_rt.fault_popup_body = telemetry_label_create(card, "", CLR_WHITE);
-    lv_obj_set_pos(s_rt.fault_popup_body, 14, 42);
-    lv_obj_set_size(s_rt.fault_popup_body, 270, 126);
-    lv_label_set_long_mode(s_rt.fault_popup_body, LV_LABEL_LONG_WRAP);
-    lv_obj_set_style_text_line_space(s_rt.fault_popup_body, 5, 0);
-    lv_obj_add_flag(overlay, LV_OBJ_FLAG_HIDDEN);
+    /* The existing three-page tree nearly fills the fixed 32KB LVGL pool.
+     * Reuse the task card and fault labels instead of allocating another tree. */
+    s_rt.fault_overlay = lv_obj_get_parent(s_rt.ov_fault_title);
+    s_rt.fault_popup_title = s_rt.ov_fault_title;
+    s_rt.fault_popup_body = s_rt.ov_fault_detail;
+    s_rt.fault_popup_visible = false;
+    lv_obj_add_flag(s_rt.ov_fault_title, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(s_rt.ov_fault_code, LV_OBJ_FLAG_HIDDEN);
+    lv_obj_add_flag(s_rt.ov_fault_detail, LV_OBJ_FLAG_HIDDEN);
 }
 
 static void refresh_fault_popup(const display_telemetry_t *t)
 {
     if (!s_rt.fault_overlay) return;
-    bool hidden = lv_obj_has_flag(s_rt.fault_overlay, LV_OBJ_FLAG_HIDDEN);
+    bool hidden = !s_rt.fault_popup_visible;
     if (!display_fault_active(t)) {
         if (!hidden) {
-            lv_obj_add_flag(s_rt.fault_overlay, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_set_parent(s_rt.fault_overlay, s_rt.pages[DISPLAY_PAGE_OVERVIEW]);
+            lv_obj_set_pos(s_rt.fault_overlay, 8, 48);
+            lv_obj_set_size(s_rt.fault_overlay, 304, 50);
+            lv_obj_set_style_border_color(s_rt.fault_overlay, lv_color_hex(CLR_CARD_BORDER), 0);
+            lv_obj_set_pos(s_rt.ov_fault_title, 4, 3);
+            lv_obj_set_size(s_rt.ov_fault_title, 150, 18);
+            lv_obj_set_pos(s_rt.ov_fault_detail, 4, 28);
+            lv_obj_set_size(s_rt.ov_fault_detail, 296, 18);
+            lv_label_set_long_mode(s_rt.ov_fault_detail, LV_LABEL_LONG_CLIP);
+            lv_obj_add_flag(s_rt.ov_fault_title, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(s_rt.ov_fault_code, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(s_rt.ov_fault_detail, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(s_rt.ov_task_title, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(s_rt.ov_task_remaining, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(s_rt.ov_task_now, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(s_rt.ov_task_next, LV_OBJ_FLAG_HIDDEN);
+            s_rt.fault_popup_visible = false;
             ESP_LOGI(TAG, "Fault popup cleared: runtime fault released");
         }
         return;
@@ -1511,6 +1509,25 @@ static void refresh_fault_popup(const display_telemetry_t *t)
         s_rt.shown_emergency == t->emergency_stop) return;
     char message[256];
     display_fault_message(t, message, sizeof(message));
+    if (hidden) {
+        lv_obj_set_parent(s_rt.fault_overlay, lv_layer_top());
+        lv_obj_set_pos(s_rt.fault_overlay, 10, 34);
+        lv_obj_set_size(s_rt.fault_overlay, 300, 184);
+        lv_obj_set_style_border_color(s_rt.fault_overlay, lv_color_hex(CLR_RED), 0);
+        lv_obj_set_pos(s_rt.fault_popup_title, 14, 12);
+        lv_obj_set_size(s_rt.fault_popup_title, 270, 18);
+        lv_obj_set_pos(s_rt.fault_popup_body, 14, 42);
+        lv_obj_set_size(s_rt.fault_popup_body, 270, 126);
+        lv_label_set_long_mode(s_rt.fault_popup_body, LV_LABEL_LONG_WRAP);
+        lv_obj_add_flag(s_rt.ov_task_title, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(s_rt.ov_task_remaining, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(s_rt.ov_task_now, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(s_rt.ov_task_next, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(s_rt.ov_fault_code, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(s_rt.fault_popup_title, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(s_rt.fault_popup_body, LV_OBJ_FLAG_HIDDEN);
+        s_rt.fault_popup_visible = true;
+    }
     lv_label_set_text(s_rt.fault_popup_title, t->emergency_stop ? "紧急停止" : "设备故障");
     lv_label_set_text(s_rt.fault_popup_body, message);
     lv_obj_clear_flag(s_rt.fault_overlay, LV_OBJ_FLAG_HIDDEN);
@@ -1519,8 +1536,12 @@ static void refresh_fault_popup(const display_telemetry_t *t)
     s_rt.shown_fault_detail = t->fault_detail;
     s_rt.shown_fault_stage = t->fault_stage;
     s_rt.shown_emergency = t->emergency_stop;
+    lv_mem_monitor_t memory;
+    lv_mem_monitor(&memory);
     ESP_LOGW(TAG, "Fault popup shown: E%u detail=%" PRIu32 " stage=%u",
         (unsigned)t->fault_code, t->fault_detail, (unsigned)t->fault_stage);
+    ESP_LOGI(TAG, "LVGL pool after popup: free=%u largest=%u",
+        (unsigned)memory.free_size, (unsigned)memory.free_biggest_size);
 }
 
 static void refresh_ui(lv_timer_t *timer)
@@ -1565,7 +1586,7 @@ static void refresh_ui(lv_timer_t *timer)
     }
 
     refresh_header(&model, page_index);
-    if (page_index == DISPLAY_PAGE_OVERVIEW) {
+    if (page_index == DISPLAY_PAGE_OVERVIEW && !s_rt.fault_popup_visible) {
         refresh_overview(&model);
     } else if (page_index == DISPLAY_PAGE_TELEMETRY) {
         refresh_telemetry(&model);
@@ -1672,6 +1693,10 @@ static esp_err_t hardware_build_ui(void)
     lv_scr_load(home);
     lv_obj_invalidate(home);
     lv_refr_now(s_rt.display);
+    lv_mem_monitor_t memory;
+    lv_mem_monitor(&memory);
+    ESP_LOGI(TAG, "LVGL pool after first frame: free=%u largest=%u",
+        (unsigned)memory.free_size, (unsigned)memory.free_biggest_size);
     ESP_LOGI(TAG,"Boot handoff: opaque overview full-screen redraw submitted");
     atomic_store_explicit(&s_current_page, DISPLAY_PAGE_OVERVIEW,
                           memory_order_release);
