@@ -1,6 +1,6 @@
 idf_component_register(SRCS "position_service.c"
                        INCLUDE_DIRS "include"
-                       REQUIRES machine_types hal_contract safety_manager
+                       REQUIRES machine_types hal_contract safety_manager machine_config
                        PRIV_REQUIRES freertos)
 
 if(CONFIG_POS_SERVICE_TEST_HOOKS)

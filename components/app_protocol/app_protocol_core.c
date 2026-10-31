@@ -117,6 +117,8 @@ static app_command_t command_from_name(const char *cmd)
         {"position_swing_cancel", APP_CMD_POSITION_SWING_CANCEL},
         {"set_diag_prefs", APP_CMD_SET_DIAG_PREFS},
         {"reset_diag_prefs", APP_CMD_RESET_DIAG_PREFS},
+        {"diagnostic_stop", APP_CMD_DIAGNOSTIC_STOP},
+        {"play_prompt", APP_CMD_PLAY_PROMPT},
     };
     for (size_t i = 0; i < sizeof(map) / sizeof(map[0]); i++)
         if (strcmp(cmd, map[i].name) == 0) return map[i].cmd;

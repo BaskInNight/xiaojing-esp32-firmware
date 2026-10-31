@@ -70,6 +70,7 @@ static voice_tool_t tool_from_name(const char *name)
         {"ack_unload", VOICE_TOOL_ACK_UNLOAD},
         {"skip_uv", VOICE_TOOL_SKIP_UV},
         {"ack_fault", VOICE_TOOL_ACK_FAULT},
+        {"confirm_plan", VOICE_TOOL_CONFIRM_PLAN},
     };
     for (size_t i = 0; i < sizeof(map) / sizeof(map[0]); i++) {
         if (strcmp(name, map[i].name) == 0) return map[i].tool;

@@ -306,7 +306,8 @@ static void publish_snapshot(wash_executor_t *exec)
             status.progress_percent = demo.total_stages ?
                 (uint8_t)(demo.stage * 100U / (demo.total_stages + 1U)) : 0;
             status.elapsed_ms = demo.elapsed_ms;
-            status.remaining_ms = demo.elapsed_ms < 176000 ? 176000 - demo.elapsed_ms : 0;
+            status.remaining_ms = demo.elapsed_ms < demo.estimated_total_ms ?
+                demo.estimated_total_ms - demo.elapsed_ms : 0;
             status.target_position = demo.target;
         }
     }
@@ -827,6 +828,7 @@ static void process_ingress_msg(wash_executor_t *exec, const ingress_msg_t *msg)
         exec->program_reserved = true;
         xSemaphoreGive(exec->mutex);
 
+        if (exec->adapter->bind_program) exec->adapter->bind_program(exec->adapter->ctx, &exec->active_program);
         exec->core.program = &exec->active_program;
         exec->core.total_steps = (uint16_t)exec->active_program.step_count;
         exec->program_started_ms = get_now_ms(exec);

@@ -109,12 +109,31 @@ typedef struct {
 
 /* ---- Wash Program (编译后的不可变计划) ---- */
 
+#define WASH_RECIPE_MAX_ACTIONS 8U
+typedef enum {
+    RECIPE_MOVE = 0, RECIPE_WATER, RECIPE_PULSATOR, RECIPE_DRUM,
+    RECIPE_SPIN, RECIPE_DRY, RECIPE_UV
+} wash_recipe_op_t;
+typedef struct {
+    uint8_t op;
+    uint8_t level; /* Local intensity 1..3, never a GPIO or raw PWM. */
+    uint16_t seconds;
+    int16_t position;
+} wash_recipe_action_t;
+typedef struct {
+    uint8_t count;
+    bool allow_uv;
+    bool allow_dry;
+    wash_recipe_action_t actions[WASH_RECIPE_MAX_ACTIONS];
+} wash_recipe_t;
+
 typedef struct {
     uint32_t program_id;
     wash_program_kind_t kind;
     uint32_t estimated_total_ms;
     size_t step_count;
     wash_step_t steps[WASH_PROGRAM_MAX_STEPS];
+    wash_recipe_t recipe; /* Value-owned, copied with the program; count=0 is the fixed recipe. */
 } wash_program_t;
 
 /* ---- Machine Status (整机状态快照) ---- */

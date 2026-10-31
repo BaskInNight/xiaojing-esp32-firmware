@@ -1,4 +1,5 @@
 #include "voice_route.h"
+#include "wash_planner.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -174,6 +175,7 @@ static bool parse_u16(const char **cursor, const char *end, uint16_t *out)
 {
     const char *p = *cursor;
     if (p >= end || !isdigit((unsigned char)*p)) return false;
+    if (*p == '0' && p + 1 < end && isdigit((unsigned char)p[1])) return false;
     uint32_t value = 0;
     do {
         value = value * 10U + (uint32_t)(*p - '0');
@@ -213,10 +215,64 @@ static voice_tool_t tool_from_name(const char *name)
         {"ack_unload", VOICE_TOOL_ACK_UNLOAD},
         {"skip_uv", VOICE_TOOL_SKIP_UV},
         {"ack_fault", VOICE_TOOL_ACK_FAULT},
+        {"confirm_plan", VOICE_TOOL_CONFIRM_PLAN},
     };
     for (size_t i = 0; i < sizeof(map) / sizeof(map[0]); i++)
         if (strcmp(name, map[i].name) == 0) return map[i].value;
     return (voice_tool_t)-1;
+}
+
+static bool parse_pipeline(const char **cursor, const char *end, wash_recipe_t *recipe)
+{
+    const char *p = skip_ws(*cursor, end);
+    if (p >= end || *p++ != '[') return false;
+    p = skip_ws(p, end);
+    while (p < end && *p != ']') {
+        if (recipe->count >= WASH_RECIPE_MAX_ACTIONS || *p++ != '{') return false;
+        char command[32] = {0}; uint16_t val = 0, seconds = 0; unsigned fields = 0;
+        p = skip_ws(p, end);
+        while (p < end && *p != '}') {
+            char key[8];
+            if (!parse_string(&p, end, key, sizeof(key))) return false;
+            p = skip_ws(p, end); if (p >= end || *p++ != ':') return false;
+            p = skip_ws(p, end);
+            unsigned bit;
+            if (!strcmp(key, "cmd")) {
+                bit = 1; if (!parse_string(&p, end, command, sizeof(command))) return false;
+            } else if (!strcmp(key, "val")) {
+                bit = 2; if (!parse_u16(&p, end, &val)) return false;
+            } else if (!strcmp(key, "time")) {
+                bit = 4; if (!parse_u16(&p, end, &seconds)) return false;
+            } else return false;
+            if (fields & bit) return false;
+            fields |= bit; p = skip_ws(p, end);
+            if (p < end && *p == ',') {
+                p = skip_ws(p + 1, end); if (p >= end || *p == '}') return false;
+            } else if (p >= end || *p != '}') return false;
+        }
+        if (p >= end || *p++ != '}' || fields != 7) return false;
+        wash_recipe_action_t a = {.seconds = seconds};
+        if (!strcmp(command, "CMD_TILT_BARREL")) {
+            a.op = RECIPE_MOVE; a.position = (int16_t)val;
+        } else {
+            if (val > 3) return false;
+            a.level = (uint8_t)val;
+            if (!strcmp(command, "CMD_WATER_IN")) a.op = RECIPE_WATER;
+            else if (!strcmp(command, "CMD_WASH_PULSATOR")) a.op = RECIPE_PULSATOR;
+            else if (!strcmp(command, "CMD_WASH_DRUM")) a.op = RECIPE_DRUM;
+            else if (!strcmp(command, "CMD_SPIN_DRY")) a.op = RECIPE_SPIN;
+            else if (!strcmp(command, "CMD_DRY")) a.op = RECIPE_DRY;
+            else if (!strcmp(command, "CMD_UV_STERILIZE")) a.op = RECIPE_UV;
+            else return false;
+        }
+        recipe->actions[recipe->count++] = a;
+        p = skip_ws(p, end);
+        if (p < end && *p == ',') {
+            p = skip_ws(p + 1, end); if (p >= end || *p == ']') return false;
+        } else if (p >= end || *p != ']') return false;
+    }
+    if (p >= end || *p++ != ']') return false;
+    *cursor = p; return true;
 }
 
 voice_route_parse_result_t voice_route_parse_json(
@@ -232,6 +288,7 @@ voice_route_parse_result_t voice_route_parse_json(
 
     bool have_domain = false, have_confidence = false, have_reply = false;
     bool have_speech_reply = false;
+    bool have_pipeline = false, have_preferences = false;
     bool have_confirm = false, have_tool = false, have_program = false;
     bool have_uv = false, have_dry = false, have_transcript = false;
     char domain[16] = {0}, tool[24] = {0}, program[16] = {0};
@@ -274,12 +331,13 @@ voice_route_parse_result_t voice_route_parse_json(
                 return VOICE_ROUTE_PARSE_INVALID_VALUE;
             have_speech_reply = true;
         } else if (strcmp(key, "updated_preferences") == 0) {
-            if (!skip_json_value(&p, end))
+            if (have_preferences || p >= end || *p != '"' || !skip_json_value(&p, end))
                 return VOICE_ROUTE_PARSE_INVALID_VALUE;
+            have_preferences = true;
         } else if (strcmp(key, "pipeline") == 0) {
-            /* Pipeline is validated by the request schema and remains data
-             * for the local planner; never treat it as presentation text. */
-            if (!skip_json_value(&p, end)) return VOICE_ROUTE_PARSE_BAD_JSON;
+            if (have_pipeline || !parse_pipeline(&p, end, &tmp.tool.recipe))
+                return VOICE_ROUTE_PARSE_INVALID_PIPELINE;
+            have_pipeline = true;
         }
         else ROUTE_STRING_FIELD("tool", have_tool, tool)
         else ROUTE_STRING_FIELD("program", have_program, program)
@@ -336,11 +394,20 @@ voice_route_parse_result_t voice_route_parse_json(
             tmp.tool.program_kind = WASH_PROGRAM_FORMAL;
         else if (strcmp(program, "demo") == 0)
             tmp.tool.program_kind = WASH_PROGRAM_DEMO;
+        else if (strcmp(program, "custom") == 0) {
+            tmp.tool.program_kind = WASH_PROGRAM_CUSTOM;
+            tmp.tool.recipe.allow_uv = tmp.tool.allow_uv;
+            tmp.tool.recipe.allow_dry = tmp.tool.allow_dry;
+            if (!have_pipeline || !have_uv || !have_dry || !wash_recipe_validate(&tmp.tool.recipe, NULL))
+                return VOICE_ROUTE_PARSE_INVALID_PIPELINE;
+            tmp.tool.has_recipe = true;
+        }
         else
             return VOICE_ROUTE_PARSE_INVALID_VALUE;
     } else if (have_program || have_uv || have_dry) {
         return VOICE_ROUTE_PARSE_INCONSISTENT_TOOL;
     }
+    if (tmp.tool.recipe.count && !tmp.tool.has_recipe) return VOICE_ROUTE_PARSE_INVALID_PIPELINE;
 
     if ((tmp.domain == VOICE_ROUTE_DOMAIN_CONTROL &&
          (!tmp.has_tool || parsed_tool == VOICE_TOOL_STATUS)) ||

@@ -1931,9 +1931,9 @@ esp_err_t display_service_set_voice_state(display_voice_state_t state)
 esp_err_t display_service_set_voice_text(const char *transcript,
                                          const char *reply)
 {
-    if (!transcript || !reply) return ESP_ERR_INVALID_ARG;
+    if (!reply) return ESP_ERR_INVALID_ARG;
     if (!model_lock()) return ESP_ERR_INVALID_STATE;
-    copy_text(s_model.transcript, sizeof(s_model.transcript), transcript);
+    if (transcript) copy_text(s_model.transcript, sizeof(s_model.transcript), transcript);
     copy_text(s_model.reply, sizeof(s_model.reply), reply);
     s_model.error[0] = '\0';
     s_model.voice_state = DISPLAY_VOICE_REPLY;

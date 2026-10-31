@@ -23,6 +23,7 @@ idf_component_register(
         machine_config
         wash_planner
         wash_executor
+        program_control
         freertos
         esp_http_client
         esp_coex

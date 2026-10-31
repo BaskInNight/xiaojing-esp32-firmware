@@ -521,9 +521,9 @@ static void stop_connectivity_timer(void)
 static const char *wash_step_name(wash_step_type_t step)
 {
     static const char *const names[] = {
-        "等待放入", "BL50归位", "姿态切换", "进水", "洗涤剂",
+        "等待放入", "姿态切换", "BL50归位", "进水", "洗涤剂",
         "波轮洗", "滚筒洗", "排水", "脱水", "烘干",
-        "等待取出", "UV消毒", "程序完成"
+        "等待取出", "UV消毒", "程序完成", "停稳等待", "检查UV关闭", "检查输出关闭", "自定义/演示流程"
     };
     return (unsigned)step < (sizeof(names) / sizeof(names[0]))
         ? names[step] : "待机";
@@ -619,6 +619,13 @@ static void publish_display_telemetry(void)
         }
         telemetry.current_step = exec_snapshot.completed_steps;
         telemetry.total_steps = exec_snapshot.total_steps;
+        competition_demo_snapshot_t composite;
+        if (exec_snapshot.program_active && exec_snapshot.current_step_type == STEP_COMPETITION_DEMO &&
+            competition_demo_get_snapshot(&composite) && composite.program_id == exec_snapshot.program_id &&
+            composite.generation == exec_snapshot.generation) {
+            telemetry.current_step = composite.stage;
+            telemetry.total_steps = composite.total_stages;
+        }
     }
 
     safety_snapshot_t safety;
@@ -846,6 +853,9 @@ static void publish_display_telemetry(void)
     }
     const char *step = exec_valid && exec_snapshot.program_active
         ? wash_step_name(exec_snapshot.current_step_type) : "待机";
+    uint8_t plan_state = program_control_voice_plan_state();
+    if (exec_valid && !exec_snapshot.program_active && plan_state)
+        step = plan_state == 1 ? "方案已就绪，按按钮1确认" : "方案已过期，请重新说或按停止清除";
     (void)display_service_set_wash(
         exec_valid && exec_snapshot.program_active, progress, step);
     (void)display_service_set_telemetry(&telemetry);
@@ -1209,7 +1219,9 @@ static void voice_cloud_ui_completion(
 
     if (s_display_active) {
         esp_err_t display_err = display_service_set_voice_text(
-            output->route.transcript, output->route.reply_text);
+            output->route.transcript,
+            output->route.has_tool && output->route.tool.tool != VOICE_TOOL_STATUS
+                ? "正在校验设备指令…" : output->route.reply_text);
         if (display_err != ESP_OK) {
             ESP_LOGW(TAG, "voice transcript display failed: 0x%x",
                      (unsigned)display_err);
@@ -1695,6 +1707,12 @@ static esp_err_t voice_cloud_speech_segment(
     return err;
 }
 
+static esp_err_t voice_present_validated_text(const char *text, void *context)
+{
+    (void)context;
+    return s_display_active ? display_service_set_voice_text(NULL, text) : ESP_OK;
+}
+
 static esp_err_t voice_cloud_speech(const char *text, void *context)
 {
     if (!text) return ESP_ERR_INVALID_ARG;
@@ -1826,6 +1844,12 @@ static esp_err_t protocol_motor_bench_start(const char *type_name,
  * PWM：由 machine_config.benchtst.ibt2_pwm 决定（滑杆/NVS 可调，默认 80）。 */
 static esp_err_t protocol_position_move_test(const char *target_name,
                                              const char **out_code) {
+    wash_exec_snapshot_t executor_state;
+    wash_executor_t *executor = wash_exec_bootstrap_get_executor();
+    if (!executor || wash_executor_get_snapshot(executor, &executor_state) != ESP_OK ||
+        executor_state.program_active || executor_state.state != WASH_EXEC_STATE_IDLE) {
+        *out_code = "EXECUTOR_BUSY"; return ESP_OK;
+    }
     drum_position_t target;
     if (strcmp(target_name, "0") == 0)         target = DRUM_POS_0;
     else if (strcmp(target_name, "45") == 0)   target = DRUM_POS_45;
@@ -1892,6 +1916,41 @@ static esp_err_t protocol_motor_bench_cancel(const char **out_code) {
     esp_err_t err = motor_bench_service_cancel();
     *out_code = "OK";
     return err;
+}
+
+static esp_err_t protocol_diagnostic_stop(void)
+{
+    esp_err_t result = program_control_request(PC_REQ_STOP, NULL);
+    esp_err_t e = actuator_self_test_emergency();
+    if (e != ESP_OK) result = e;
+    e = uv_self_test_emergency(); if (e != ESP_OK) result = e;
+    e = motor_bench_service_cancel(); if (e != ESP_OK && e != ESP_ERR_INVALID_STATE) result = e;
+    const char *code = NULL;
+    e = position_swing_service_cancel(&code);
+    if (e != ESP_OK && e != ESP_ERR_INVALID_STATE) result = e;
+    position_snapshot_t pos;
+    if (position_service_get_snapshot(&pos) == ESP_OK && pos.active_request_id &&
+        pos.state != POSITION_STATE_IDLE_KNOWN && pos.state != POSITION_STATE_IDLE_UNKNOWN) {
+        e = position_service_cancel(pos.active_request_id);
+        if (e != ESP_OK) result = e;
+    }
+    return result;
+}
+
+static esp_err_t protocol_play_fixed_prompt(const char *name)
+{
+    voice_prompt_id_t prompt;
+    if (!strcmp(name, "boot")) prompt = VOICE_PROMPT_BOOT_READY;
+    else return ESP_ERR_INVALID_ARG;
+    voice_service_snapshot_t voice;
+    wash_exec_snapshot_t exec;
+    wash_executor_t *executor = wash_exec_bootstrap_get_executor();
+    if (!s_task_complete_queue || !executor ||
+        wash_executor_get_snapshot(executor, &exec) != ESP_OK || exec.program_active ||
+        voice_service_get_snapshot(&voice) != ESP_OK || voice.state != VOICE_STATE_LISTENING)
+        return ESP_ERR_INVALID_STATE;
+    task_complete_event_t ev = {.prompt = prompt};
+    return xQueueSend(s_task_complete_queue, &ev, 0) == pdTRUE ? ESP_OK : ESP_ERR_NO_MEM;
 }
 
 static bool protocol_motor_bench_snapshot(
@@ -3125,6 +3184,7 @@ esp_err_t app_bootstrap_init(app_bootstrap_result_t *result) {
                 .cancel_io = voice_cloud_adapter_cancel_io,
                 .play_prompt = voice_placeholder_prompt,
                 .speak_text = voice_cloud_speech,
+                .present_text = voice_present_validated_text,
                 .set_route_context =
                     voice_cloud_adapter_set_route_context,
                 .min_control_confidence_milli = 750,
@@ -3224,6 +3284,8 @@ esp_err_t app_bootstrap_init(app_bootstrap_result_t *result) {
             .motor_bench_start = protocol_motor_bench_start,
             .motor_bench_confirm = protocol_motor_bench_confirm,
             .motor_bench_cancel = protocol_motor_bench_cancel,
+            .diagnostic_stop = protocol_diagnostic_stop,
+            .play_prompt = protocol_play_fixed_prompt,
             .position_move_test = protocol_position_move_test,
             .position_swing_test = protocol_position_swing_test,
             .position_swing_cancel = protocol_position_swing_cancel,

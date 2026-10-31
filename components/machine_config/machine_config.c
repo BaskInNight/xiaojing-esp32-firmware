@@ -294,6 +294,17 @@ esp_err_t machine_config_set_benchtst(const benchtst_params_t *params)
     return ESP_OK;
 }
 
+esp_err_t machine_config_set_position_pwm(uint8_t pwm)
+{
+    if (!s_initialized) return ESP_ERR_INVALID_STATE;
+    if (pwm < 5 || pwm > 100) return ESP_ERR_INVALID_ARG;
+    if (s_config.position.approach_pwm_percent > pwm)
+        s_config.position.approach_pwm_percent = pwm;
+    s_config.position.move_pwm_percent = pwm;
+    ESP_LOGI(TAG, "position default PWM=%u (next move)", (unsigned)pwm);
+    return ESP_OK;
+}
+
 esp_err_t machine_config_reset_benchtst_defaults(void)
 {
     if (!s_initialized) return ESP_ERR_INVALID_STATE;

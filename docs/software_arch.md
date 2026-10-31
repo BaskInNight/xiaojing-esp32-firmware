@@ -71,3 +71,7 @@ UV 服务 FSM 与安全层同时检查演示许可；热风的原诊断上限 3 
 启动与结束播报由现有异步语音队列执行，不阻塞控制任务。
 
 验证记录和真机验收项见 `COMPETITION_MOTION_DEMO_V2_IMPLEMENTATION.md`。
+
+语音自定义演示流程复用上述组合执行器，由严格有界的 `wash_recipe_t` 值对象驱动，
+经 `program_control` 候选确认/仲裁后执行；固定加水投液、安全换位和退出关闭由本地插入。
+具体协议、硬件范围、调试面板与速度配置见 `VOICE_CUSTOM_RECIPE.md`。

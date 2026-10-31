@@ -40,6 +40,7 @@ struct wash_executor_adapter {
         uint32_t token_size);
 
     void (*stop_all)(void *ctx);
+    void (*bind_program)(void *ctx, const wash_program_t *program);
     void *ctx;
 };
 

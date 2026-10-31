@@ -37,6 +37,7 @@ typedef enum {
     VOICE_ROUTE_PARSE_UNKNOWN_FIELD,
     VOICE_ROUTE_PARSE_INVALID_VALUE,
     VOICE_ROUTE_PARSE_INCONSISTENT_TOOL,
+    VOICE_ROUTE_PARSE_INVALID_PIPELINE,
 } voice_route_parse_result_t;
 
 typedef struct {

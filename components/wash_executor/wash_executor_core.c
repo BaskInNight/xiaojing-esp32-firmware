@@ -92,7 +92,8 @@ bool core_token_matches_reset(
 
 static bool is_competition_program(const wash_executor_core_t *core)
 {
-    if (!core->program || core->program->kind != WASH_PROGRAM_DEMO) return false;
+    if (!core->program || (core->program->kind != WASH_PROGRAM_DEMO &&
+        core->program->kind != WASH_PROGRAM_CUSTOM)) return false;
     for (uint16_t i = 0; i < core->total_steps && i < WASH_PROGRAM_MAX_STEPS; ++i)
         if (core->program->steps[i].type == STEP_COMPETITION_DEMO) return true;
     return false;

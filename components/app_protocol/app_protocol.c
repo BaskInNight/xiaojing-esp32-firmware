@@ -285,7 +285,7 @@ static esp_err_t publish_status_locked(void)
         ",\"lc\":\"%.24s\"}"
         ",\"pc\":%d"
         ",\"config\":{\"benchtst\":{\"bl50_pwm\":%u,\"ibt2_pwm\":%u"
-        ",\"act_duration_ms\":%" PRIu32 "}}}",
+        ",\"act_duration_ms\":%" PRIu32 ",\"position_move_pwm\":%u}}}",
         status.revision, (int)status.state, (int)status.phase,
         status.program_id, status.current_step, status.total_steps,
         status.progress_percent, (int)status.position,
@@ -299,7 +299,8 @@ static esp_err_t publish_status_locked(void)
         sw_st, sw_term, sw_rid, sw_seg, sw_dir, sw_off, sw_fl, sw_elapsed,
         sw_emerg, sw_rounds, sw_dwell, sw_lc,
         (int)program_control_get_state(),
-        (unsigned)bt.bl50_pwm, (unsigned)bt.ibt2_pwm, bt.act_duration_ms);
+        (unsigned)bt.bl50_pwm, (unsigned)bt.ibt2_pwm, bt.act_duration_ms,
+        (unsigned)machine_config_get()->position.move_pwm_percent);
     if (n < 0 || (size_t)n >= sizeof(json)) return ESP_ERR_INVALID_SIZE;
     err = s_rt.config.status_tx(json, (size_t)n, 0, s_rt.config.tx_context);
     if (err != ESP_OK) {
@@ -320,7 +321,7 @@ static esp_err_t publish_capabilities_locked(void)
         "\"diagnostics\":[\"uv_self_test\",\"actuator_self_test\","
         "\"motor_bench_self_test\",\"set_direction_calibration\","
         "\"position_move_test\",\"position_swing_test\","
-        "\"set_diag_prefs\",\"reset_diag_prefs\"],"
+        "\"set_diag_prefs\",\"reset_diag_prefs\",\"position_speed\",\"diagnostic_stop\",\"play_prompt\"],"
         "\"actuator_self_test_targets\":["
         "\"source_valve\",\"transfer_valve\",\"detergent_pump\","
         "\"drain_pump\",\"hot_air_coupled\"],"
@@ -718,17 +719,34 @@ static route_result_t route_command_locked(const app_protocol_message_t *message
         result.send_status = true;
         break;
     }
+    case APP_CMD_DIAGNOSTIC_STOP:
+        err = s_rt.config.diagnostic_stop ? s_rt.config.diagnostic_stop() : ESP_ERR_NOT_SUPPORTED;
+        result.ok = err == ESP_OK; result.code = result.ok ? "STOP_REQUESTED" : "STOP_FAILED";
+        result.send_status = true;
+        break;
+    case APP_CMD_PLAY_PROMPT: {
+        const char *name = NULL;
+        if (!root || !json_string(root, "name", true, &name)) { result.code = "BAD_PAYLOAD"; break; }
+        err = s_rt.config.play_prompt ? s_rt.config.play_prompt(name) : ESP_ERR_NOT_SUPPORTED;
+        result.ok = err == ESP_OK; result.code = result.ok ? "PROMPT_QUEUED" : "PROMPT_BUSY_OR_INVALID";
+        break;
+    }
     case APP_CMD_SET_DIAG_PREFS: {
-        uint32_t blwm = 0, ibt2 = 0, act_dur = 0;
+        uint32_t blwm = 0, ibt2 = 0, act_dur = 0, move_pwm = 0;
+        bool persist = true;
         bool have_something = false;
         if (root) {
             have_something =
                 cJSON_GetObjectItem(root, "bl50_pwm") != NULL ||
                 cJSON_GetObjectItem(root, "ibt2_pwm") != NULL ||
-                cJSON_GetObjectItem(root, "act_duration_ms") != NULL;
-            (void)json_u32(root, "bl50_pwm", 0, &blwm);
-            (void)json_u32(root, "ibt2_pwm", 0, &ibt2);
-            (void)json_u32(root, "act_duration_ms", 0, &act_dur);
+                cJSON_GetObjectItem(root, "act_duration_ms") != NULL ||
+                cJSON_GetObjectItem(root, "position_move_pwm") != NULL;
+            if (!json_u32(root, "bl50_pwm", 0, &blwm) || blwm > 100 ||
+                !json_u32(root, "ibt2_pwm", 0, &ibt2) || ibt2 > 100 ||
+                !json_u32(root, "act_duration_ms", 0, &act_dur) ||
+                !json_u32(root, "position_move_pwm", 0, &move_pwm) || move_pwm > 100 ||
+                (cJSON_GetObjectItem(root, "position_move_pwm") && move_pwm < 5) ||
+                !json_bool(root, "persist", true, &persist)) { result.code = "BAD_PAYLOAD"; break; }
         }
         if (!have_something) { result.code = "BAD_PAYLOAD"; break; }
         const machine_config_t *cfg = machine_config_get();
@@ -739,7 +757,11 @@ static route_result_t route_command_locked(const app_protocol_message_t *message
         esp_err_t se = machine_config_set_benchtst(&prefs);
         if (se != ESP_OK) { result.code = se == ESP_ERR_INVALID_ARG ? "BAD_PWM" : "INTERNAL";
                             result.detail = (uint32_t)se; break; }
-        se = machine_config_request_persist();
+        if (move_pwm) {
+            se = machine_config_set_position_pwm((uint8_t)move_pwm);
+            if (se != ESP_OK) { result.code = "BAD_PWM"; break; }
+        }
+        se = persist ? machine_config_request_persist() : ESP_OK;
         if (se != ESP_OK) { result.code = "INTERNAL"; result.detail = (uint32_t)se; break; }
         result.ok = true;
         result.code = "DIAG_PREFS_SET";

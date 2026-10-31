@@ -485,6 +485,14 @@ static voice_cloud_result_t extract_content_route(const char *response,
     if (remaining > 0 && (*p == '{' || *p == '[')) {
         char speech[VOICE_ROUTE_REPLY_CAPACITY];
         size_t speech_length = 0;
+        char tool[24]; size_t tool_length = 0;
+        if (find_json_string_member(p, remaining, "tool", tool, sizeof(tool), &tool_length) &&
+            (!strcmp(tool, "start_program") || !strcmp(tool, "confirm_plan"))) {
+            static const char invalid[] = "未收到完整的工具调用方案，设备没有启动，请重新说明洗涤需求。";
+            if (!set_content_chat_route(invalid, sizeof(invalid) - 1, out)) return VOICE_CLOUD_BAD_RESPONSE;
+            preserve_transcript(p, remaining, out);
+            return VOICE_CLOUD_OK;
+        }
         if (!find_json_string_member(p, remaining, "speech_reply", speech,
                                      sizeof(speech), &speech_length) ||
             !set_content_chat_route(speech, speech_length, out)) {
@@ -635,6 +643,12 @@ voice_cloud_result_t voice_cloud_run_auto_route(
     voice_route_parse_result_t parse_result =
         voice_route_parse_json(arguments, arguments_length, &out->route);
     if (parse_result != VOICE_ROUTE_PARSE_OK) {
+        if (parse_result == VOICE_ROUTE_PARSE_INVALID_PIPELINE) {
+            static const char rejected[] = "洗涤方案校验未通过，设备尚未启动，请重新说明需求。";
+            if (!set_content_chat_route(rejected, sizeof(rejected) - 1, out)) return VOICE_CLOUD_BAD_RESPONSE;
+            preserve_transcript(arguments, arguments_length, out);
+            return VOICE_CLOUD_OK;
+        }
         char speech[VOICE_ROUTE_REPLY_CAPACITY];
         size_t speech_length = 0;
         ESP_LOGW("voice_cloud", "tool route rejected: parse=%d speech_fallback", parse_result);

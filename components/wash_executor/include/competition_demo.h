@@ -19,6 +19,7 @@ typedef struct {
     uint8_t stage;
     uint8_t total_stages;
     uint32_t elapsed_ms;
+    uint32_t estimated_total_ms;
     wash_phase_t phase;
     drum_position_t target;
     uint32_t error_code;
@@ -37,6 +38,8 @@ typedef void (*competition_demo_terminal_fn)(const void *token, bool success,
                                              uint32_t error, void *context);
 esp_err_t competition_demo_submit(const void *token, size_t token_bytes,
                                   competition_demo_terminal_fn terminal, void *context);
+esp_err_t competition_demo_submit_plan(const void *token, size_t token_bytes,
+    const wash_recipe_t *recipe, competition_demo_terminal_fn terminal, void *context);
 esp_err_t competition_demo_cancel(const void *token, size_t token_bytes);
 void competition_demo_abort(void);
 esp_err_t competition_demo_shutdown(void);

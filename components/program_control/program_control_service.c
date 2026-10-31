@@ -11,11 +11,13 @@
 #include "program_control.h"
 #include "program_control_core.h"
 #include <string.h>
+#include <stdlib.h>
 #include <inttypes.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_timer.h"
 #include "esp_log.h"
+#include "esp_heap_caps.h"
 
 static const char *TAG = "program_control";
 
@@ -39,6 +41,8 @@ typedef struct {
     uint32_t program_id;
     uint32_t last_program_id;
     uint32_t last_up_start_ms;
+    wash_program_t *voice_plan;
+    int64_t voice_plan_deadline_ms;
 } program_control_inst_t;
 
 static program_control_inst_t s_inst;
@@ -147,8 +151,11 @@ esp_err_t program_control_service_start(void)
 
 esp_err_t program_control_service_stop(void)
 {
+    if (s_inst.mutex) xSemaphoreTake(s_inst.mutex, portMAX_DELAY);
+    free(s_inst.voice_plan); s_inst.voice_plan = NULL;
     s_inst.initialized = false;
     s_inst.executor = NULL;
+    if (s_inst.mutex) xSemaphoreGive(s_inst.mutex);
     return ESP_OK;
 }
 
@@ -160,6 +167,73 @@ static void lock(void)
 static void unlock(void)
 {
     if (s_inst.mutex) xSemaphoreGive(s_inst.mutex);
+}
+
+static esp_err_t submit_voice_locked(const wash_program_t *program)
+{
+    wash_exec_snapshot_t snap;
+    const machine_config_t *config = s_inst.get_config ? s_inst.get_config() : NULL;
+    if (!s_inst.initialized || !s_inst.executor || !s_inst.get_config ||
+        !config || !config->position.direction_calibrated ||
+        wash_executor_get_snapshot(s_inst.executor, &snap) != ESP_OK ||
+        snap.program_active || snap.state != WASH_EXEC_STATE_IDLE) return ESP_ERR_INVALID_STATE;
+    s_inst.arbiter.program_active = snap.program_active;
+    s_inst.arbiter.fault_active = false;
+    pc_arbiter_refresh(&s_inst.arbiter);
+    if (pc_arbitrate(&s_inst.arbiter, PC_REQ_START_DEMO) != PC_ACTION_START_DEMO)
+        return ESP_ERR_INVALID_STATE;
+    esp_err_t e = wash_executor_submit_program(s_inst.executor, program, program->program_id);
+    if (e == ESP_OK) {
+        s_inst.last_program_id = program->program_id;
+        s_inst.arbiter.program_active = true;
+    }
+    return e;
+}
+
+esp_err_t program_control_offer_voice_plan(const wash_program_t *program, bool start_now)
+{
+    if (!program || !program->program_id || !wash_recipe_validate(&program->recipe, NULL))
+        return ESP_ERR_INVALID_ARG;
+    lock();
+    wash_exec_snapshot_t snap;
+    if (!s_inst.initialized || !s_inst.executor ||
+        wash_executor_get_snapshot(s_inst.executor, &snap) != ESP_OK || snap.program_active ||
+        snap.state != WASH_EXEC_STATE_IDLE || s_inst.arbiter.external_busy || s_inst.arbiter.emergency_latched) {
+        unlock(); return ESP_ERR_INVALID_STATE;
+    }
+    esp_err_t e = ESP_OK;
+    if (start_now) e = submit_voice_locked(program);
+    else {
+        if (!s_inst.voice_plan) s_inst.voice_plan = heap_caps_malloc(sizeof(*program), MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+        if (!s_inst.voice_plan) e = ESP_ERR_NO_MEM;
+        else {
+            *s_inst.voice_plan = *program;
+            s_inst.voice_plan_deadline_ms = esp_timer_get_time() / 1000 + 90000;
+        }
+    }
+    if (e == ESP_OK && start_now) { free(s_inst.voice_plan); s_inst.voice_plan = NULL; }
+    unlock(); return e;
+}
+
+static esp_err_t confirm_voice_locked(void)
+{
+    if (!s_inst.voice_plan) return ESP_ERR_INVALID_STATE;
+    if (esp_timer_get_time() / 1000 >= s_inst.voice_plan_deadline_ms) return ESP_ERR_TIMEOUT;
+    esp_err_t e = submit_voice_locked(s_inst.voice_plan);
+    if (e == ESP_OK) { free(s_inst.voice_plan); s_inst.voice_plan = NULL; }
+    return e;
+}
+
+esp_err_t program_control_confirm_voice_plan(void)
+{
+    lock(); esp_err_t e = confirm_voice_locked(); unlock(); return e;
+}
+
+uint8_t program_control_voice_plan_state(void)
+{
+    lock();
+    uint8_t state = !s_inst.voice_plan ? 0 : esp_timer_get_time() / 1000 < s_inst.voice_plan_deadline_ms ? 1 : 2;
+    unlock(); return state;
 }
 
 /* 从 executor 快照回填外部真实（无锁读取快照，锁内刷新闩锁）。 */
@@ -189,6 +263,14 @@ esp_err_t program_control_request(pc_request_t req, pc_action_t *out_action)
     if (out_action) *out_action = PC_ACTION_NONE;
     if (!s_inst.initialized) return ESP_ERR_INVALID_STATE;
     lock();
+    if (req == PC_REQ_STOP || req == PC_REQ_ABORT || req == PC_REQ_EMERGENCY) {
+        free(s_inst.voice_plan); s_inst.voice_plan = NULL;
+    }
+    if (req == PC_REQ_START_DEMO && s_inst.voice_plan) {
+        esp_err_t e = confirm_voice_locked();
+        if (e == ESP_OK && out_action) *out_action = PC_ACTION_START_DEMO;
+        unlock(); return e;
+    }
     pc_action_t action = pc_arbitrate(&s_inst.arbiter, req);
     esp_err_t result = ESP_OK;
     if (action != PC_ACTION_NONE) {
@@ -209,6 +291,7 @@ esp_err_t program_control_gesture(hal_gesture_t gesture,
      * esp_timer（毫秒）。 */
     uint32_t now_ms = (uint32_t)(esp_timer_get_time() / 1000);
     lock();
+    if (gesture == HAL_GESTURE_DOWN) { free(s_inst.voice_plan); s_inst.voice_plan = NULL; }
     if (gesture == HAL_GESTURE_DOWN &&
         (s_inst.arbiter.program_active || s_inst.arbiter.state == PC_STATE_STARTING ||
          s_inst.arbiter.state == PC_STATE_RUNNING) && now_ms - s_inst.last_up_start_ms >= 250U) {
@@ -221,6 +304,11 @@ esp_err_t program_control_gesture(hal_gesture_t gesture,
     pc_gesture_action_t ga = pc_gesture_step(
         &s_inst.gesture, gesture, now_ms, s_inst.gesture_cooldown_ms);
     if (ga == PC_GESTURE_ACTION_START) {
+        if (s_inst.voice_plan) {
+            esp_err_t e = confirm_voice_locked();
+            if (e == ESP_OK && out_action) *out_action = ga;
+            unlock(); return e;
+        }
         pc_action_t action = pc_arbitrate(&s_inst.arbiter, PC_REQ_START_DEMO);
         if (action == PC_ACTION_START_DEMO) {
             s_inst.last_up_start_ms = now_ms;
@@ -263,6 +351,12 @@ esp_err_t program_control_btn1(pc_btn1_event_t ev, pc_btn1_action_t *out_action)
             if (out_action) *out_action = ba;
             unlock();
             return result;
+        }
+        if (s_inst.voice_plan) {
+            result = confirm_voice_locked();
+            ESP_LOGI(TAG, "BTN1 voice plan confirmation: %s", esp_err_to_name(result));
+            if (out_action) *out_action = ba;
+            unlock(); return result;
         }
         pc_action_t action = pc_arbitrate(&s_inst.arbiter, PC_REQ_START_DEMO);
         if (action == PC_ACTION_START_DEMO) {

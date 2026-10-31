@@ -32,6 +32,7 @@ typedef struct {
 /* ---- Internal context ---- */
 
 struct real_adapter_ctx {
+    wash_recipe_t recipe;
     struct wash_executor *exec;
 
     /* Event queue — shared with bootstrap, services publish here */

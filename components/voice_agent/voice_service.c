@@ -7,6 +7,7 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "wash_planner.h"
+#include "program_control.h"
 
 static const char *TAG = "voice_svc";
 
@@ -410,13 +411,15 @@ static esp_err_t route_tool(const voice_tool_request_t *request,
             cfg->executor, &program, program_id);
     }
     case VOICE_TOOL_CANCEL:
-        return wash_executor_submit_urgent(cfg->executor, false);
+        return program_control_request(PC_REQ_STOP, NULL);
+    case VOICE_TOOL_CONFIRM_PLAN:
+        return program_control_confirm_voice_plan();
     case VOICE_TOOL_STATUS: {
         wash_exec_snapshot_t snapshot;
         return wash_executor_get_snapshot(cfg->executor, &snapshot);
     }
     case VOICE_TOOL_ACK_LOAD:
-        return wash_executor_confirm_load(cfg->executor);
+        return ESP_ERR_NOT_SUPPORTED; /* Loading is confirmed physically with BTN1. */
     case VOICE_TOOL_ACK_UNLOAD:
         return wash_executor_confirm_unload(cfg->executor);
     case VOICE_TOOL_SKIP_UV:
@@ -490,6 +493,7 @@ static esp_err_t complete_route_without_tool(
     const voice_service_config_t *cfg)
 {
     esp_err_t err = ESP_OK;
+    if (cfg->present_text) (void)cfg->present_text(route->reply_text, cfg->adapter_context);
     if (route->reply_text[0] != '\0' && cfg->speak_text) {
         err = cfg->speak_text(route->reply_text, cfg->adapter_context);
     } else if (cfg->play_prompt) {
@@ -536,6 +540,37 @@ esp_err_t voice_service_process_route_result(
 
     uint32_t program_id = s_rt.snapshot.next_program_id;
     voice_service_config_t cfg = s_rt.config;
+    /* A proposal is inert until locally authorized. Even low-confidence/PTT
+     * proposals may be reviewed physically; they never gain execution rights. */
+    if (route->has_tool && route->tool.tool == VOICE_TOOL_START_PROGRAM &&
+        decision != VOICE_ROUTE_DECISION_REJECT) {
+        xSemaphoreGive(s_mutex);
+        wash_program_t program;
+        planner_report_t report = wash_recipe_compile(&route->tool.recipe, program_id, &program);
+        bool pending = decision != VOICE_ROUTE_DECISION_EXECUTE_TOOL;
+        esp_err_t e = !route->tool.has_recipe || report.result != PLAN_RESULT_OK
+            ? ESP_ERR_INVALID_ARG : program_control_offer_voice_plan(&program, !pending);
+        char reply[513];
+        if (e == ESP_OK) {
+            (void)wash_recipe_summary(&route->tool.recipe, pending, reply, sizeof(reply));
+        } else {
+            strcpy(reply, "方案未被设备接受，请检查设备是否空闲、位置标定和安全状态。设备没有启动新方案。");
+        }
+        if (!take_lock()) return ESP_ERR_TIMEOUT;
+        tr = voice_core_process(&s_rt.core, e == ESP_OK ? VOICE_EVENT_TOOL_ACCEPTED : VOICE_EVENT_TOOL_REJECTED, (uint32_t)e);
+        if (e == ESP_OK) {
+            s_rt.snapshot.accepted_commands++;
+            s_rt.snapshot.next_program_id = next_voice_program_id(program_id);
+        } else s_rt.snapshot.rejected_commands++;
+        s_rt.snapshot.last_error = e;
+        refresh_snapshot_locked();
+        xSemaphoreGive(s_mutex);
+        if (cfg.present_text) (void)cfg.present_text(reply, cfg.adapter_context);
+        /* TTS is optional: it cannot turn an accepted plan into a model failure. */
+        if (cfg.speak_text) (void)cfg.speak_text(reply, cfg.adapter_context);
+        (void)voice_service_handle_event(VOICE_EVENT_PLAYBACK_DONE, 0);
+        return ESP_OK;
+    }
     if (decision != VOICE_ROUTE_DECISION_EXECUTE_TOOL) {
         tr = voice_core_process(
             &s_rt.core,
@@ -571,8 +606,14 @@ esp_err_t voice_service_process_route_result(
     s_rt.snapshot.last_error = route_err;
     refresh_snapshot_locked();
     xSemaphoreGive(s_mutex);
-    esp_err_t action_err = execute_transition_action(tr.action);
-    return route_err != ESP_OK ? route_err : action_err;
+    const char *reply = route_err != ESP_OK ? "设备未接受该指令，请检查设备状态或重新生成方案。" :
+        route->tool.tool == VOICE_TOOL_CONFIRM_PLAN ? "已确认方案，正在前往装衣位，放好后按按钮1确认。" :
+        route->tool.tool == VOICE_TOOL_CANCEL ? "已收到停止指令，正在关闭输出。" :
+        route->tool.tool == VOICE_TOOL_STATUS ? route->reply_text : "设备已接受指令。";
+    if (cfg.present_text) (void)cfg.present_text(reply, cfg.adapter_context);
+    if (cfg.speak_text) (void)cfg.speak_text(reply, cfg.adapter_context);
+    (void)voice_service_handle_event(VOICE_EVENT_PLAYBACK_DONE, 0);
+    return ESP_OK;
 }
 
 esp_err_t voice_service_toggle_backend(void)

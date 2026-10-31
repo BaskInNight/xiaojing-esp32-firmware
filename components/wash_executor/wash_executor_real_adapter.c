@@ -261,6 +261,14 @@ static uint8_t get_bl50_pwm(real_adapter_ctx_t *ra, bl50_action_t action)
 
 /* ---- dispatch_step ---- */
 
+static void real_bind_program(void *ctx, const wash_program_t *program)
+{
+    real_adapter_ctx_t *ra = ctx;
+    if (!adapter_state_lock(ra, portMAX_DELAY)) return;
+    ra->recipe = program->recipe;
+    adapter_state_unlock(ra);
+}
+
 static void competition_terminal(const void *token_buf, bool success, uint32_t error, void *ctx)
 {
     real_adapter_ctx_t *ra = ctx;
@@ -305,13 +313,15 @@ static adapter_dispatch_result_t real_dispatch_step(
         return map_esp_err(ESP_ERR_INVALID_STATE);
     }
     prepare_slot_locked(&ra->active, token, step->type, mrid);
+    wash_recipe_t recipe = ra->recipe;
     adapter_state_unlock(ra);
 
     esp_err_t err = ESP_ERR_NOT_SUPPORTED;
 
     switch (step->type) {
     case STEP_COMPETITION_DEMO:
-        err = competition_demo_submit(token, token_size, competition_terminal, ra);
+        err = competition_demo_submit_plan(token, token_size, recipe.count ? &recipe : NULL,
+            competition_terminal, ra);
         break;
     case STEP_MOVE_POSITION: {
         position_move_request_t req = {
@@ -603,6 +613,7 @@ esp_err_t real_adapter_init(wash_executor_adapter_t *adapter,
     adapter->dispatch_final_reset = real_dispatch_final_reset;
     adapter->cancel_step = real_cancel_step;
     adapter->stop_all = real_stop_all;
+    adapter->bind_program = real_bind_program;
 
     return ESP_OK;
 }

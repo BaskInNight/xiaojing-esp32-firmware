@@ -2,6 +2,7 @@
  * Executor owns one composite token; service completions keep their own IDs.
  * All waits yield, and every error/cancel path closes the owned outputs. */
 #include "competition_demo.h"
+#include "wash_planner.h"
 #include "wash_executor_core.h"
 #include "position_service.h"
 #include "bl50_service.h"
@@ -46,6 +47,7 @@ static bool position_done, motor_done, uv_done, heat_done;
 static int64_t started_ms;
 static bool lease;
 static uint32_t failure_code, failure_detail;
+static wash_recipe_t active_recipe;
 
 static int64_t now_ms(void) { return esp_timer_get_time() / 1000; }
 static void pause_tick(void) { vTaskDelay(pdMS_TO_TICKS(20) ? pdMS_TO_TICKS(20) : 1); }
@@ -263,12 +265,12 @@ static esp_err_t motor(bl50_action_t action, uint8_t pwm, uint32_t duration)
     return e;
 }
 
-static esp_err_t dry(void)
+static esp_err_t dry(uint32_t duration_ms)
 {
     esp_err_t e = safety_manager_demo_dry(owner_token.program_id, owner_token.generation, true);
     if (e != ESP_OK) return e;
     coupled_hot_air_request_t request = { .request_id = child_id(),
-        .duration_ms = 15000, .competition_demo = true };
+        .duration_ms = duration_ms, .competition_demo = true };
     heat_id = request.request_id;
     heat_done = false;
     e = coupled_hot_air_service_run_async(&request);
@@ -310,11 +312,56 @@ static esp_err_t dry(void)
     return ESP_ERR_TIMEOUT;
 }
 
+static esp_err_t execute_recipe(void)
+{
+    uint8_t index = 5;
+    esp_err_t e;
+    static const uint8_t pulsator_pwm[] = {20, 30, 40};
+    static const uint8_t drum_pwm[] = {15, 20, 30};
+    static const uint8_t spin_pwm[] = {40, 60, 80};
+    for (unsigned i = 0; i < active_recipe.count; ++i) {
+        const wash_recipe_action_t *a = &active_recipe.actions[i];
+        if (a->op == RECIPE_WATER) continue;
+        if (a->op == RECIPE_MOVE) {
+            stage(++index, WASH_PHASE_MOVE_POSITION, (drum_position_t)a->position);
+            e = move((drum_position_t)a->position);
+        } else if (a->op == RECIPE_UV) {
+            stage(++index, WASH_PHASE_UV, DRUM_POS_UNKNOWN);
+            e = settle(a->seconds * 1000U);
+        } else {
+            drum_position_t target = a->op == RECIPE_PULSATOR ? DRUM_POS_0 :
+                a->op == RECIPE_DRUM ? DRUM_POS_90 : a->op == RECIPE_SPIN ? DRUM_POS_180 : DRUM_POS_270;
+            wash_phase_t phase = a->op == RECIPE_PULSATOR ? WASH_PHASE_PULSATOR_WASH :
+                a->op == RECIPE_DRUM ? WASH_PHASE_DRUM_WASH : a->op == RECIPE_SPIN ? WASH_PHASE_SPIN : WASH_PHASE_DRY;
+            stage(++index, WASH_PHASE_MOVE_POSITION, target);
+            e = move(target); if (e != ESP_OK) return e;
+            stage(++index, phase, target);
+            if (a->op == RECIPE_DRY) e = dry(a->seconds * 1000U);
+            else e = motor(a->op == RECIPE_PULSATOR ? BL50_ACTION_PULSATOR :
+                a->op == RECIPE_DRUM ? BL50_ACTION_DRUM : BL50_ACTION_SPIN,
+                a->op == RECIPE_PULSATOR ? pulsator_pwm[a->level - 1] :
+                a->op == RECIPE_DRUM ? drum_pwm[a->level - 1] : spin_pwm[a->level - 1], a->seconds * 1000U);
+            if (e != ESP_OK) return e;
+            stage(++index, phase, target);
+            e = settle(3000);
+        }
+        if (e != ESP_OK) return e;
+    }
+    stage(++index, WASH_PHASE_MOVE_POSITION, DRUM_POS_45);
+    e = move(DRUM_POS_45); if (e != ESP_OK) return e;
+    stage(++index, WASH_PHASE_MOVE_POSITION, DRUM_POS_45);
+    e = COMPETITION_DEMO_SHAFT_HOME_REQUIRED ? motor(BL50_ACTION_HOME, 40, 0) : wait_motor_idle();
+    if (e != ESP_OK) return e;
+    stage(++index, WASH_PHASE_DONE, DRUM_POS_45);
+    return ESP_OK;
+}
+
 static esp_err_t execute(void)
 {
     esp_err_t e = safety_manager_demo_begin(owner_token.program_id, owner_token.generation);
     if (e != ESP_OK) return e;
     lease = true;
+    if (!active_recipe.count || active_recipe.allow_uv) {
     uv_request_t uv = { .request_id = child_id(), .duration_ms = 180000, .competition_demo = true };
     e = uv_service_run_async(&uv); if (e != ESP_OK) return e;
     uv_id = uv.request_id;
@@ -330,6 +377,7 @@ static esp_err_t execute(void)
     }
     /* Keep the ID even if startup failed, so cleanup cancels a late start. */
     if (!confirmed) return ESP_ERR_TIMEOUT;
+    }
 #define RUN(number, phase, target, call) do { stage(number, phase, target); e = (call); if (e != ESP_OK) return e; } while (0)
     RUN(1, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, move(DRUM_POS_45));
     ESP_LOGI(TAG, "shaft HOME sensor required=%u; bucket position checks remain enabled",
@@ -342,6 +390,7 @@ static esp_err_t execute(void)
     RUN(3, WASH_PHASE_MOVE_POSITION, DRUM_POS_0, move(DRUM_POS_0));
     RUN(4, WASH_PHASE_WATER_SOURCE_FILL, DRUM_POS_0, timed_water_dose(WATER_ACTUATOR_VALVE_SOURCE, false));
     RUN(5, WASH_PHASE_WATER_TRANSFER, DRUM_POS_0, timed_water_dose(WATER_ACTUATOR_VALVE_TRANSFER, true));
+    if (active_recipe.count) return execute_recipe();
     RUN(6, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, motor(BL50_ACTION_PULSATOR, 40, 20000));
     RUN(7, WASH_PHASE_PULSATOR_WASH, DRUM_POS_0, settle(3000));
     RUN(8, WASH_PHASE_MOVE_POSITION, DRUM_POS_90, move(DRUM_POS_90));
@@ -351,7 +400,7 @@ static esp_err_t execute(void)
     RUN(12, WASH_PHASE_SPIN, DRUM_POS_180, motor(BL50_ACTION_SPIN, 80, 12000));
     RUN(13, WASH_PHASE_SPIN, DRUM_POS_180, settle(3000));
     RUN(14, WASH_PHASE_MOVE_POSITION, DRUM_POS_270, move(DRUM_POS_270));
-    RUN(15, WASH_PHASE_DRY, DRUM_POS_270, dry());
+    RUN(15, WASH_PHASE_DRY, DRUM_POS_270, dry(15000));
     RUN(16, WASH_PHASE_DRY, DRUM_POS_270, settle(3000));
     RUN(17, WASH_PHASE_MOVE_POSITION, DRUM_POS_45, move(DRUM_POS_45));
     if (COMPETITION_DEMO_SHAFT_HOME_REQUIRED) {
@@ -445,10 +494,12 @@ static void worker(void *unused)
     vTaskDeleteWithCaps(NULL);
 }
 
-esp_err_t competition_demo_submit(const void *token, size_t bytes,
-                                  competition_demo_terminal_fn terminal, void *context)
+esp_err_t competition_demo_submit_plan(const void *token, size_t bytes,
+    const wash_recipe_t *recipe, competition_demo_terminal_fn terminal, void *context)
 {
     if (!token || bytes != sizeof(terminal_token_t) || !terminal) return ESP_ERR_INVALID_ARG;
+    uint32_t estimated = 176000;
+    if (recipe && !wash_recipe_validate(recipe, &estimated)) return ESP_ERR_INVALID_ARG;
     if (!lock) {
         lock = xSemaphoreCreateMutexStatic(&lock_storage);
         done = xSemaphoreCreateBinaryStatic(&done_storage);
@@ -467,8 +518,19 @@ esp_err_t competition_demo_submit(const void *token, size_t bytes,
     cancel_token.terminal_kind = TERMINAL_KIND_CANCEL_ACK;
     callback = terminal; callback_context = context;
     started_ms = now_ms();
+    memset(&active_recipe, 0, sizeof(active_recipe));
+    if (recipe) active_recipe = *recipe;
+    uint8_t stages = 19;
+    if (recipe) {
+        stages = 8;
+        for (unsigned i = 0; i < recipe->count; ++i) {
+            uint8_t op = recipe->actions[i].op;
+            stages += op == RECIPE_WATER ? 0 : op == RECIPE_MOVE || op == RECIPE_UV ? 1 : 3;
+        }
+    }
     snapshot = (competition_demo_snapshot_t){ .active = true, .program_id = owner_token.program_id,
-        .generation = owner_token.generation, .total_stages = 19, .target = DRUM_POS_UNKNOWN };
+        .generation = owner_token.generation, .total_stages = stages, .estimated_total_ms = estimated,
+        .target = DRUM_POS_UNKNOWN };
     xQueueReset(events);
     if (!task && xTaskCreateWithCaps(worker, "competition", 6144, NULL, 3, &task,
                                      MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) != pdPASS) {
@@ -479,6 +541,12 @@ esp_err_t competition_demo_submit(const void *token, size_t bytes,
     xTaskNotifyGive(task);
     xSemaphoreGive(lock);
     return ESP_OK;
+}
+
+esp_err_t competition_demo_submit(const void *token, size_t bytes,
+    competition_demo_terminal_fn terminal, void *context)
+{
+    return competition_demo_submit_plan(token, bytes, NULL, terminal, context);
 }
 
 esp_err_t competition_demo_cancel(const void *token, size_t bytes)

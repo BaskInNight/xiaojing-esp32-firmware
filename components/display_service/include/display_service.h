@@ -179,6 +179,7 @@ void display_service_set_boot_stage(uint8_t percent);
 esp_err_t display_service_start(void);
 esp_err_t display_service_stop(void);
 esp_err_t display_service_set_voice_state(display_voice_state_t state);
+/* NULL transcript preserves the current user's recognized utterance. */
 esp_err_t display_service_set_voice_text(const char *transcript,
                                          const char *reply);
 esp_err_t display_service_set_error(const char *message);

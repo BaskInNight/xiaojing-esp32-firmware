@@ -13,6 +13,7 @@ idf_component_register(
     REQUIRES
         machine_types
         machine_config
+        wash_planner
         machine_status_store
         safety_contract
         hal_contract

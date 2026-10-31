@@ -142,6 +142,7 @@ esp_err_t machine_config_set_bl50_direction_reverse(bool reverse);
  * - ESP_OK：全部字段已写入；
  * - ESP_ERR_INVALID_ARG：任一字段超范围。 */
 esp_err_t machine_config_set_benchtst(const benchtst_params_t *params);
+esp_err_t machine_config_set_position_pwm(uint8_t pwm_percent);
 
 /* 仅恢复板测诊断参数默认值，不得修改方向标定、生产参数或其他配置。 */
 esp_err_t machine_config_reset_benchtst_defaults(void);

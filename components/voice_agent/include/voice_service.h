@@ -67,6 +67,7 @@ typedef struct {
     voice_adapter_action_fn cancel_io;
     voice_prompt_play_fn play_prompt;
     voice_speak_text_fn speak_text;
+    voice_speak_text_fn present_text; /* Local validated reply; display only. */
     voice_set_route_context_fn set_route_context;
     uint16_t min_control_confidence_milli;
     void *adapter_context;

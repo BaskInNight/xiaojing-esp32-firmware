@@ -70,6 +70,12 @@ planner_report_t wash_planner_compile(
     uint32_t program_id,
     wash_program_t *out_program);
 
+/* Current hardware profile: bounded dry demo, fixed loading/water/safety prelude. */
+planner_report_t wash_recipe_compile(const wash_recipe_t *recipe, uint32_t program_id,
+    wash_program_t *out_program);
+bool wash_recipe_validate(const wash_recipe_t *recipe, uint32_t *estimated_ms);
+bool wash_recipe_summary(const wash_recipe_t *recipe, bool pending, char *text, size_t capacity);
+
 #ifdef __cplusplus
 }
 #endif

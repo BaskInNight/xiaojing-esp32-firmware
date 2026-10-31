@@ -12,6 +12,7 @@
 #include "position_service.h"
 #include "position_service_sync.h"
 #include "safety_manager.h"
+#include "machine_config.h"
 #include <stdatomic.h>
 #include <string.h>
 #include "esp_log.h"
@@ -541,7 +542,10 @@ static void handle_move(const pos_cmd_t *cmd)
     if (policy > POSITION_DIR_MAX_VALID_FOR_CONFIG) return;
 
     uint8_t pwm = cmd->move.pwm_percent;
-    if (pwm == 0) pwm = s_ctx.cfg.move_pwm_percent;
+    if (pwm == 0) {
+        const machine_config_t *config = machine_config_get();
+        pwm = config ? config->position.move_pwm_percent : s_ctx.cfg.move_pwm_percent;
+    }
     if (pwm < 5 || pwm > 100) return;
 
     uint32_t timeout = cmd->move.timeout_ms;

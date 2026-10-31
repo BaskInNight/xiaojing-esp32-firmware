@@ -47,6 +47,8 @@ typedef enum {
     APP_CMD_LEGACY_START,
     APP_CMD_LEGACY_STOP,
     APP_CMD_FORBIDDEN_HARDWARE,
+    APP_CMD_DIAGNOSTIC_STOP,
+    APP_CMD_PLAY_PROMPT,
 } app_command_t;
 
 typedef enum {

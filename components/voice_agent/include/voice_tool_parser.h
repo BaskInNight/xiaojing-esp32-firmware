@@ -19,6 +19,7 @@ typedef enum {
     VOICE_TOOL_ACK_UNLOAD,
     VOICE_TOOL_SKIP_UV,
     VOICE_TOOL_ACK_FAULT,
+    VOICE_TOOL_CONFIRM_PLAN,
 } voice_tool_t;
 
 typedef enum {
@@ -39,6 +40,8 @@ typedef struct {
     wash_program_kind_t program_kind;
     bool allow_uv;
     bool allow_dry;
+    bool has_recipe;
+    wash_recipe_t recipe;
 } voice_tool_request_t;
 
 voice_parse_result_t voice_tool_parse_json(

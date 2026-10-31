@@ -136,6 +136,8 @@ typedef struct {
     app_protocol_position_swing_fn position_swing_test;
     app_protocol_position_swing_cancel_fn position_swing_cancel;
     app_protocol_position_swing_snapshot_fn position_swing_snapshot;
+    esp_err_t (*diagnostic_stop)(void);
+    esp_err_t (*play_prompt)(const char *name);
     void *provision_context;
     void *tx_context;
 } app_protocol_config_t;

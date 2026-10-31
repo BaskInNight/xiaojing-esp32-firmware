@@ -51,7 +51,7 @@ bool voice_policy_tool_allowed(
 {
     if (policy < VOICE_ROUTE_POLICY_AUTO ||
         policy >= VOICE_ROUTE_POLICY_COUNT ||
-        tool <= VOICE_TOOL_NONE || tool > VOICE_TOOL_ACK_FAULT) {
+        tool <= VOICE_TOOL_NONE || tool > VOICE_TOOL_CONFIRM_PLAN) {
         return false;
     }
     if (policy == VOICE_ROUTE_POLICY_CHAT_PRIORITY)

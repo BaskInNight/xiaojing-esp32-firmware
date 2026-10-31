@@ -47,6 +47,7 @@ set(PRODUCTION_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/../components/button_service/button_debounce.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../components/gesture_service/gesture_page_map.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../components/wash_planner/wash_planner.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/../components/wash_planner/wash_recipe.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../components/wash_executor/wash_executor_core.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../components/wash_executor/wash_executor_fake_adapter.c
     ${CMAKE_CURRENT_SOURCE_DIR}/../components/uv_service/uv_fsm.c
@@ -80,6 +81,11 @@ if(NOT MSVC)
 endif()
 
 enable_testing()
+add_executable(test_voice_recipe test_voice_recipe.c
+    ../components/voice_agent/voice_route.c ../components/voice_agent/voice_profile.c
+    ../components/wash_planner/wash_recipe.c ../components/wash_executor/wash_executor_core.c)
+target_include_directories(test_voice_recipe PRIVATE ${SHIMS_DIR} ${COMPONENT_INCLUDES})
+add_test(NAME voice_recipe_tests COMMAND test_voice_recipe)
 add_test(NAME xiaojing_host_tests COMMAND test_runner)
 
 add_executable(test_voice_vad

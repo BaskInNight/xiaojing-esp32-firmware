@@ -87,6 +87,10 @@ pc_state_t program_control_get_state(void);
 
 /* 当前是否有程序在运行/保留（供 motor_bench 等反向互斥查询）。 */
 bool program_control_program_active(void);
+/* A proposed voice plan never moves hardware until explicitly accepted. */
+esp_err_t program_control_offer_voice_plan(const wash_program_t *program, bool start_now);
+esp_err_t program_control_confirm_voice_plan(void);
+uint8_t program_control_voice_plan_state(void); /* 0=none, 1=ready, 2=expired */
 
 /* 最近一次成功受理 START 分配的 program_id（0=从未受理）。 */
 uint32_t program_control_last_program_id(void);
