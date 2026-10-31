@@ -1554,6 +1554,7 @@ static void task_complete_worker(void *arg)
             if (notice_err != ESP_OK)
                 ESP_LOGW(TAG, "local notice id=%d skipped/busy: %s",
                          (int)ev.prompt, esp_err_to_name(notice_err));
+            ESP_LOGI(TAG, "notice worker stack headroom=%u", (unsigned)uxTaskGetStackHighWaterMark(NULL));
             continue;
         }
 
@@ -3377,9 +3378,9 @@ esp_err_t app_bootstrap_init(app_bootstrap_result_t *result) {
 
     log_heap("bootstrap_complete");
     if (s_voice_service_active) {
-        esp_err_t boot_prompt_err = voice_service_play_idle_prompt(VOICE_PROMPT_BOOT_READY);
-        if (boot_prompt_err != ESP_OK)
-            ESP_LOGW(TAG, "boot prompt failed: %s", esp_err_to_name(boot_prompt_err));
+        task_complete_event_t boot_notice = {.prompt = VOICE_PROMPT_BOOT_READY};
+        if (!s_task_complete_queue || xQueueSend(s_task_complete_queue, &boot_notice, 0) != pdTRUE)
+            ESP_LOGW(TAG, "boot prompt queue unavailable");
     }
 #if XIAOJING_PHASE9_AUTOTEST
     {
