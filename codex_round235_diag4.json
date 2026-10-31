@@ -1,0 +1,13 @@
+{
+  "begin_count": 1,
+  "complete_count": 1,
+  "pass": 671,
+  "fail": 1,
+  "failures": [
+    "./main/wash_executor_round2_integration_tests.c:1045:R2: UV skip waits for SKIPPED terminal:FAIL: Expected 0 Was 3. Function [r2][uv]I (132141) bl50_svc: task exiting (stop_err=0x0)"
+  ],
+  "ignore": 15,
+  "total": 687,
+  "valid": true,
+  "elapsed_seconds": 140.6
+}

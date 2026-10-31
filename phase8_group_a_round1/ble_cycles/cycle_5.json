@@ -1,0 +1,102 @@
+{
+  "device_name": "JJTP-XIAOJING",
+  "address": "DC:B4:D9:13:68:86",
+  "rssi": -34,
+  "advertised_service": "0000fff0-0000-1000-8000-00805f9b34fb",
+  "rx_properties": [
+    "write",
+    "write-without-response"
+  ],
+  "tx_properties": [
+    "notify",
+    "read"
+  ],
+  "connected": true,
+  "hello_frames": [
+    {
+      "v": 1,
+      "type": "ack",
+      "seq": 1,
+      "ok": true,
+      "code": "OK",
+      "detail": 0
+    },
+    {
+      "v": 1,
+      "type": "capabilities",
+      "max_frame": 2048,
+      "legacy": true,
+      "commands": [
+        "hello",
+        "get_status",
+        "start_formal",
+        "start_demo",
+        "submit_plan",
+        "ack_load",
+        "ack_unload",
+        "skip_uv",
+        "abort_reset",
+        "ack_fault"
+      ]
+    },
+    {
+      "v": 1,
+      "type": "status",
+      "revision": 127,
+      "state": 1,
+      "phase": 0,
+      "program_id": 0,
+      "current_step": 0,
+      "total_steps": 0,
+      "progress": 0,
+      "position": -1,
+      "target_position": -1,
+      "water_full": false,
+      "heater_on": false,
+      "uv_on": false,
+      "ble_connected": true,
+      "fault_code": 0,
+      "fault_detail": 0
+    }
+  ],
+  "duplicate_replay": true,
+  "sequence_conflict": {
+    "v": 1,
+    "type": "nack",
+    "seq": 1,
+    "ok": false,
+    "code": "SEQ_CONFLICT",
+    "detail": 0
+  },
+  "get_status_frames": [
+    {
+      "v": 1,
+      "type": "ack",
+      "seq": 2,
+      "ok": true,
+      "code": "OK",
+      "detail": 0
+    },
+    {
+      "v": 1,
+      "type": "status",
+      "revision": 127,
+      "state": 1,
+      "phase": 0,
+      "program_id": 0,
+      "current_step": 0,
+      "total_steps": 0,
+      "progress": 0,
+      "position": -1,
+      "target_position": -1,
+      "water_full": false,
+      "heater_on": false,
+      "uv_on": false,
+      "ble_connected": true,
+      "fault_code": 0,
+      "fault_detail": 0
+    }
+  ],
+  "readback_type": "status",
+  "disconnected_cleanly": true
+}

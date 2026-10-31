@@ -1,0 +1,30 @@
+﻿Executing action: all (aliases: build)
+Running cmake in directory D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\build
+Executing "cmake -G Ninja -DPYTHON_DEPS_CHECKED=1 -DPYTHON=D:\Program\esp\.espressif\python_env\idf5.5_py3.10_env\Scripts\python.exe -DESP_PLATFORM=1 -DCCACHE_ENABLE=0 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit"...
+-- IDF_TARGET is not set, guessed 'esp32s3' from sdkconfig 'D:/UserData/ESP32Project/IDF/ESP32-IDF-Test/test_apps/unit/sdkconfig'
+-- Found Git: D:/Program/Git/Git/cmd/git.exe (found version "2.53.0.windows.2")
+-- Minimal build - OFF
+-- The C compiler identification is GNU 14.2.0
+-- The CXX compiler identification is GNU 14.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: C:/Espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Espressif/tools/xtensa-esp-elf/esp-14.2.0_20260121/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building ESP-IDF components for target esp32s3
+-- ESP-TEE is currently supported only on the esp32c6;esp32h2;esp32c5 SoCs
+python : cmake failed with exit code 4294967295, output of the command is in the D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\build\log\i
+df_py_stderr_output_35504 and D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\build\log\idf_py_stdout_output_35504
+At line:6 char:1
++ python "$env:IDF_PATH\tools\idf.py" build *> "D:\UserData\ESP32Projec ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (cmake failed wi...ut_output_35504:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

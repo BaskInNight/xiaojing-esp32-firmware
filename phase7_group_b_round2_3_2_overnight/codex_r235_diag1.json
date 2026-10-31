@@ -1,0 +1,13 @@
+{
+  "begin_count": 2,
+  "complete_count": 0,
+  "pass": 647,
+  "fail": 1,
+  "failures": [
+    "./main/wash_executor_round2_integration_tests.c:452:R2: real adapter MOVE_POSITION dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (116110) bl50_svc: task exiting (stop_err=0x0)"
+  ],
+  "ignore": 15,
+  "total": 663,
+  "valid": false,
+  "elapsed_seconds": 119.0
+}

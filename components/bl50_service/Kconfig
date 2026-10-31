@@ -1,0 +1,10 @@
+menu "BL50 Service Configuration"
+
+    config BL50_SERVICE_TEST_HOOKS
+        bool "Enable BL50 service test hooks"
+        default n
+        help
+            Enable test hooks for BL50 service unit testing.
+            Must be disabled in production builds.
+
+endmenu

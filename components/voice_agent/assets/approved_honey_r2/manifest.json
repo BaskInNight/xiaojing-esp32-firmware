@@ -1,0 +1,14 @@
+{
+  "conversion": "Same 24-tap Q15 FIR as audio_pcm_resample.c; no speed/pitch change",
+  "assets": [
+    {
+      "id": "chat_thinking",
+      "source": "honey_v8/chat_thinking_wait.wav",
+      "source_sha256": "afaa41b04139c4131d82dd4d4eec9601ae083d0e0521b3211603c7109371214f",
+      "file": "chat_thinking.wav",
+      "sample_rate": 16000,
+      "duration_ms": 2400,
+      "sha256": "434145d4d447877d372f4998fc88c77da2d3ebcc827b9f86f02da1e206f8d0b9"
+    }
+  ]
+}

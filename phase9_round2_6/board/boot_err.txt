@@ -1,0 +1,1 @@
+D:\Program\MiniConda3\python.exe: No module named esp_idf_monitor

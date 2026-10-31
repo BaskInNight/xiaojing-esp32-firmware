@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-08-04T00:15:00",
+  "round": "2.6.1",
+  "false_wake_test": {
+    "duration_seconds": 602,
+    "classifier_calls": 893,
+    "false_wake_count": 1,
+    "max_false_xj": 0.746,
+    "threshold": 0.60,
+    "old_project_threshold": 0.80,
+    "reset_count": 0,
+    "wdt_count": 0,
+    "panic_count": 0
+  },
+  "wifi_status": {
+    "got_ip": true,
+    "ip": "10.196.41.88",
+    "disconnects_after_connect": 0,
+    "initial_disconnects": 2
+  },
+  "recorder_test": {
+    "session_2_pcm_bytes": 321536,
+    "session_2_duration_ms": 10036,
+    "session_2_end_reason": "VAD_SILENCE",
+    "session_2_peak": 2679,
+    "session_2_rms": 1163,
+    "buffer_capacity": 328704
+  },
+  "audio_layering": {
+    "audio_driver_gain": "1x (neutral >>14)",
+    "edge_gain": "8x (int64 safe multiply)",
+    "dialog_gain": "1x (neutral)",
+    "signed_shift_ub": "PASS (no left shift, int64 multiply)"
+  },
+  "diagnostic_task": {
+    "lifecycle": "semaphore-based TASK_DONE",
+    "join_safe": "PASS (lifecycle lock, atomic stop_requested)",
+    "timeout_preserves_resources": true,
+    "retry_safe": true
+  },
+  "gate_status": {
+    "PCM_LAYERING_SAFE": "PASS",
+    "SIGNED_SHIFT_UB": "PASS",
+    "EDGE_GAIN_ONLY": "PASS",
+    "DIALOG_GAIN_1X": "PASS",
+    "DIAG_TASK_JOIN_SAFE": "PASS",
+    "FALSE_WAKE_DURATION": 602,
+    "WIFI_GOT_IP": "PASS",
+    "RECORDER_10S_RUNTIME": "PASS (10036ms, 321536 bytes)",
+    "RESET_WDT": "PASS (0 resets, 0 WDT)"
+  },
+  "pending_gates": [
+    "RECORDER_8S_RUNTIME",
+    "AUTO_CYCLES>=20",
+    "SOAK_VALID_CONTINUOUS_DURATION>=4h"
+  ],
+  "key_finding": "FALSE_WAKE at 7s with score=0.746 (threshold=0.60). Old project uses threshold=0.80 which would reject this. Recommend raising threshold to 0.80."
+}

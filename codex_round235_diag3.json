@@ -1,0 +1,31 @@
+{
+  "begin_count": 1,
+  "complete_count": 1,
+  "pass": 653,
+  "fail": 19,
+  "failures": [
+    "./main/wash_executor_round2_integration_tests.c:536:R2: real adapter MOVE_POSITION dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (116311) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:555:R2: real adapter HOME dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (123561) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:579:R2: real adapter PULSATOR dispatch default PWM 40:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (129231) bl50_svc: task exiting (stop_err=0",
+    "./main/wash_executor_round2_integration_tests.c:603:R2: real adapter DRUM dispatch default PWM 30:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (134901) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:627:R2: real adapter SPIN dispatch default PWM 80:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (140571) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:651:R2: real adapter WATER dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (146241) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:667:R2: real adapter DETERGENT dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (151881) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:683:R2: real adapter DRAIN dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (157521) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:699:R2: real adapter DRY dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEE (164891) wash_exec: FAULT: code=600 result=3",
+    "./main/wash_executor_round2_integration_tests.c:715:R2: real adapter UV dispatch:FAIL:Function [r2][adapter].  Expected TRUE Was FALSEI (171801) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:744:R2: wrong service terminal rejected:FAIL:Function [r2][terminal].  Expected TRUE Was FALSEI (177741) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:766:R2: stale request_id rejected:FAIL:Function [r2][terminal].  Expected TRUE Was FALSEI (184991) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:783:R2: duplicate terminal rejected:FAIL:Function [r2][terminal].  Expected TRUE Was FALSEI (191941) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:818:R2: cancel ACK matches correctly:FAIL:Function [r2][terminal].  Expected TRUE Was FALSEI (202191) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:844:R2: QueueSet program wake:FAIL:Function [r2][queueset].  Expected TRUE Was FALSEI (209851) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:870:R2: QueueSet urgent wake:FAIL:Function [r2][queueset].  Expected TRUE Was FALSEI (220701) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:887:R2: QueueSet service wake:FAIL:Function [r2][queueset].  Expected TRUE Was FALSEI (228341) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:979:R2: quiesce drains pending terminals:FAIL:Function [r2][bootstrap].  Expected TRUE Was FALSEI (240151) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:1043:R2: UV skip waits for SKIPPED terminal:FAIL:Function [r2][uv].  Expected TRUE Was FALSEI (254921) bl50_svc: task exiting (stop_err=0x0)"
+  ],
+  "ignore": 15,
+  "total": 687,
+  "valid": true,
+  "elapsed_seconds": 263.4
+}

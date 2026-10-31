@@ -1,0 +1,18 @@
+idf_component_register(
+    SRCS
+        "bl50_fsm.c"
+        "bl50_service.c"
+    INCLUDE_DIRS
+        "include"
+    PRIV_INCLUDE_DIRS
+        "private_include"
+    REQUIRES
+        machine_types
+        safety_contract
+        hal_contract
+        machine_config
+    PRIV_REQUIRES
+        safety_manager
+        board_config
+        freertos
+)

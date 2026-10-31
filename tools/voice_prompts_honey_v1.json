@@ -1,0 +1,16 @@
+{
+  "profile": "xiaojing-honey-v1",
+  "style": "请用年轻成年女性的蜜糖音色朗读：甜润、柔和、清透，温暖亲近，音色明亮自然，带轻盈气息但吐字清楚。用正常日常聊天语速，不要慢放感，不要刻意压低音调或拖长尾音。不要播音腔、客服腔、机器人腔、童声或夸张撒娇，只朗读正文，不添加任何字词。",
+  "prompts": [
+    {"id": "boot_ready", "text": "你好呀，小净准备好啦。", "description": "本地初始化完成，只播一次"},
+    {"id": "wake_ready", "text": "小净在听。", "description": "语音唤醒成功，播放结束后开始收音"},
+    {"id": "ptt_ready", "text": "我在，你说。", "description": "按键进入收音"},
+    {"id": "not_heard", "text": "没听清，再说一次吧。", "description": "录音为空或无法识别"},
+    {"id": "chat_thinking", "text": "让我想一下。", "description": "请求等待较久，只播一次"},
+    {"id": "network_unavailable", "text": "网络暂时没连上，请检查无线网络。", "description": "对话需要网络但连接不可用"},
+    {"id": "wash_started", "text": "开始洗涤啦，交给小净吧。", "description": "洗涤实际开始"},
+    {"id": "wash_complete", "text": "洗好啦，记得取出衣物哦。", "description": "程序确认完成"},
+    {"id": "device_fault", "text": "设备出现异常，请停止使用，查看屏幕提示。", "description": "进入故障状态"},
+    {"id": "error", "text": "这次没处理好，请再试一次。", "description": "主模型请求或解析失败"}
+  ]
+}

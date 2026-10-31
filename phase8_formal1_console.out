@@ -1,0 +1,31 @@
+TESTS_STARTED (attempt 1)
+============================================================
+BOARD TEST RESULTS (143s)
+============================================================
+PASS=700 FAIL=1 IGNORE=15 TOTAL=716
+EXPECTED_TOTAL=716 TOTAL_MATCH=True
+TOTAL_EQ_COMPONENTS=True
+TEST_BEGIN: True
+UNITY_BEGIN: True
+ALL_TESTS_COMPLETE: True
+APP_MAIN_COUNT=1
+BEGIN_COUNT=1
+COMPLETE_COUNT=1
+EXPECTED_STOP_TIMEOUT_COUNT=3
+RECOVERED_STOP_TIMEOUT_COUNT=3
+UNRECOVERED_STOP_TIMEOUT_COUNT=0
+EXPECTED_DESTROY_REJECT_COUNT=1
+UNRECOVERED_DESTROY_RUNNING_COUNT=0
+AUTO_RESET: PASS
+RESET_MODE: RTS_AUTO
+AUTO_RESET_ATTEMPTS: 1
+RUNNER_INDUCED_RESETS: 0
+SPONTANEOUS_EXTRA_RESET: NONE
+
+FAILED (1):
+  ./main/phase8_protocol_tests.c:576:BLE-P8-25 lifecycle heap stable and worker stacks measured:FAIL: Expected 8192 to be less than or equal to 512. Function [ble][phase8][runtime]
+
+EXIT_CODE: 1
+Log: D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\phase8_r2_formal_run1.log
+ATTEMPT_LOGS:
+  attempt1: D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\phase8_r2_formal_run1_attempt1.log

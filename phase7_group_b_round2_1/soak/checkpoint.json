@@ -1,0 +1,62 @@
+{
+  "rounds": 9,
+  "valid": 9,
+  "fail": 0,
+  "duration_s": 1913,
+  "results": [
+    {
+      "round": 1,
+      "passed": true,
+      "fail": 0,
+      "complete": true
+    },
+    {
+      "round": 2,
+      "passed": true,
+      "fail": 0,
+      "complete": false
+    },
+    {
+      "round": 3,
+      "passed": true,
+      "fail": 0,
+      "complete": true
+    },
+    {
+      "round": 4,
+      "passed": true,
+      "fail": 0,
+      "complete": true
+    },
+    {
+      "round": 5,
+      "passed": true,
+      "fail": 0,
+      "complete": true
+    },
+    {
+      "round": 6,
+      "passed": true,
+      "fail": 0,
+      "complete": false
+    },
+    {
+      "round": 7,
+      "passed": true,
+      "fail": 0,
+      "complete": true
+    },
+    {
+      "round": 8,
+      "passed": true,
+      "fail": 0,
+      "complete": true
+    },
+    {
+      "round": 9,
+      "passed": true,
+      "fail": 0,
+      "complete": true
+    }
+  ]
+}

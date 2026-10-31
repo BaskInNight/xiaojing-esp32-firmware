@@ -1,0 +1,28 @@
+{
+  "begin_count": 1,
+  "complete_count": 1,
+  "pass": 656,
+  "fail": 16,
+  "failures": [
+    "./main/wash_executor_round2_integration_tests.c:281:R2: real adapter DETERGENT dispatch:FAIL:Function [r2][adapter].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119270) water_svc:",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: real adapter DRAIN dispatch:FAIL:Function [r2][adapter].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119320) water_svc: cle",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: real adapter DRY dispatch:FAIL:Function [r2][adapter].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119370) water_svc: clean",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: real adapter UV dispatch:FAIL:Function [r2][adapter].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119430) water_svc: cleanu",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: wrong service terminal rejected:FAIL:Function [r2][terminal].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119480) water_svc",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: stale request_id rejected:FAIL:Function [r2][terminal].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119540) water_svc: clea",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: duplicate terminal rejected:FAIL:Function [r2][terminal].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119590) water_svc: cl",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: cancel ACK matches correctly:FAIL:Function [r2][terminal].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119650) water_svc: c",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: QueueSet program wake:FAIL:Function [r2][queueset].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119700) water_svc: cleanup:",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: QueueSet urgent wake:FAIL:Function [r2][queueset].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119750) water_svc: cleanup: ",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: QueueSet service wake:FAIL:Function [r2][queueset].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (119810) water_svc: cleanup:",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: quiesce drains pending terminals:FAIL:Function [r2][bootstrap].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (124300) water_s",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: BTN3 urgent abort via fake HAL:FAIL:Function [r2][button].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (124350) water_svc: c",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: UV skip waits for SKIPPED terminal:FAIL:Function [r2][uv].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (124410) water_svc: c",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: dispatch failure enters FAULT:FAIL:Function [r2][fault].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (124460) water_svc: cle",
+    "./main/wash_executor_round2_integration_tests.c:281:R2: position terminal loss timeout FAULT:FAIL:Function [r2][timeout].  Leaked service cleanup failed \\xE2\\x80\\x94 isolation poisonedW (124520) water"
+  ],
+  "ignore": 15,
+  "total": 687,
+  "valid": true,
+  "elapsed_seconds": 129.3
+}

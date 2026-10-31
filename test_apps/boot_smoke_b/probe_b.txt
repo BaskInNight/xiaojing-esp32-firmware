@@ -1,0 +1,73 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x28 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1668
+load:0x403c8700,len:0xe78
+load:0x403cb700,len:0x3158
+entry 0x403c8940
+I (24) boot: ESP-IDF GIT-NOTFOUND 2nd stage bootloader
+I (25) boot: compile time Jul 24 2026 18:33:19
+I (25) boot: Multicore bootloader
+I (26) boot: chip revision: v0.2
+I (28) boot: efuse block revision: v1.4
+I (32) qio_mode: Enabling default flash chip QIO
+I (36) boot.esp32s3: Boot SPI Speed : 80MHz
+I (40) boot.esp32s3: SPI Mode       : QIO
+I (44) boot.esp32s3: SPI Flash Size : 16MB
+I (48) boot: Enabling RNG early entropy source...
+I (52) boot: Partition Table:
+I (55) boot: ## Label            Usage          Type ST Offset   Length
+I (61) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (68) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (74) boot:  2 factory          factory app      00 00 00010000 00100000
+I (81) boot: End of partition table
+I (84) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a278h�ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x28 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1668
+load:0x403c8700,len:0xe78
+load:0x403cb700,len:0x3158
+entry 0x403c8940
+I (24) boot: ESP-IDF GIT-NOTFOUND 2nd stage bootloader
+I (25) boot: compile time Jul 24 2026 18:33:19
+I (25) boot: Multicore bootloader
+I (26) boot: chip revision: v0.2
+I (28) boot: efuse block revision: v1.4
+I (32) qio_mode: Enabling default flash chip QIO
+I (36) boot.esp32s3: Boot SPI Speed : 80MHz
+I (40) boot.esp32s3: SPI Mode       : QIO
+I (44) boot.esp32s3: SPI Flash Size : 16MB
+I (48) boot: Enabling RNG early entropy source...
+I (52) boot: Partition Table:
+I (55) boot: ## Label            Usage          Type ST Offset   Length
+I (61) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (68) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (74) boot:  2 factory          factory app      00 00 00010000 00100000
+I (81) boot: End of partition table
+I (84) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a278h ( 41592) map
+I (98) esp_image: segment 1: paddr=0001a2a0 vaddr=3fc93600 size=0337ch ( 13180) load
+I (101) esp_image: segment 2: paddr=0001d624 vaddr=40374000 size=029f4h ( 10740) load
+I (108) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=13e70h ( 81520) map
+I (126) esp_image: segment 4: paddr=00033e98 vaddr=403769f4 size=0cb7ch ( 52092) load
+I (136) esp_image: segment 5: paddr=00040a1c vaddr=50000000 size=00020h (    32) load
+I (142) boot: Loaded app from partition at offset 0x10000
+I (143) boot: Disabling RNG early entropy source...
+I (154) octal_psram: vendor id    : 0x0d (AP)
+I (154) octal_psram: dev id       : 0x02 (generation 3)
+I (154) octal_psram: density      : 0x03 (64 Mbit)
+I (156) octal_psram: good-die     : 0x01 (Pass)
+I (160) octal_psram: Latency      : 0x01 (Fixed)
+I (165) octal_psram: VCC          : 0x01 (3V)
+I (169) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (174) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (179) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (183) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (188) octal_psram: DriveStrength: 0x00 (1/1)
+I (192) MSPI Timing: Enter psram timing tuning
+I (197) esp_psram: Found 8MB PSRAM device
+I (200) esp_psram: Speed: 80MHz
+I (203) cpu_start: Multicore app

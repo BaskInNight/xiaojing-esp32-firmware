@@ -1,0 +1,1196 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1668
+load:0x403c8700,len:0xec0
+load:0x403cb700,len:0x317c
+entry 0x403c894c
+I (24) boot: ESP-IDF v5.5.4 2nd stage bootloader
+I (25) boot: compile time Aug  3 2026 11:51:19
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (28) boot: efuse block revision: v1.4
+I (31) qio_mode: Enabling default flash chip QIO
+I (36) boot.esp32s3: Boot SPI Speed : 80MHz
+I (40) boot.esp32s3: SPI Mode       : QIO
+I (43) boot.esp32s3: SPI Flash Size : 16MB
+I (47) boot: Enabling RNG early entropy source...
+I (52) boot: Partition Table:
+I (54) boot: ## Label            Usage          Type ST Offset   Length
+I (61) boot:  0 nvs              WiFi data        01 02 00009000 00008000
+I (67) boot:  1 otadata          OTA data         01 00 00011000 00002000
+I (74) boot:  2 ota_0            OTA app          00 10 00020000 00400000
+I (80) boot:  3 ota_1            OTA app          00 11 00420000 00400000
+I (87) boot:  4 coredump         Unknown data     01 03 00820000 00100000
+I (93) boot:  5 storage          Unknown data     01 81 00920000 006e0000
+I (100) boot: End of partition table
+I (103) esp_image: segment 0: paddr=00020020 vaddr=3c160020 size=26fccch (2555084) map
+I (490) esp_image: segment 1: paddr=0028fcf4 vaddr=3fca4500 size=00324h (   804) load
+I (490) esp_image: segment 2: paddr=00290020 vaddr=42000020 size=154af0h (1395440) map
+I (701) esp_image: segment 3: paddr=003e4b18 vaddr=3fca4824 size=086bch ( 34492) load
+I (707) esp_image: segment 4: paddr=003ed1dc vaddr=40374000 size=20420h (132128) load
+I (732) esp_image: segment 5: paddr=0040d604 vaddr=50000000 size=00020h (    32) load
+I (745) boot: Loaded app from partition at offset 0x20000
+I (746) boot: Disabling RNG early entropy source...
+I (756) octal_psram: vendor id    : 0x0d (AP)
+I (756) octal_psram: dev id       : 0x02 (generation 3)
+I (756) octal_psram: density      : 0x03 (64 Mbit)
+I (758) octal_psram: good-die     : 0x01 (Pass)
+I (762) octal_psram: Latency      : 0x01 (Fixed)
+I (767) octal_psram: VCC          : 0x01 (3V)
+I (771) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (776) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (781) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (785) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (790) octal_psram: DriveStrength: 0x00 (1/1)
+I (795) MSPI Timing: Enter psram timing tuning
+I (799) esp_psram: Found 8MB PSRAM device
+I (802) esp_psram: Speed: 80MHz
+I (805) cpu_start: Multicore app
+I (1241) esp_psram: SPI SRAM memory test OK
+I (1249) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (1250) cpu_start: Pro cpu start user code
+I (1250) cpu_start: cpu freq: 160000000 Hz
+I (1252) app_init: Application information:
+I (1256) app_init: Project name:     xiaojing_idf
+I (1260) app_init: App version:      8ec391c-dirty
+I (1265) app_init: Compile time:     Aug  3 2026 11:48:54
+I (1270) app_init: ELF file SHA256:  cca43ea57...
+I (1274) app_init: ESP-IDF:          v5.5.4
+I (1278) efuse_init: Min chip rev:     v0.0
+I (1282) efuse_init: Max chip rev:     v0.99 
+I (1286) efuse_init: Chip rev:         v0.2
+I (1290) heap_init: Initializing. RAM available for dynamic allocation:
+I (1296) heap_init: At 3FCC03B0 len 00029360 (164 KiB): RAM
+I (1302) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1307) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1312) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (1318) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1325) spi_flash: detected chip: generic
+I (1328) spi_flash: flash io: qio
+I (1331) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1337) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1344) esp_core_dump_flash: Init core dump to flash
+I (1349) esp_core_dump_flash: Found partition 'coredump' @ 820000 1048576 bytes
+I (2075) esp_core_dump_flash: Core dump data checksum is correct
+I (2075) esp_core_dump_flash: Found core dump 560036 bytes in flash @ 0x820000
+I (2077) coexist: coex firmware version: 093e3d2
+I (2081) coexist: coexist rom version e7ae62f
+I (2086) main_task: Started on CPU0
+I (2096) esp_psram: Reserving pool of 16K of internal memory for DMA/internal allocations
+I (2096) main_task: Calling app_main()
+I (2096) xiaojing: ========================================
+I (2106) xiaojing: XiaoJing ESP-IDF Firmware
+I (2106) xiaojing:   Version    : Phase 9 Round 2.2
+I (2116) xiaojing:   Chip       : esp32s3
+I (2116) xiaojing:   Cores      : 2
+I (2116) xiaojing:   Revision   : 0.2
+I (2126) xiaojing:   Free heap  : 8577496 bytes
+I (2126) xiaojing:   Output mode: LOW_VOLTAGE
+I (2136) xiaojing:   PTC        : disabled
+I (2136) xiaojing: ========================================
+W (2146) xiaojing: Non-FAKE mode: real hardware outputs active!
+I (2146) bootstrap: HEAP[boot_start] int_free=207323 int_largest=139264 int_min=207323 psram=8386140
+I (2176) bootstrap: TEST_MODE=1 (BLE + Edge + WiFi)
+I (2176) machine_config: Loaded valid config from NVS (schema 3)
+I (2176) status_store: Initialized
+I (2176) ili9341: LCD panel create success, version: 2.0.2
+I (2306) i2c_bus: I2C bus initialized (SDA=6, SCL=7, retries=3)
+I (2306) i2c_bus: I2C idle levels: SDA=1 SCL=1
+I (2306) mcp23017: MCP23017 initialized (addr=0x20, IOCON=0x44)
+W (2306) ibt2: GPIO48 (IBT2_EN) NOT driven — voltage domain unconfirmed
+I (2316) ibt2: IBT-2 driver initialized (calibrated=no)
+I (2316) bl50: BL50 driver initialized
+I (2326) fan: Fan driver initialized (25kHz)
+I (2326) flow: Flow meter initialized (GPIO18, PCNT unit)
+I (2336) water_lvl: Water level sensor initialized (GPIO4)
+I (2336) audio: Audio driver initialized (AMP_SD LOW/muted, 16000Hz)
+I (2346) real_hal: Real HAL created successfully
+I (2346) ibt2: Calibration updated: calibrated=no, rpwm_is_cw=yes
+I (2356) safety_mgr: Initialized (mode=1 ptc=0 board=1)
+I (2356) safety_mgr: Running (MCP baseline OK)
+I (2406) bl50_svc: task started
+I (2406) bl50_svc: started
+I (2416) bootstrap: task_complete_worker started
+I (2416) bootstrap: HEAP[before_ble] int_free=146735 int_largest=90112 int_min=146687 psram=8379436
+I (2416) ble_transport: BLE_HEAP[pre_nimble_port_init] int_free=117459 int_largest=61440 int_min=117459
+I (2426) BLE_INIT: BT controller compile version [b7de11e]
+I (2426) BLE_INIT: Using main XTAL as clock source
+I (2436) BLE_INIT: Feature Config, ADV:1, BLE_50:0, DTM:0, SCAN:1, CCA:0, SMP:0, CONNECT:1
+I (2446) BLE_INIT: Bluetooth MAC: 94:a9:90:db:68:4a
+I (2446) phy_init: phy_version 711,97bcf0a2,Aug 25 2025,19:04:10
+I (2496) ble_transport: nimble_port_init err=0x0
+I (2496) ble_transport: BLE_HEAP[post_nimble_port_init] int_free=89871 int_largest=32768 int_min=88735
+I (2496) ble_transport: gap/gatt init done
+I (2506) ble_transport: BLE_HEAP[post_gap_gatt_init] int_free=89855 int_largest=32768 int_min=88735
+I (2516) ble_transport: gatts_count rc=0
+I (2516) ble_transport: gatts_add_svcs rc=0
+I (2516) ble_transport: gap_device_name_set rc=0
+I (2526) ble_transport: BLE_HEAP[post_service_reg] int_free=89855 int_largest=32768 int_min=88735
+I (2536) NimBLE: GAP procedure initiated: stop advertising.
+
+I (2536) ble_transport: start_advertising call #1
+I (2546) ble_transport: BLE_HEAP[pre_adv_set_fields] int_free=85379 int_largest=31744 int_min=85363
+I (2556) ble_transport: adv_set_fields rc=0
+I (2556) ble_transport: BLE_HEAP[post_adv_set_fields] int_free=85363 int_largest=31744 int_min=85363
+I (2566) ble_transport: scan_rsp name_len=13
+I (2566) ble_transport: adv_rsp_set_fields rc=0
+I (2576) ble_transport: BLE_HEAP[pre_adv_start] int_free=85343 int_largest=31744 int_min=85343
+I (2586) NimBLE: GAP procedure initiated: advertise; 
+I (2586) NimBLE: disc_mode=2
+I (2586) NimBLE:  adv_channel_map=0 own_addr_type=0 adv_filter_policy=0 adv_itvl_min=0 adv_itvl_max=0
+I (2596) NimBLE: 
+
+I (2596) ble_transport: adv_start rc=0
+I (2606) ble_transport: BLE_HEAP[post_adv_start] int_free=85343 int_largest=31744 int_min=85343
+I (2616) ble_transport: host_task started
+I (2616) ble_transport: running as JJTP-XIAOJING
+I (2616) bootstrap: HEAP[after_ble] int_free=85343 int_largest=31744 int_min=85343 psram=8362088
+I (2626) pp: pp rom version: e7ae62f
+I (2636) net80211: net80211 rom version: e7ae62f
+I (2636) bootstrap: HEAP[after_wifi] int_free=61231 int_largest=31744 int_min=61231 psram=8361896
+I (2646) wifi:wifi driver task: 3fce8070, prio:23, stack:6656, core=0
+I (2666) wifi:wifi firmware version: 0947e8b
+I (2666) wifi:wifi certification version: v7.0
+I (2666) wifi:config NVS flash: enabled
+I (2666) wifi:config nano formatting: disabled
+I (2666) wifi:Init data frame dynamic rx buffer num: 16
+I (2676) wifi:Init static rx mgmt buffer num: 3
+I (2676) wifi:Init management short buffer num: 16
+I (2676) wifi:Init static tx buffer num: 8
+I (2686) wifi:Init tx cache buffer num: 16
+I (2686) wifi:Init static tx FG buffer num: 2
+I (2696) wifi:Init static rx buffer size: 1600
+I (2696) wifi:Init static rx buffer num: 3
+I (2696) wifi:Init dynamic rx buffer num: 16
+I (2706) wifi_init: rx ba win: 6
+I (2706) wifi_init: accept mbox: 6
+I (2706) wifi_init: tcpip mbox: 32
+I (2716) wifi_init: udp mbox: 6
+I (2716) wifi_init: tcp mbox: 6
+I (2716) wifi_init: tcp tx win: 5760
+I (2726) wifi_init: tcp rx win: 5760
+I (2726) wifi_init: tcp mss: 1440
+I (2726) wifi_init: WiFi/LWIP prefer SPIRAM
+I (2736) wifi_init: WiFi IRAM OP enabled
+I (2736) wifi_init: WiFi RX IRAM OP enabled
+W (2736) bootstrap: BLE defrag reserve: 36864 bytes unavailable
+I (2746) wifi:mode : sta (94:a9:90:db:68:48)
+I (2746) wifi:enable tsf
+I (2756) wifi:Set ps type: 0, coexist: 1
+
+I (2756) wifi:Coexist!!! Wi-Fi station would only keep waked when available
+
+I (2766) audio: Audio capture initialized (RX only, 16000Hz)
+I (2766) bootstrap: HEAP[before_voice_frontend] int_free=38943 int_largest=30720 int_min=38943 psram=8162136
+I (2776) voice_frontend: initialized (no I2S owner - PCM fed externally)
+I (2776) wifi:new:<1,0>, old:<1,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0
+I (2796) wifi:state: init -> auth (0xb0)
+I (2796) voice_frontend: registered backend: edge_impulse_xiao_jing
+I (2796) voice_frontend: registered backend: esp_sr_xiao_ai_tong_xue
+I (2806) bootstrap: voice_frontend initialized with 2 backends
+I (2816) bootstrap: HEAP[after_voice_frontend_register] int_free=38815 int_largest=30720 int_min=38639 psram=8162120
+I (2826) voice_recorder: Buffer allocated: 328704 bytes at 0x3c4074f4 (PSRAM)
+I (2826) wifi:state: auth -> assoc (0x0)
+I (2836) voice_recorder: Initialized (buf=328704 bytes, max_dur=10000 ms, vad_timeout=1100 ms, empty_timeout=2500 ms)
+I (2846) bootstrap: Voice recorder initialized
+I (2846) audio_ctrl: Initialized (frame_samples=512 queue_depth=8 cooldown=2000 ms dialog_timeout=10000 ms)
+I (2856) wifi:Association refused temporarily time 1024, comeback time 1124 (TUs)
+I (2866) audio_ctrl: Started
+I (2866) audio_ctrl: Capture task started
+I (2866) bootstrap: Audio controller started
+W (2876) i2s_common: GPIO 15 is not usable, maybe conflict with others
+I (2876) ei_classifier: Resample buffer: 32156 bytes at 0x3c459ad8 (PSRAM)
+W (2886) i2s_common: GPIO 16 is not usable, maybe conflict with others
+I (2886) ei_classifier: Edge Impulse classifier initialized
+I (2896) audio: I2S_CONFIG:
+I (2896) ei_classifier:   project: Washer-Voice-Control (id=982269)
+I (2906) audio:   hardware_sample_rate=16000 Hz
+I (2906) ei_classifier:   frequency: 16062 Hz
+I (2916) audio:   slot_mode=STEREO (I2S_SLOT_MODE_STEREO)
+I (2916) ei_classifier:   sample_count: 16062
+I (2926) audio:   bits_per_sample=32 (I2S_DATA_BIT_WIDTH_32BIT)
+I (2926) ei_classifier:   labels: noise, unknown, xiao_jing
+I (2936) ei_classifier:   threshold: 0.60
+I (2926) audio:   bytes_per_frame=8 (32-bit * 2 channels)
+I (2936) ei_classifier:   engine: TFLite (compiled/EON)
+I (2946) audio:   output_bits_per_sample=16
+I (2956) wake_edge: MODEL_CONSTANTS:
+I (2956) audio:   capture_only=1
+I (2956) wake_edge:   EI_CLASSIFIER_FREQUENCY=16062
+I (2966) wake_edge:   EI_CLASSIFIER_RAW_SAMPLE_COUNT=16062
+I (2956) audio: Audio input enabled (I2S1 32-bit stereo, SD=GPIO17)
+I (2966) wake_edge:   EI_CLASSIFIER_INTERVAL_MS=0.062259
+I (2976) audio_ctrl: State: STOPPED -> WAKE (gen=1)
+I (2976) wake_edge:   EI_CLASSIFIER_DSP_INPUT_FRAME_SIZE=16062
+I (2996) wake_edge:   EI_CLASSIFIER_RAW_SAMPLES_PER_FRAME=1
+I (2996) audio: I2S raw level: frames=128 Lpeak=131547136 Rpeak=1 Lrms=117257052 Rrms=1 GPIO highs SD=1723 BCLK=0 WS=0
+I (2996) wake_edge:   window_size=16000 samples (1s)
+I (3016) wake_edge:   window_stride=8000 samples (500ms)
+I (3006) audio: I2S: Microphone detected on LEFT channel (Lrms/Rrms=117257052.0)
+I (3016) wake_edge: initialized (threshold=0.80, margin=0.15, consecutive=2, cooldown=2000 ms, window=16000 samples, stride=8000 samples)
+I (3036) wake_edge: started
+I (3036) voice_frontend: started backend: edge_impulse_xiao_jing (took 163 ms)
+I (3046) bootstrap: wake backend set to Edge Impulse
+I (3046) bootstrap: bootstrap_start_frontend: current_backend=0
+I (3056) bootstrap: bootstrap_start_frontend: start_backend(0) = 0x0
+I (3066) bootstrap: HEAP[after_voice_service_start] int_free=29171 int_largest=20480 int_min=29171 psram=7760164
+I (3076) btn_svc: button raw baseline: GPA=0x70 mask=0x70
+I (3076) LVGL: Starting LVGL task
+I (3136) display_svc: display running (hardware=on CJK=on)
+I (3136) bootstrap: Diagnostic task started (60s interval)
+I (3136) bootstrap: Diagnostic task started (60s interval)
+I (3136) sht30: SHT30 found at 0x44
+I (3146) sht30: SHT30 initialized (addr=0x44, stale=5000ms)
+W (3176) sht30: Humidity CRC failed (errors=1)
+I (3266) paj7620: gesture mode ready (id=2076 regs=219)
+I (3266) paj7620: PAJ7620 adapter initialized (addr=0x73, GPB6)
+I (3266) gesture_svc: running (poll=50ms cooldown=400ms)
+I (3276) bootstrap: HEAP[bootstrap_complete] int_free=21327 int_largest=13312 int_min=21311 psram=7736016
+I (3286) xiaojing: Bootstrap complete:
+I (3286) xiaojing:   NVS        : OK
+I (3286) xiaojing:   Config     : OK
+I (3296) xiaojing:   StatusStore: OK
+I (3296) xiaojing:   HAL        : ready
+I (3296) xiaojing:   SafetyMgr  : OK
+I (3306) xiaojing:   PositionSvc: OK
+I (3306) xiaojing:   WaterSvc   : OK
+I (3306) xiaojing:   DrySvc     : OK
+I (3316) xiaojing:   DrainSvc   : OK
+I (3316) xiaojing:   Detergent  : OK
+I (3316) xiaojing:   UVSvc      : OK
+I (3326) xiaojing:   Executor   : OK
+I (3326) xiaojing:   WiFi       : CONNECTING
+I (3336) xiaojing:   BLE        : OK
+I (3336) xiaojing:   VoiceSvc   : OK
+I (3336) xiaojing:   ButtonSvc  : OK
+I (3346) xiaojing: Bootstrap OK.
+I (3346) main_task: Returned from app_main()
+I (4016) wifi:state: assoc -> assoc (0x0)
+W (4176) sht30: Humidity CRC failed (errors=21)
+I (4246) ei_classifier: classifier took 143 ms
+W (4246) wake_edge: Classifier slow: 196 ms
+I (4906) ei_classifier: classifier took 138 ms
+W (4906) wake_edge: Classifier slow: 190 ms
+I (5016) wifi:state: assoc -> init (0x400)
+I (5026) wifi:Coexist: Wi-Fi connect fail, apply reconnect coex policy
+
+I (5026) wifi:new:<1,0>, old:<1,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0
+I (5026) WIFI_STA: DISCONNECTED reason=4 reason_name=ASSOC_EXPIRE
+I (5026) WIFI_STA: retry=1 connect_attempts=2 max_retries=5 backoff=500ms
+I (5036) bootstrap: WIFI_DISCONNECT
+W (5176) sht30: Humidity CRC failed (errors=41)
+I (5596) ei_classifier: classifier took 138 ms
+W (5596) wake_edge: Classifier slow: 191 ms
+W (6176) sht30: Humidity CRC failed (errors=61)
+I (6296) ei_classifier: classifier took 137 ms
+W (6296) wake_edge: Classifier slow: 190 ms
+I (6956) ei_classifier: classifier took 137 ms
+W (6956) wake_edge: Classifier slow: 189 ms
+W (7176) sht30: Humidity CRC failed (errors=81)
+I (7646) ei_classifier: classifier took 136 ms
+W (7646) wake_edge: Classifier slow: 190 ms
+W (8176) sht30: Humidity CRC failed (errors=101)
+I (8306) ei_classifier: classifier took 137 ms
+W (8306) wake_edge: Classifier slow: 190 ms
+I (8996) ei_classifier: classifier took 137 ms
+I (8996) ei_classifier: THRESHOLD_HIT: score=0.973 threshold=0.60 count=1
+W (8996) wake_edge: Classifier slow: 190 ms
+I (8996) wake_edge: CANDIDATE: xj=0.973 noise=0.000 unknown=0.027 margin_n=0.973 margin_u=0.945 consecutive=1/2 MARGIN_OK
+W (9176) sht30: Humidity CRC failed (errors=121)
+I (9696) ei_classifier: classifier took 137 ms
+W (9696) wake_edge: Classifier slow: 189 ms
+W (10176) sht30: Humidity CRC failed (errors=141)
+I (10346) wifi:Coexist: Wi-Fi connect fail, apply reconnect coex policy
+
+I (10346) WIFI_STA: DISCONNECTED reason=205 reason_name=CONNECTION_FAIL
+I (10346) WIFI_STA: retry=2 connect_attempts=3 max_retries=5 backoff=1000ms
+I (10356) bootstrap: WIFI_DISCONNECT
+I (10366) ei_classifier: classifier took 141 ms
+W (10366) wake_edge: Classifier slow: 194 ms
+I (11056) ei_classifier: classifier took 136 ms
+W (11056) wake_edge: Classifier slow: 189 ms
+W (11176) sht30: Humidity CRC failed (errors=161)
+I (11356) wifi:new:<1,0>, old:<1,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0
+I (11356) wifi:state: init -> auth (0xb0)
+I (11406) wifi:state: auth -> assoc (0x0)
+I (11446) wifi:state: assoc -> run (0x10)
+I (11476) wifi:connected with JINGJIE, aid = 18, channel 1, BW20, bssid = 46:31:d0:e9:77:58
+I (11476) wifi:security: WPA2-PSK, phy: bgn, rssi: -19, cipher(pairwise:0x3, group:0x3), pmf:1
+I (11476) wifi:pm start, type: 0
+
+I (11486) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (11486) wifi:set rx beacon pti, rx_bcn_pti: 14, bcn_timeout: 25000, mt_pti: 14, mt_time: 10000
+I (11556) wifi:dp: 2, bi: 102400, li: 4, scale listen interval from 307200 us to 409600 us
+I (11556) wifi:AP's beacon interval = 102400 us, DTIM period = 2
+I (11746) ei_classifier: classifier took 138 ms
+W (11746) wake_edge: Classifier slow: 192 ms
+W (12176) sht30: Humidity CRC failed (errors=181)
+I (12406) ei_classifier: classifier took 139 ms
+I (12406) ei_classifier: THRESHOLD_HIT: score=0.707 threshold=0.60 count=2
+W (12406) wake_edge: Classifier slow: 192 ms
+I (12416) wake_edge: CANDIDATE: xj=0.707 noise=0.004 unknown=0.285 margin_n=0.703 margin_u=0.422 consecutive=1/2 MARGIN_OK
+I (12556) esp_netif_handlers: sta ip: 10.196.41.88, mask: 255.255.255.0, gw: 10.196.41.158
+I (12556) bootstrap: GOT_IP: attempts=3 disconnects=2 reason=205
+I (12556) bootstrap: GOT_IP: ip=10.196.41.88
+I (12556) bootstrap: HEAP[got_ip] int_free=25635 int_largest=13312 int_min=21311 psram=7710824
+I (13116) ei_classifier: classifier took 138 ms
+W (13116) wake_edge: Classifier slow: 190 ms
+W (13176) sht30: Humidity CRC failed (errors=201)
+I (13776) ei_classifier: classifier took 138 ms
+W (13786) wake_edge: Classifier slow: 191 ms
+W (14176) sht30: Humidity CRC failed (errors=221)
+I (14476) ei_classifier: classifier took 138 ms
+W (14476) wake_edge: Classifier slow: 191 ms
+I (15176) ei_classifier: classifier took 138 ms
+W (15176) wake_edge: Classifier slow: 190 ms
+W (15176) sht30: Humidity CRC failed (errors=241)
+I (15826) ei_classifier: classifier took 138 ms
+W (15826) wake_edge: Classifier slow: 191 ms
+W (16176) sht30: Humidity CRC failed (errors=261)
+I (16516) ei_classifier: classifier took 139 ms
+W (16516) wake_edge: Classifier slow: 192 ms
+I (16676) wifi:<ba-add>idx:0 (ifx:0, 46:31:d0:e9:77:58), tid:0, ssn:3, winSize:64
+W (17176) sht30: Humidity CRC failed (errors=281)
+I (17216) ei_classifier: classifier took 138 ms
+W (17216) wake_edge: Classifier slow: 191 ms
+I (17866) ei_classifier: classifier took 138 ms
+I (17866) ei_classifier: THRESHOLD_HIT: score=0.656 threshold=0.60 count=3
+W (17866) wake_edge: Classifier slow: 192 ms
+I (17876) wake_edge: CANDIDATE: xj=0.656 noise=0.004 unknown=0.340 margin_n=0.652 margin_u=0.316 consecutive=1/2 MARGIN_OK
+W (18176) sht30: Humidity CRC failed (errors=301)
+I (18586) ei_classifier: classifier took 139 ms
+W (18586) wake_edge: Classifier slow: 192 ms
+W (19176) sht30: Humidity CRC failed (errors=321)
+I (19246) ei_classifier: classifier took 139 ms
+W (19246) wake_edge: Classifier slow: 192 ms
+I (19946) ei_classifier: classifier took 138 ms
+W (19946) wake_edge: Classifier slow: 191 ms
+W (20176) sht30: Humidity CRC failed (errors=341)
+I (20646) ei_classifier: classifier took 138 ms
+W (20646) wake_edge: Classifier slow: 191 ms
+W (21176) sht30: Humidity CRC failed (errors=361)
+I (21306) ei_classifier: classifier took 139 ms
+W (21306) wake_edge: Classifier slow: 191 ms
+I (21996) ei_classifier: classifier took 138 ms
+I (21996) ei_classifier: THRESHOLD_HIT: score=0.875 threshold=0.60 count=4
+W (21996) wake_edge: Classifier slow: 191 ms
+I (22006) wake_edge: CANDIDATE: xj=0.875 noise=0.020 unknown=0.105 margin_n=0.855 margin_u=0.770 consecutive=1/2 MARGIN_OK
+W (22176) sht30: Humidity CRC failed (errors=381)
+I (22706) ei_classifier: classifier took 137 ms
+W (22706) wake_edge: Classifier slow: 190 ms
+W (23176) sht30: Humidity CRC failed (errors=401)
+I (23356) ei_classifier: classifier took 138 ms
+W (23356) wake_edge: Classifier slow: 191 ms
+I (24046) ei_classifier: classifier took 137 ms
+W (24046) wake_edge: Classifier slow: 191 ms
+W (24176) sht30: Humidity CRC failed (errors=421)
+I (24706) ei_classifier: classifier took 139 ms
+W (24706) wake_edge: Classifier slow: 191 ms
+W (25176) sht30: Humidity CRC failed (errors=441)
+I (25386) ei_classifier: classifier took 139 ms
+I (25396) ei_classifier: THRESHOLD_HIT: score=0.844 threshold=0.60 count=5
+W (25396) wake_edge: Classifier slow: 192 ms
+I (25396) wake_edge: CANDIDATE: xj=0.844 noise=0.000 unknown=0.156 margin_n=0.844 margin_u=0.688 consecutive=1/2 MARGIN_OK
+I (26096) ei_classifier: classifier took 138 ms
+W (26096) wake_edge: Classifier slow: 191 ms
+W (26176) sht30: Humidity CRC failed (errors=461)
+I (26756) ei_classifier: classifier took 137 ms
+W (26756) wake_edge: Classifier slow: 190 ms
+W (27176) sht30: Humidity CRC failed (errors=481)
+I (27446) ei_classifier: classifier took 137 ms
+W (27446) wake_edge: Classifier slow: 190 ms
+I (28146) ei_classifier: classifier took 139 ms
+W (28146) wake_edge: Classifier slow: 190 ms
+W (28176) sht30: Humidity CRC failed (errors=501)
+I (28806) ei_classifier: classifier took 138 ms
+W (28806) wake_edge: Classifier slow: 191 ms
+W (29176) sht30: Humidity CRC failed (errors=521)
+I (29496) ei_classifier: classifier took 138 ms
+I (29496) ei_classifier: THRESHOLD_HIT: score=0.723 threshold=0.60 count=6
+W (29496) wake_edge: Classifier slow: 190 ms
+I (29506) wake_edge: CANDIDATE: xj=0.723 noise=0.074 unknown=0.203 margin_n=0.648 margin_u=0.520 consecutive=1/2 MARGIN_OK
+I (30166) ei_classifier: classifier took 138 ms
+W (30166) wake_edge: Classifier slow: 191 ms
+W (30176) sht30: Humidity CRC failed (errors=541)
+I (30846) ei_classifier: classifier took 137 ms
+W (30846) wake_edge: Classifier slow: 190 ms
+W (31176) sht30: Humidity CRC failed (errors=561)
+I (31546) ei_classifier: classifier took 138 ms
+W (31546) wake_edge: Classifier slow: 191 ms
+W (32176) sht30: Humidity CRC failed (errors=581)
+I (32196) ei_classifier: classifier took 139 ms
+W (32206) wake_edge: Classifier slow: 191 ms
+I (32896) ei_classifier: classifier took 138 ms
+I (32896) ei_classifier: THRESHOLD_HIT: score=0.934 threshold=0.60 count=7
+W (32896) wake_edge: Classifier slow: 191 ms
+I (32906) wake_edge: CANDIDATE: xj=0.934 noise=0.000 unknown=0.066 margin_n=0.934 margin_u=0.867 consecutive=1/2 MARGIN_OK
+W (33176) sht30: Humidity CRC failed (errors=601)
+I (33616) ei_classifier: classifier took 138 ms
+W (33616) wake_edge: Classifier slow: 192 ms
+W (34176) sht30: Humidity CRC failed (errors=621)
+I (34266) ei_classifier: classifier took 138 ms
+W (34266) wake_edge: Classifier slow: 191 ms
+I (34956) ei_classifier: classifier took 139 ms
+W (34966) wake_edge: Classifier slow: 191 ms
+W (35176) sht30: Humidity CRC failed (errors=641)
+I (35626) ei_classifier: classifier took 138 ms
+W (35626) wake_edge: Classifier slow: 192 ms
+W (36176) sht30: Humidity CRC failed (errors=661)
+I (36326) ei_classifier: classifier took 137 ms
+W (36326) wake_edge: Classifier slow: 190 ms
+I (37016) ei_classifier: classifier took 138 ms
+W (37016) wake_edge: Classifier slow: 191 ms
+W (37176) sht30: Humidity CRC failed (errors=681)
+I (37666) ei_classifier: classifier took 138 ms
+W (37666) wake_edge: Classifier slow: 191 ms
+W (38176) sht30: Humidity CRC failed (errors=701)
+I (38346) ei_classifier: classifier took 137 ms
+I (38346) ei_classifier: THRESHOLD_HIT: score=0.656 threshold=0.60 count=8
+W (38346) wake_edge: Classifier slow: 191 ms
+I (38356) wake_edge: CANDIDATE: xj=0.656 noise=0.004 unknown=0.340 margin_n=0.652 margin_u=0.316 consecutive=1/2 MARGIN_OK
+I (39056) ei_classifier: classifier took 137 ms
+W (39056) wake_edge: Classifier slow: 190 ms
+W (39176) sht30: Humidity CRC failed (errors=721)
+I (39706) ei_classifier: classifier took 138 ms
+W (39706) wake_edge: Classifier slow: 191 ms
+W (40176) sht30: Humidity CRC failed (errors=741)
+I (40386) ei_classifier: classifier took 138 ms
+I (40386) ei_classifier: THRESHOLD_HIT: score=0.781 threshold=0.60 count=9
+W (40396) wake_edge: Classifier slow: 191 ms
+I (40396) wake_edge: CANDIDATE: xj=0.781 noise=0.000 unknown=0.219 margin_n=0.781 margin_u=0.562 consecutive=1/2 MARGIN_OK
+I (41056) ei_classifier: classifier took 138 ms
+W (41056) wake_edge: Classifier slow: 191 ms
+W (41176) sht30: Humidity CRC failed (errors=761)
+I (41736) ei_classifier: classifier took 138 ms
+W (41746) wake_edge: Classifier slow: 191 ms
+W (42176) sht30: Humidity CRC failed (errors=781)
+I (42446) ei_classifier: classifier took 137 ms
+W (42446) wake_edge: Classifier slow: 190 ms
+I (43106) ei_classifier: classifier took 137 ms
+W (43106) wake_edge: Classifier slow: 190 ms
+W (43176) sht30: Humidity CRC failed (errors=801)
+I (43796) ei_classifier: classifier took 137 ms
+I (43796) ei_classifier: THRESHOLD_HIT: score=0.707 threshold=0.60 count=10
+W (43796) wake_edge: Classifier slow: 191 ms
+I (43806) wake_edge: CANDIDATE: xj=0.707 noise=0.004 unknown=0.289 margin_n=0.703 margin_u=0.418 consecutive=1/2 MARGIN_OK
+W (44176) sht30: Humidity CRC failed (errors=821)
+I (44496) ei_classifier: classifier took 138 ms
+W (44496) wake_edge: Classifier slow: 190 ms
+I (45156) ei_classifier: classifier took 138 ms
+I (45156) ei_classifier: THRESHOLD_HIT: score=0.969 threshold=0.60 count=11
+W (45166) wake_edge: Classifier slow: 191 ms
+I (45166) wake_edge: CANDIDATE: xj=0.969 noise=0.000 unknown=0.031 margin_n=0.969 margin_u=0.938 consecutive=1/2 MARGIN_OK
+W (45176) sht30: Humidity CRC failed (errors=841)
+I (45866) ei_classifier: classifier took 138 ms
+W (45866) wake_edge: Classifier slow: 191 ms
+W (46176) sht30: Humidity CRC failed (errors=861)
+I (46526) ei_classifier: classifier took 138 ms
+I (46526) ei_classifier: THRESHOLD_HIT: score=0.828 threshold=0.60 count=12
+W (46526) wake_edge: Classifier slow: 191 ms
+I (46536) wake_edge: CANDIDATE: xj=0.828 noise=0.016 unknown=0.152 margin_n=0.812 margin_u=0.676 consecutive=1/2 MARGIN_OK
+W (47176) sht30: Humidity CRC failed (errors=881)
+I (47236) ei_classifier: classifier took 138 ms
+W (47236) wake_edge: Classifier slow: 191 ms
+I (47926) ei_classifier: classifier took 139 ms
+W (47926) wake_edge: Classifier slow: 192 ms
+W (48176) sht30: Humidity CRC failed (errors=901)
+I (48596) ei_classifier: classifier took 137 ms
+W (48596) wake_edge: Classifier slow: 190 ms
+W (49176) sht30: Humidity CRC failed (errors=921)
+I (49296) ei_classifier: classifier took 139 ms
+W (49296) wake_edge: Classifier slow: 191 ms
+I (49986) ei_classifier: classifier took 138 ms
+W (49986) wake_edge: Classifier slow: 191 ms
+W (50176) sht30: Humidity CRC failed (errors=941)
+I (50656) ei_classifier: classifier took 138 ms
+W (50656) wake_edge: Classifier slow: 191 ms
+W (51176) sht30: Humidity CRC failed (errors=961)
+I (51346) ei_classifier: classifier took 138 ms
+W (51346) wake_edge: Classifier slow: 191 ms
+I (51996) ei_classifier: classifier took 138 ms
+I (51996) ei_classifier: THRESHOLD_HIT: score=0.613 threshold=0.60 count=13
+W (51996) wake_edge: Classifier slow: 191 ms
+I (52006) wake_edge: CANDIDATE: xj=0.613 noise=0.008 unknown=0.379 margin_n=0.605 margin_u=0.234 consecutive=1/2 MARGIN_OK
+W (52176) sht30: Humidity CRC failed (errors=981)
+I (52706) ei_classifier: classifier took 137 ms
+I (52706) ei_classifier: THRESHOLD_HIT: score=0.633 threshold=0.60 count=14
+W (52706) wake_edge: Classifier slow: 190 ms
+I (52706) wake_edge: CANDIDATE: xj=0.633 noise=0.000 unknown=0.367 margin_n=0.633 margin_u=0.266 consecutive=2/2 MARGIN_OK
+I (52716) wake_edge: DETECTED xiao_jing score=0.633 noise=0.000 unknown=0.367 (count=1) ACCEPTED
+I (52726) voice_frontend: WAKE_CALLBACK count=1
+I (52736) bootstrap: wake detected: score=0.00 seq=1
+I (52746) audio_ctrl: WAKE_DETECTED: gen=2
+I (52746) audio_ctrl: State: WAKE -> TRANS_TO_DIALOG (gen=2)
+I (52746) audio_ctrl: State: TRANS_TO_DIALOG -> DIALOG (gen=2)
+I (52756) voice_recorder: Begin session=2 source=0
+I (52756) audio_ctrl: Dialog recording started (gen=2)
+I (52826) voice_recorder: VAD: speech started (rms=1502)
+W (53176) sht30: Humidity CRC failed (errors=1001)
+W (54176) sht30: Humidity CRC failed (errors=1021)
+W (55176) sht30: Humidity CRC failed (errors=1041)
+W (56176) sht30: Humidity CRC failed (errors=1061)
+W (57176) sht30: Humidity CRC failed (errors=1081)
+W (58176) sht30: Humidity CRC failed (errors=1101)
+W (59176) sht30: Humidity CRC failed (errors=1121)
+W (60176) sht30: Humidity CRC failed (errors=1141)
+W (61176) sht30: Humidity CRC failed (errors=1161)
+W (62176) sht30: Humidity CRC failed (errors=1181)
+W (62766) audio_ctrl: Dialog timeout (10014 ms > 10000 ms), recovering to WAKE
+I (62766) audio_ctrl: Dialog termination requested by VAD/timeout
+I (62796) voice_recorder: End session=2 reason=VAD_SILENCE pcm=320512 dur=10038 ms peak=6075 rms=1659
+I (62796) audio_ctrl: DIALOG_TERMINAL: gen=2
+I (62796) audio_ctrl: State: DIALOG -> TRANS_TO_WAKE (gen=2)
+I (62806) audio_ctrl: State: TRANS_TO_WAKE -> WAKE (gen=2)
+I (62806) audio_ctrl: DIALOG_TERMINAL: gen=2
+I (63136) bootstrap: D: h=30171 L=13312 s=W g=2 i2s=0 iB=0 w=0 d=0 we=0 te=0 ei=0/0
+I (63136) bootstrap: D: h=30171 L=13312 s=W g=2 i2s=1465 iB=1500160 w=589824 d=160256 we=1 te=2 ei=72/14
+W (63176) sht30: Humidity CRC failed (errors=1201)
+I (63496) ei_classifier: classifier took 138 ms
+W (63496) wake_edge: Classifier slow: 191 ms
+I (64146) ei_classifier: classifier took 138 ms
+W (64146) wake_edge: Classifier slow: 190 ms
+W (64176) sht30: Humidity CRC failed (errors=1221)
+I (64846) ei_classifier: classifier took 138 ms
+W (64846) wake_edge: Classifier slow: 191 ms
+W (65176) sht30: Humidity CRC failed (errors=1241)
+I (65546) ei_classifier: classifier took 138 ms
+W (65546) wake_edge: Classifier slow: 190 ms
+W (66176) sht30: Humidity CRC failed (errors=1261)
+I (66206) ei_classifier: classifier took 138 ms
+I (66206) ei_classifier: THRESHOLD_HIT: score=0.891 threshold=0.60 count=15
+W (66206) wake_edge: Classifier slow: 192 ms
+I (66216) wake_edge: CANDIDATE: xj=0.891 noise=0.016 unknown=0.098 margin_n=0.875 margin_u=0.793 consecutive=1/2 MARGIN_OK
+I (66906) ei_classifier: classifier took 139 ms
+W (66916) wake_edge: Classifier slow: 191 ms
+W (67176) sht30: Humidity CRC failed (errors=1281)
+I (67576) ei_classifier: classifier took 139 ms
+W (67576) wake_edge: Classifier slow: 192 ms
+W (68176) sht30: Humidity CRC failed (errors=1301)
+I (68276) ei_classifier: classifier took 137 ms
+I (68276) ei_classifier: THRESHOLD_HIT: score=0.879 threshold=0.60 count=16
+W (68276) wake_edge: Classifier slow: 191 ms
+I (68286) wake_edge: CANDIDATE: xj=0.879 noise=0.008 unknown=0.113 margin_n=0.871 margin_u=0.766 consecutive=1/2 MARGIN_OK
+I (68976) ei_classifier: classifier took 138 ms
+W (68976) wake_edge: Classifier slow: 191 ms
+W (69176) sht30: Humidity CRC failed (errors=1321)
+I (69646) ei_classifier: classifier took 137 ms
+I (69646) ei_classifier: THRESHOLD_HIT: score=0.770 threshold=0.60 count=17
+W (69646) wake_edge: Classifier slow: 191 ms
+I (69656) wake_edge: CANDIDATE: xj=0.770 noise=0.012 unknown=0.219 margin_n=0.758 margin_u=0.551 consecutive=1/2 MARGIN_OK
+W (70176) sht30: Humidity CRC failed (errors=1341)
+I (70356) ei_classifier: classifier took 138 ms
+I (70366) ei_classifier: THRESHOLD_HIT: score=0.789 threshold=0.60 count=18
+W (70366) wake_edge: Classifier slow: 191 ms
+I (70366) wake_edge: CANDIDATE: xj=0.789 noise=0.000 unknown=0.211 margin_n=0.789 margin_u=0.578 consecutive=2/2 MARGIN_OK
+I (70376) wake_edge: DETECTED xiao_jing score=0.789 noise=0.000 unknown=0.211 (count=2) ACCEPTED
+I (70386) voice_frontend: WAKE_CALLBACK count=2
+I (70386) bootstrap: wake detected: score=0.00 seq=2
+I (70406) audio_ctrl: WAKE_DETECTED: gen=3
+I (70406) audio_ctrl: State: WAKE -> TRANS_TO_DIALOG (gen=3)
+I (70406) audio_ctrl: State: TRANS_TO_DIALOG -> DIALOG (gen=3)
+I (70406) voice_recorder: Begin session=3 source=0
+I (70416) audio_ctrl: Dialog recording started (gen=3)
+I (70496) voice_recorder: VAD: speech started (rms=1863)
+W (71176) sht30: Humidity CRC failed (errors=1361)
+W (72176) sht30: Humidity CRC failed (errors=1381)
+W (73176) sht30: Humidity CRC failed (errors=1401)
+W (74176) sht30: Humidity CRC failed (errors=1421)
+W (75176) sht30: Humidity CRC failed (errors=1441)
+W (76176) sht30: Humidity CRC failed (errors=1461)
+W (77176) sht30: Humidity CRC failed (errors=1481)
+W (78176) sht30: Humidity CRC failed (errors=1501)
+W (79176) sht30: Humidity CRC failed (errors=1521)
+W (80176) sht30: Humidity CRC failed (errors=1541)
+W (80416) audio_ctrl: Dialog timeout (10005 ms > 10000 ms), recovering to WAKE
+I (80446) voice_recorder: End session=3 reason=VAD_SILENCE pcm=320512 dur=10026 ms peak=8536 rms=1991
+I (80446) audio_ctrl: DIALOG_TERMINAL: gen=3
+I (80446) audio_ctrl: State: DIALOG -> TRANS_TO_WAKE (gen=3)
+I (80456) audio_ctrl: State: TRANS_TO_WAKE -> WAKE (gen=3)
+I (81146) ei_classifier: classifier took 138 ms
+W (81146) wake_edge: Classifier slow: 191 ms
+W (81176) sht30: Humidity CRC failed (errors=1561)
+I (81806) ei_classifier: classifier took 137 ms
+W (81806) wake_edge: Classifier slow: 190 ms
+W (82176) sht30: Humidity CRC failed (errors=1581)
+I (82496) ei_classifier: classifier took 137 ms
+I (82496) ei_classifier: THRESHOLD_HIT: score=0.746 threshold=0.60 count=19
+W (82496) wake_edge: Classifier slow: 191 ms
+I (82506) wake_edge: CANDIDATE: xj=0.746 noise=0.066 unknown=0.188 margin_n=0.680 margin_u=0.559 consecutive=1/2 MARGIN_OK
+I (83166) ei_classifier: classifier took 138 ms
+W (83166) wake_edge: Classifier slow: 191 ms
+W (83176) sht30: Humidity CRC failed (errors=1601)
+I (83856) ei_classifier: classifier took 138 ms
+I (83856) ei_classifier: THRESHOLD_HIT: score=0.848 threshold=0.60 count=20
+W (83866) wake_edge: Classifier slow: 191 ms
+I (83866) wake_edge: CANDIDATE: xj=0.848 noise=0.004 unknown=0.148 margin_n=0.844 margin_u=0.699 consecutive=1/2 MARGIN_OK
+W (84176) sht30: Humidity CRC failed (errors=1621)
+I (84566) ei_classifier: classifier took 138 ms
+W (84566) wake_edge: Classifier slow: 191 ms
+W (85176) sht30: Humidity CRC failed (errors=1641)
+I (85216) ei_classifier: classifier took 138 ms
+I (85216) ei_classifier: THRESHOLD_HIT: score=0.664 threshold=0.60 count=21
+W (85216) wake_edge: Classifier slow: 192 ms
+I (85226) wake_edge: CANDIDATE: xj=0.664 noise=0.012 unknown=0.324 margin_n=0.652 margin_u=0.340 consecutive=1/2 MARGIN_OK
+I (85926) ei_classifier: classifier took 138 ms
+W (85926) wake_edge: Classifier slow: 191 ms
+W (86176) sht30: Humidity CRC failed (errors=1661)
+I (86626) ei_classifier: classifier took 138 ms
+W (86626) wake_edge: Classifier slow: 191 ms
+W (87176) sht30: Humidity CRC failed (errors=1681)
+I (87296) ei_classifier: classifier took 138 ms
+W (87296) wake_edge: Classifier slow: 191 ms
+I (87996) ei_classifier: classifier took 138 ms
+I (87996) ei_classifier: THRESHOLD_HIT: score=0.750 threshold=0.60 count=22
+W (87996) wake_edge: Classifier slow: 190 ms
+I (87996) wake_edge: CANDIDATE: xj=0.750 noise=0.023 unknown=0.227 margin_n=0.727 margin_u=0.523 consecutive=1/2 MARGIN_OK
+W (88176) sht30: Humidity CRC failed (errors=1701)
+I (88666) ei_classifier: classifier took 138 ms
+W (88666) wake_edge: Classifier slow: 191 ms
+W (89176) sht30: Humidity CRC failed (errors=1721)
+I (89346) ei_classifier: classifier took 137 ms
+W (89346) wake_edge: Classifier slow: 190 ms
+I (90046) ei_classifier: classifier took 137 ms
+W (90046) wake_edge: Classifier slow: 191 ms
+W (90176) sht30: Humidity CRC failed (errors=1741)
+I (90696) ei_classifier: classifier took 137 ms
+W (90696) wake_edge: Classifier slow: 190 ms
+W (91176) sht30: Humidity CRC failed (errors=1761)
+I (91396) ei_classifier: classifier took 137 ms
+W (91396) wake_edge: Classifier slow: 191 ms
+I (92086) ei_classifier: classifier took 139 ms
+I (92086) ei_classifier: THRESHOLD_HIT: score=0.977 threshold=0.60 count=23
+W (92086) wake_edge: Classifier slow: 192 ms
+I (92096) wake_edge: CANDIDATE: xj=0.977 noise=0.008 unknown=0.020 margin_n=0.969 margin_u=0.957 consecutive=1/2 MARGIN_OK
+W (92176) sht30: Humidity CRC failed (errors=1781)
+I (92766) ei_classifier: classifier took 138 ms
+W (92766) wake_edge: Classifier slow: 191 ms
+W (93176) sht30: Humidity CRC failed (errors=1801)
+I (93466) ei_classifier: classifier took 138 ms
+W (93466) wake_edge: Classifier slow: 191 ms
+I (94126) ei_classifier: classifier took 138 ms
+W (94126) wake_edge: Classifier slow: 191 ms
+W (94176) sht30: Humidity CRC failed (errors=1821)
+I (94826) ei_classifier: classifier took 137 ms
+W (94826) wake_edge: Classifier slow: 190 ms
+W (95176) sht30: Humidity CRC failed (errors=1841)
+I (95526) ei_classifier: classifier took 138 ms
+W (95526) wake_edge: Classifier slow: 191 ms
+W (96176) sht30: Humidity CRC failed (errors=1861)
+I (96186) ei_classifier: classifier took 139 ms
+W (96186) wake_edge: Classifier slow: 191 ms
+I (96886) ei_classifier: classifier took 139 ms
+W (96886) wake_edge: Classifier slow: 191 ms
+W (97176) sht30: Humidity CRC failed (errors=1881)
+I (97576) ei_classifier: classifier took 139 ms
+W (97576) wake_edge: Classifier slow: 192 ms
+W (98176) sht30: Humidity CRC failed (errors=1901)
+I (98236) ei_classifier: classifier took 139 ms
+W (98236) wake_edge: Classifier slow: 192 ms
+I (98946) ei_classifier: classifier took 138 ms
+W (98946) wake_edge: Classifier slow: 190 ms
+W (99176) sht30: Humidity CRC failed (errors=1921)
+I (99606) ei_classifier: classifier took 138 ms
+W (99606) wake_edge: Classifier slow: 190 ms
+W (100176) sht30: Humidity CRC failed (errors=1941)
+I (100296) ei_classifier: classifier took 138 ms
+W (100296) wake_edge: Classifier slow: 191 ms
+I (100996) ei_classifier: classifier took 138 ms
+W (100996) wake_edge: Classifier slow: 191 ms
+W (101176) sht30: Humidity CRC failed (errors=1961)
+I (101656) ei_classifier: classifier took 138 ms
+W (101656) wake_edge: Classifier slow: 191 ms
+W (102176) sht30: Humidity CRC failed (errors=1981)
+I (102356) ei_classifier: classifier took 137 ms
+W (102356) wake_edge: Classifier slow: 190 ms
+I (103046) ei_classifier: classifier took 137 ms
+W (103046) wake_edge: Classifier slow: 190 ms
+W (103176) sht30: Humidity CRC failed (errors=2001)
+I (103706) ei_classifier: classifier took 137 ms
+W (103706) wake_edge: Classifier slow: 190 ms
+W (104176) sht30: Humidity CRC failed (errors=2021)
+I (104396) ei_classifier: classifier took 137 ms
+W (104396) wake_edge: Classifier slow: 191 ms
+I (105056) ei_classifier: classifier took 137 ms
+W (105056) wake_edge: Classifier slow: 190 ms
+W (105176) sht30: Humidity CRC failed (errors=2041)
+I (105746) ei_classifier: classifier took 138 ms
+W (105746) wake_edge: Classifier slow: 191 ms
+W (106176) sht30: Humidity CRC failed (errors=2061)
+I (106446) ei_classifier: classifier took 138 ms
+W (106446) wake_edge: Classifier slow: 190 ms
+I (107106) ei_classifier: classifier took 138 ms
+W (107106) wake_edge: Classifier slow: 190 ms
+W (107176) sht30: Humidity CRC failed (errors=2081)
+I (107796) ei_classifier: classifier took 137 ms
+W (107796) wake_edge: Classifier slow: 190 ms
+W (108176) sht30: Humidity CRC failed (errors=2101)
+I (108496) ei_classifier: classifier took 137 ms
+W (108496) wake_edge: Classifier slow: 191 ms
+I (109146) ei_classifier: classifier took 138 ms
+W (109146) wake_edge: Classifier slow: 191 ms
+W (109176) sht30: Humidity CRC failed (errors=2121)
+I (109846) ei_classifier: classifier took 137 ms
+W (109846) wake_edge: Classifier slow: 191 ms
+W (110176) sht30: Humidity CRC failed (errors=2141)
+I (110506) ei_classifier: classifier took 138 ms
+W (110506) wake_edge: Classifier slow: 191 ms
+W (111176) sht30: Humidity CRC failed (errors=2161)
+I (111196) ei_classifier: classifier took 139 ms
+W (111196) wake_edge: Classifier slow: 191 ms
+I (111886) ei_classifier: classifier took 139 ms
+W (111886) wake_edge: Classifier slow: 191 ms
+W (112176) sht30: Humidity CRC failed (errors=2181)
+I (112536) ei_classifier: classifier took 139 ms
+W (112536) wake_edge: Classifier slow: 191 ms
+W (113176) sht30: Humidity CRC failed (errors=2201)
+I (113236) ei_classifier: classifier took 139 ms
+W (113236) wake_edge: Classifier slow: 192 ms
+I (113926) ei_classifier: classifier took 138 ms
+W (113926) wake_edge: Classifier slow: 191 ms
+W (114176) sht30: Humidity CRC failed (errors=2221)
+I (114596) ei_classifier: classifier took 137 ms
+W (114596) wake_edge: Classifier slow: 190 ms
+W (115176) sht30: Humidity CRC failed (errors=2241)
+I (115296) ei_classifier: classifier took 139 ms
+W (115296) wake_edge: Classifier slow: 191 ms
+I (115956) ei_classifier: classifier took 138 ms
+W (115956) wake_edge: Classifier slow: 190 ms
+W (116176) sht30: Humidity CRC failed (errors=2261)
+I (116646) ei_classifier: classifier took 137 ms
+W (116646) wake_edge: Classifier slow: 190 ms
+W (117176) sht30: Humidity CRC failed (errors=2281)
+I (117346) ei_classifier: classifier took 138 ms
+W (117346) wake_edge: Classifier slow: 191 ms
+I (117996) ei_classifier: classifier took 138 ms
+W (117996) wake_edge: Classifier slow: 191 ms
+W (118176) sht30: Humidity CRC failed (errors=2301)
+I (118696) ei_classifier: classifier took 138 ms
+I (118696) ei_classifier: THRESHOLD_HIT: score=0.637 threshold=0.60 count=24
+W (118696) wake_edge: Classifier slow: 191 ms
+I (118706) wake_edge: CANDIDATE: xj=0.637 noise=0.012 unknown=0.348 margin_n=0.625 margin_u=0.289 consecutive=1/2 MARGIN_OK
+W (119176) sht30: Humidity CRC failed (errors=2321)
+I (119406) ei_classifier: classifier took 138 ms
+W (119406) wake_edge: Classifier slow: 191 ms
+I (120066) ei_classifier: classifier took 137 ms
+W (120066) wake_edge: Classifier slow: 190 ms
+W (120176) sht30: Humidity CRC failed (errors=2341)
+I (120766) ei_classifier: classifier took 138 ms
+W (120766) wake_edge: Classifier slow: 192 ms
+W (121176) sht30: Humidity CRC failed (errors=2361)
+I (121426) ei_classifier: classifier took 138 ms
+W (121426) wake_edge: Classifier slow: 191 ms
+I (122126) ei_classifier: classifier took 137 ms
+W (122126) wake_edge: Classifier slow: 190 ms
+W (122176) sht30: Humidity CRC failed (errors=2381)
+I (122816) ei_classifier: classifier took 138 ms
+W (122816) wake_edge: Classifier slow: 191 ms
+I (123136) bootstrap: D: h=30171 L=13312 s=W g=3 i2s=1465 iB=1500160 w=589824 d=160256 we=1 te=2 ei=72/14
+I (123136) bootstrap: D: h=30171 L=13312 s=W g=3 i2s=2919 iB=2989056 w=1174016 d=320512 we=2 te=3 ei=145/24
+W (123176) sht30: Humidity CRC failed (errors=2401)
+I (123476) ei_classifier: classifier took 138 ms
+W (123476) wake_edge: Classifier slow: 190 ms
+I (124166) ei_classifier: classifier took 138 ms
+W (124166) wake_edge: Classifier slow: 191 ms
+W (124176) sht30: Humidity CRC failed (errors=2421)
+I (124856) ei_classifier: classifier took 137 ms
+W (124856) wake_edge: Classifier slow: 190 ms
+W (125176) sht30: Humidity CRC failed (errors=2441)
+I (125506) ei_classifier: classifier took 138 ms
+W (125506) wake_edge: Classifier slow: 191 ms
+W (126176) sht30: Humidity CRC failed (errors=2461)
+I (126196) ei_classifier: classifier took 139 ms
+W (126196) wake_edge: Classifier slow: 192 ms
+I (126856) ei_classifier: classifier took 138 ms
+W (126856) wake_edge: Classifier slow: 192 ms
+W (127176) sht30: Humidity CRC failed (errors=2481)
+I (127556) ei_classifier: classifier took 137 ms
+W (127556) wake_edge: Classifier slow: 190 ms
+W (128176) sht30: Humidity CRC failed (errors=2501)
+I (128246) ei_classifier: classifier took 137 ms
+W (128246) wake_edge: Classifier slow: 191 ms
+I (128906) ei_classifier: classifier took 137 ms
+W (128906) wake_edge: Classifier slow: 190 ms
+W (129176) sht30: Humidity CRC failed (errors=2521)
+I (129596) ei_classifier: classifier took 137 ms
+W (129596) wake_edge: Classifier slow: 191 ms
+W (130176) sht30: Humidity CRC failed (errors=2541)
+I (130296) ei_classifier: classifier took 139 ms
+W (130296) wake_edge: Classifier slow: 191 ms
+I (130956) ei_classifier: classifier took 138 ms
+W (130956) wake_edge: Classifier slow: 191 ms
+W (131176) sht30: Humidity CRC failed (errors=2561)
+I (131646) ei_classifier: classifier took 137 ms
+W (131646) wake_edge: Classifier slow: 190 ms
+W (132176) sht30: Humidity CRC failed (errors=2581)
+I (132306) ei_classifier: classifier took 139 ms
+W (132316) wake_edge: Classifier slow: 191 ms
+I (133006) ei_classifier: classifier took 139 ms
+W (133006) wake_edge: Classifier slow: 191 ms
+W (133176) sht30: Humidity CRC failed (errors=2601)
+I (133706) ei_classifier: classifier took 137 ms
+W (133706) wake_edge: Classifier slow: 190 ms
+W (134176) sht30: Humidity CRC failed (errors=2621)
+I (134356) ei_classifier: classifier took 139 ms
+W (134356) wake_edge: Classifier slow: 192 ms
+I (135056) ei_classifier: classifier took 137 ms
+W (135056) wake_edge: Classifier slow: 190 ms
+W (135176) sht30: Humidity CRC failed (errors=2641)
+I (135746) ei_classifier: classifier took 137 ms
+W (135746) wake_edge: Classifier slow: 191 ms
+W (136176) sht30: Humidity CRC failed (errors=2661)
+I (136406) ei_classifier: classifier took 138 ms
+W (136406) wake_edge: Classifier slow: 190 ms
+I (137096) ei_classifier: classifier took 138 ms
+W (137096) wake_edge: Classifier slow: 191 ms
+W (137176) sht30: Humidity CRC failed (errors=2681)
+I (137756) ei_classifier: classifier took 137 ms
+W (137756) wake_edge: Classifier slow: 191 ms
+W (138176) sht30: Humidity CRC failed (errors=2701)
+I (138446) ei_classifier: classifier took 137 ms
+W (138446) wake_edge: Classifier slow: 191 ms
+I (139146) ei_classifier: classifier took 139 ms
+W (139146) wake_edge: Classifier slow: 191 ms
+W (139176) sht30: Humidity CRC failed (errors=2721)
+I (139806) ei_classifier: classifier took 138 ms
+W (139806) wake_edge: Classifier slow: 191 ms
+W (140176) sht30: Humidity CRC failed (errors=2741)
+I (140496) ei_classifier: classifier took 138 ms
+W (140496) wake_edge: Classifier slow: 190 ms
+W (141176) sht30: Humidity CRC failed (errors=2761)
+I (141196) ei_classifier: classifier took 138 ms
+W (141196) wake_edge: Classifier slow: 191 ms
+I (141846) ei_classifier: classifier took 138 ms
+W (141846) wake_edge: Classifier slow: 191 ms
+W (142176) sht30: Humidity CRC failed (errors=2781)
+I (142546) ei_classifier: classifier took 138 ms
+W (142546) wake_edge: Classifier slow: 191 ms
+W (143176) sht30: Humidity CRC failed (errors=2801)
+I (143196) ei_classifier: classifier took 138 ms
+W (143206) wake_edge: Classifier slow: 191 ms
+I (143896) ei_classifier: classifier took 138 ms
+W (143896) wake_edge: Classifier slow: 191 ms
+W (144176) sht30: Humidity CRC failed (errors=2821)
+I (144596) ei_classifier: classifier took 138 ms
+W (144596) wake_edge: Classifier slow: 190 ms
+W (145176) sht30: Humidity CRC failed (errors=2841)
+I (145256) ei_classifier: classifier took 137 ms
+W (145256) wake_edge: Classifier slow: 190 ms
+I (145946) ei_classifier: classifier took 138 ms
+W (145946) wake_edge: Classifier slow: 191 ms
+W (146176) sht30: Humidity CRC failed (errors=2861)
+I (146646) ei_classifier: classifier took 139 ms
+W (146646) wake_edge: Classifier slow: 191 ms
+W (147176) sht30: Humidity CRC failed (errors=2881)
+I (147306) ei_classifier: classifier took 138 ms
+W (147306) wake_edge: Classifier slow: 191 ms
+I (147996) ei_classifier: classifier took 138 ms
+W (147996) wake_edge: Classifier slow: 191 ms
+W (148176) sht30: Humidity CRC failed (errors=2901)
+I (148666) ei_classifier: classifier took 138 ms
+W (148666) wake_edge: Classifier slow: 192 ms
+W (149176) sht30: Humidity CRC failed (errors=2921)
+I (149366) ei_classifier: classifier took 137 ms
+W (149366) wake_edge: Classifier slow: 191 ms
+I (150056) ei_classifier: classifier took 137 ms
+W (150056) wake_edge: Classifier slow: 190 ms
+W (150176) sht30: Humidity CRC failed (errors=2941)
+I (150706) ei_classifier: classifier took 139 ms
+W (150706) wake_edge: Classifier slow: 192 ms
+W (151176) sht30: Humidity CRC failed (errors=2961)
+I (151406) ei_classifier: classifier took 137 ms
+W (151406) wake_edge: Classifier slow: 190 ms
+I (152096) ei_classifier: classifier took 138 ms
+W (152096) wake_edge: Classifier slow: 191 ms
+W (152176) sht30: Humidity CRC failed (errors=2981)
+I (152756) ei_classifier: classifier took 137 ms
+W (152756) wake_edge: Classifier slow: 190 ms
+W (153176) sht30: Humidity CRC failed (errors=3001)
+I (153446) ei_classifier: classifier took 137 ms
+W (153446) wake_edge: Classifier slow: 190 ms
+I (154106) ei_classifier: classifier took 137 ms
+W (154106) wake_edge: Classifier slow: 190 ms
+W (154176) sht30: Humidity CRC failed (errors=3021)
+I (154796) ei_classifier: classifier took 137 ms
+W (154796) wake_edge: Classifier slow: 190 ms
+W (155176) sht30: Humidity CRC failed (errors=3041)
+I (155496) ei_classifier: classifier took 139 ms
+W (155496) wake_edge: Classifier slow: 191 ms
+I (156156) ei_classifier: classifier took 138 ms
+W (156156) wake_edge: Classifier slow: 191 ms
+W (156176) sht30: Humidity CRC failed (errors=3061)
+I (156846) ei_classifier: classifier took 137 ms
+W (156846) wake_edge: Classifier slow: 190 ms
+W (157176) sht30: Humidity CRC failed (errors=3081)
+I (157546) ei_classifier: classifier took 138 ms
+W (157546) wake_edge: Classifier slow: 191 ms
+W (158176) sht30: Humidity CRC failed (errors=3101)
+I (158196) ei_classifier: classifier took 138 ms
+W (158206) wake_edge: Classifier slow: 191 ms
+I (158896) ei_classifier: classifier took 138 ms
+W (158896) wake_edge: Classifier slow: 191 ms
+W (159176) sht30: Humidity CRC failed (errors=3121)
+I (159556) ei_classifier: classifier took 138 ms
+W (159556) wake_edge: Classifier slow: 191 ms
+W (160176) sht30: Humidity CRC failed (errors=3141)
+I (160246) ei_classifier: classifier took 139 ms
+W (160246) wake_edge: Classifier slow: 192 ms
+I (160946) ei_classifier: classifier took 137 ms
+W (160946) wake_edge: Classifier slow: 190 ms
+W (161176) sht30: Humidity CRC failed (errors=3161)
+I (161606) ei_classifier: classifier took 137 ms
+W (161606) wake_edge: Classifier slow: 190 ms
+W (162176) sht30: Humidity CRC failed (errors=3181)
+I (162296) ei_classifier: classifier took 139 ms
+W (162296) wake_edge: Classifier slow: 192 ms
+I (162996) ei_classifier: classifier took 138 ms
+W (162996) wake_edge: Classifier slow: 190 ms
+W (163176) sht30: Humidity CRC failed (errors=3201)
+I (163656) ei_classifier: classifier took 137 ms
+W (163656) wake_edge: Classifier slow: 190 ms
+W (164176) sht30: Humidity CRC failed (errors=3221)
+I (164346) ei_classifier: classifier took 138 ms
+W (164346) wake_edge: Classifier slow: 191 ms
+I (165006) ei_classifier: classifier took 139 ms
+W (165016) wake_edge: Classifier slow: 191 ms
+W (165176) sht30: Humidity CRC failed (errors=3241)
+I (165706) ei_classifier: classifier took 139 ms
+W (165706) wake_edge: Classifier slow: 192 ms
+W (166176) sht30: Humidity CRC failed (errors=3261)
+I (166406) ei_classifier: classifier took 137 ms
+W (166406) wake_edge: Classifier slow: 190 ms
+I (167056) ei_classifier: classifier took 138 ms
+W (167056) wake_edge: Classifier slow: 192 ms
+W (167176) sht30: Humidity CRC failed (errors=3281)
+I (167756) ei_classifier: classifier took 137 ms
+W (167756) wake_edge: Classifier slow: 190 ms
+W (168176) sht30: Humidity CRC failed (errors=3301)
+I (168446) ei_classifier: classifier took 137 ms
+W (168446) wake_edge: Classifier slow: 191 ms
+I (169106) ei_classifier: classifier took 138 ms
+W (169106) wake_edge: Classifier slow: 190 ms
+W (169176) sht30: Humidity CRC failed (errors=3321)
+I (169796) ei_classifier: classifier took 137 ms
+W (169796) wake_edge: Classifier slow: 190 ms
+W (170176) sht30: Humidity CRC failed (errors=3341)
+I (170456) ei_classifier: classifier took 137 ms
+W (170456) wake_edge: Classifier slow: 190 ms
+I (171146) ei_classifier: classifier took 138 ms
+W (171146) wake_edge: Classifier slow: 190 ms
+W (171176) sht30: Humidity CRC failed (errors=3361)
+I (171846) ei_classifier: classifier took 139 ms
+W (171846) wake_edge: Classifier slow: 191 ms
+W (172176) sht30: Humidity CRC failed (errors=3381)
+I (172506) ei_classifier: classifier took 138 ms
+W (172506) wake_edge: Classifier slow: 190 ms
+W (173176) sht30: Humidity CRC failed (errors=3401)
+I (173196) ei_classifier: classifier took 138 ms
+W (173196) wake_edge: Classifier slow: 191 ms
+I (173896) ei_classifier: classifier took 138 ms
+W (173896) wake_edge: Classifier slow: 191 ms
+W (174176) sht30: Humidity CRC failed (errors=3421)
+I (174556) ei_classifier: classifier took 138 ms
+W (174556) wake_edge: Classifier slow: 191 ms
+W (175176) sht30: Humidity CRC failed (errors=3441)
+I (175246) ei_classifier: classifier took 138 ms
+W (175246) wake_edge: Classifier slow: 192 ms
+I (175906) ei_classifier: classifier took 139 ms
+W (175906) wake_edge: Classifier slow: 192 ms
+W (176176) sht30: Humidity CRC failed (errors=3461)
+I (176606) ei_classifier: classifier took 138 ms
+W (176606) wake_edge: Classifier slow: 191 ms
+W (177176) sht30: Humidity CRC failed (errors=3481)
+I (177296) ei_classifier: classifier took 139 ms
+W (177296) wake_edge: Classifier slow: 192 ms
+I (177956) ei_classifier: classifier took 138 ms
+W (177956) wake_edge: Classifier slow: 191 ms
+W (178176) sht30: Humidity CRC failed (errors=3501)
+I (178646) ei_classifier: classifier took 137 ms
+W (178646) wake_edge: Classifier slow: 191 ms
+W (179176) sht30: Humidity CRC failed (errors=3521)
+I (179346) ei_classifier: classifier took 139 ms
+W (179346) wake_edge: Classifier slow: 191 ms
+I (180006) ei_classifier: classifier took 138 ms
+W (180006) wake_edge: Classifier slow: 191 ms
+W (180176) sht30: Humidity CRC failed (errors=3541)
+I (180696) ei_classifier: classifier took 138 ms
+W (180696) wake_edge: Classifier slow: 190 ms
+W (181176) sht30: Humidity CRC failed (errors=3561)
+I (181356) ei_classifier: classifier took 138 ms
+W (181366) wake_edge: Classifier slow: 191 ms
+I (182056) ei_classifier: classifier took 138 ms
+W (182056) wake_edge: Classifier slow: 192 ms
+W (182176) sht30: Humidity CRC failed (errors=3581)
+I (182756) ei_classifier: classifier took 137 ms
+W (182756) wake_edge: Classifier slow: 190 ms
+I (183136) bootstrap: D: h=30171 L=13312 s=W g=3 i2s=2919 iB=2989056 w=1174016 d=320512 we=2 te=3 ei=145/24
+I (183136) bootstrap: D: h=30171 L=13312 s=W g=3 i2s=4296 iB=4399104 w=1879040 d=320512 we=2 te=3 ei=233/24
+W (183176) sht30: Humidity CRC failed (errors=3601)
+I (183406) ei_classifier: classifier took 139 ms
+W (183406) wake_edge: Classifier slow: 191 ms
+I (184096) ei_classifier: classifier took 138 ms
+W (184096) wake_edge: Classifier slow: 191 ms
+W (184176) sht30: Humidity CRC failed (errors=3621)
+I (184796) ei_classifier: classifier took 137 ms
+W (184796) wake_edge: Classifier slow: 190 ms
+W (185176) sht30: Humidity CRC failed (errors=3641)
+I (185456) ei_classifier: classifier took 137 ms
+W (185456) wake_edge: Classifier slow: 190 ms
+I (186146) ei_classifier: classifier took 138 ms
+W (186146) wake_edge: Classifier slow: 191 ms
+W (186176) sht30: Humidity CRC failed (errors=3661)
+I (186806) ei_classifier: classifier took 138 ms
+W (186806) wake_edge: Classifier slow: 192 ms
+W (187176) sht30: Humidity CRC failed (errors=3681)
+I (187496) ei_classifier: classifier took 138 ms
+W (187496) wake_edge: Classifier slow: 191 ms
+W (188176) sht30: Humidity CRC failed (errors=3701)
+I (188196) ei_classifier: classifier took 139 ms
+W (188196) wake_edge: Classifier slow: 191 ms
+I (188856) ei_classifier: classifier took 137 ms
+W (188856) wake_edge: Classifier slow: 190 ms
+W (189176) sht30: Humidity CRC failed (errors=3721)
+I (189546) ei_classifier: classifier took 138 ms
+W (189546) wake_edge: Classifier slow: 191 ms
+W (190176) sht30: Humidity CRC failed (errors=3741)
+I (190246) ei_classifier: classifier took 138 ms
+W (190246) wake_edge: Classifier slow: 191 ms
+I (190896) ei_classifier: classifier took 138 ms
+W (190896) wake_edge: Classifier slow: 191 ms
+W (191176) sht30: Humidity CRC failed (errors=3761)
+I (191596) ei_classifier: classifier took 138 ms
+W (191596) wake_edge: Classifier slow: 191 ms
+W (192176) sht30: Humidity CRC failed (errors=3781)
+I (192246) ei_classifier: classifier took 138 ms
+W (192256) wake_edge: Classifier slow: 191 ms
+I (192946) ei_classifier: classifier took 138 ms
+W (192946) wake_edge: Classifier slow: 191 ms
+W (193176) sht30: Humidity CRC failed (errors=3801)
+I (193646) ei_classifier: classifier took 137 ms
+W (193646) wake_edge: Classifier slow: 190 ms
+W (194176) sht30: Humidity CRC failed (errors=3821)
+I (194306) ei_classifier: classifier took 138 ms
+W (194306) wake_edge: Classifier slow: 191 ms
+I (194996) ei_classifier: classifier took 138 ms
+W (194996) wake_edge: Classifier slow: 191 ms
+W (195176) sht30: Humidity CRC failed (errors=3841)
+I (195696) ei_classifier: classifier took 139 ms
+W (195696) wake_edge: Classifier slow: 190 ms
+W (196176) sht30: Humidity CRC failed (errors=3861)
+I (196356) ei_classifier: classifier took 138 ms
+W (196356) wake_edge: Classifier slow: 190 ms
+I (197046) ei_classifier: classifier took 137 ms
+W (197046) wake_edge: Classifier slow: 190 ms
+W (197176) sht30: Humidity CRC failed (errors=3881)
+I (197716) ei_classifier: classifier took 139 ms
+W (197716) wake_edge: Classifier slow: 192 ms
+W (198176) sht30: Humidity CRC failed (errors=3901)
+I (198426) ei_classifier: classifier took 137 ms
+W (198426) wake_edge: Classifier slow: 190 ms
+I (199116) ei_classifier: classifier took 138 ms
+W (199116) wake_edge: Classifier slow: 191 ms
+W (199176) sht30: Humidity CRC failed (errors=3921)
+I (199786) ei_classifier: classifier took 139 ms
+W (199786) wake_edge: Classifier slow: 191 ms
+W (200176) sht30: Humidity CRC failed (errors=3941)
+I (200476) ei_classifier: classifier took 138 ms
+W (200476) wake_edge: Classifier slow: 192 ms
+I (201176) ei_classifier: classifier took 138 ms
+W (201176) wake_edge: Classifier slow: 191 ms
+W (201176) sht30: Humidity CRC failed (errors=3961)
+I (201836) ei_classifier: classifier took 138 ms
+W (201836) wake_edge: Classifier slow: 191 ms
+W (202176) sht30: Humidity CRC failed (errors=3981)
+I (202526) ei_classifier: classifier took 138 ms
+W (202526) wake_edge: Classifier slow: 191 ms
+I (203176) ei_classifier: classifier took 138 ms
+W (203176) wake_edge: Classifier slow: 191 ms
+W (203176) sht30: Humidity CRC failed (errors=4001)
+I (203876) ei_classifier: classifier took 138 ms
+W (203876) wake_edge: Classifier slow: 191 ms
+W (204176) sht30: Humidity CRC failed (errors=4021)
+I (204576) ei_classifier: classifier took 138 ms
+W (204576) wake_edge: Classifier slow: 191 ms
+W (205176) sht30: Humidity CRC failed (errors=4041)
+I (205236) ei_classifier: classifier took 138 ms
+W (205236) wake_edge: Classifier slow: 191 ms
+I (205926) ei_classifier: classifier took 139 ms
+W (205936) wake_edge: Classifier slow: 191 ms
+W (206176) sht30: Humidity CRC failed (errors=4061)
+I (206626) ei_classifier: classifier took 138 ms
+W (206626) wake_edge: Classifier slow: 192 ms
+W (207176) sht30: Humidity CRC failed (errors=4081)
+I (207286) ei_classifier: classifier took 139 ms
+W (207286) wake_edge: Classifier slow: 192 ms
+I (207996) ei_classifier: classifier took 138 ms
+W (207996) wake_edge: Classifier slow: 190 ms
+W (208176) sht30: Humidity CRC failed (errors=4101)
+I (208656) ei_classifier: classifier took 137 ms
+W (208656) wake_edge: Classifier slow: 190 ms
+W (209176) sht30: Humidity CRC failed (errors=4121)
+I (209346) ei_classifier: classifier took 138 ms
+W (209356) wake_edge: Classifier slow: 191 ms
+I (210046) ei_classifier: classifier took 138 ms
+W (210046) wake_edge: Classifier slow: 191 ms
+W (210176) sht30: Humidity CRC failed (errors=4141)
+I (210706) ei_classifier: classifier took 138 ms
+W (210706) wake_edge: Classifier slow: 191 ms
+W (211176) sht30: Humidity CRC failed (errors=4161)
+I (211396) ei_classifier: classifier took 138 ms
+W (211396) wake_edge: Classifier slow: 191 ms
+I (212086) ei_classifier: classifier took 138 ms
+W (212086) wake_edge: Classifier slow: 191 ms
+W (212176) sht30: Humidity CRC failed (errors=4181)
+I (212736) ei_classifier: classifier took 139 ms
+W (212736) wake_edge: Classifier slow: 191 ms
+W (213176) sht30: Humidity CRC failed (errors=4201)
+I (213426) ei_classifier: classifier took 138 ms
+W (213436) wake_edge: Classifier slow: 191 ms
+I (214086) ei_classifier: classifier took 138 ms
+W (214086) wake_edge: Classifier slow: 191 ms
+W (214176) sht30: Humidity CRC failed (errors=4221)
+I (214786) ei_classifier: classifier took 139 ms
+W (214786) wake_edge: Classifier slow: 192 ms
+W (215176) sht30: Humidity CRC failed (errors=4241)
+I (215496) ei_classifier: classifier took 139 ms
+W (215496) wake_edge: Classifier slow: 191 ms
+I (216156) ei_classifier: classifier took 138 ms
+W (216156) wake_edge: Classifier slow: 190 ms
+W (216176) sht30: Humidity CRC failed (errors=4261)
+I (216846) ei_classifier: classifier took 137 ms
+W (216846) wake_edge: Classifier slow: 190 ms
+W (217176) sht30: Humidity CRC failed (errors=4281)
+I (217546) ei_classifier: classifier took 138 ms
+W (217546) wake_edge: Classifier slow: 191 ms
+W (218176) sht30: Humidity CRC failed (errors=4301)
+I (218196) ei_classifier: classifier took 138 ms
+W (218206) wake_edge: Classifier slow: 191 ms
+I (218896) ei_classifier: classifier took 138 ms
+W (218896) wake_edge: Classifier slow: 191 ms
+W (219176) sht30: Humidity CRC failed (errors=4321)
+I (219556) ei_classifier: classifier took 139 ms
+W (219556) wake_edge: Classifier slow: 191 ms
+W (220176) sht30: Humidity CRC failed (errors=4341)
+I (220256) ei_classifier: classifier took 137 ms
+W (220256) wake_edge: Classifier slow: 190 ms
+I (220946) ei_classifier: classifier took 138 ms
+W (220946) wake_edge: Classifier slow: 191 ms
+W (221176) sht30: Humidity CRC failed (errors=4361)
+I (221606) ei_classifier: classifier took 138 ms
+W (221606) wake_edge: Classifier slow: 191 ms
+W (222176) sht30: Humidity CRC failed (errors=4381)
+I (222296) ei_classifier: classifier took 139 ms
+W (222296) wake_edge: Classifier slow: 192 ms
+I (222996) ei_classifier: classifier took 138 ms
+W (222996) wake_edge: Classifier slow: 190 ms
+W (223176) sht30: Humidity CRC failed (errors=4401)
+I (223656) ei_classifier: classifier took 138 ms
+W (223656) wake_edge: Classifier slow: 191 ms
+W (224176) sht30: Humidity CRC failed (errors=4421)
+I (224346) ei_classifier: classifier took 138 ms
+W (224356) wake_edge: Classifier slow: 191 ms
+I (225016) ei_classifier: classifier took 139 ms
+W (225016) wake_edge: Classifier slow: 192 ms
+W (225176) sht30: Humidity CRC failed (errors=4441)

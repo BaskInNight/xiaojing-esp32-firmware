@@ -1,0 +1,58 @@
+{
+  "phase": 9,
+  "round": "2.6.2",
+  "timestamp": "2026-08-04T01:30:00",
+  "bin_sha256": "032FB7A074A886BF8D5288D0F24D0BBCAF39E8DD4DB4F93A465CCD3AC505EC35",
+  "elf_sha256": "5809A875617C52CAF710F4F4F1883DDEBED88F36B65C78D843B1EFAEB15AED1B",
+  "bin_sha256_length": 64,
+  "elf_sha256_length": 64,
+  "git_commit": "8ec391c-dirty",
+  "esp_idf_version": "v5.5.4",
+  "target_chip": "esp32s3",
+  "psram_size_bytes": 8388608,
+  "flash_size_bytes": 16777216,
+  "firmware_size_bytes": 4116768,
+  "wake_strategy": {
+    "candidate_threshold": 0.80,
+    "candidate_margin": 0.15,
+    "candidate_consecutive_hits": 2,
+    "candidate_cooldown_ms": 2000,
+    "old_project_threshold": 0.80,
+    "status": "CANDIDATE_PENDING_USER_TEST"
+  },
+  "classifier_frequency": {
+    "declared_stride_ms": 500,
+    "observed_interval_ms": 674,
+    "gap_cause": "Synchronous classifier blocks I2S reads",
+    "dma_buffer_ms": 30,
+    "recommendation": "Acceptable if no DMA overruns"
+  },
+  "p1_fixes_applied": [
+    "P1-1: Audio layering - neutral driver, Edge 8x, Dialog 1x",
+    "P1-3: Diagnostic task - semaphore lifecycle, atomic stop"
+  ],
+  "gate_status": {
+    "PCM_LAYERING_SAFE": "PASS",
+    "SIGNED_SHIFT_UB": "PASS",
+    "EDGE_GAIN_ONLY": "PASS",
+    "DIALOG_GAIN_1X": "PASS",
+    "RECORDER_10S_RUNTIME": "PASS",
+    "DIAG_TASK_JOIN_SAFE": "PASS",
+    "FALSE_WAKE_DURATION": "PASS (602s)",
+    "WIFI_GOT_IP": "PASS",
+    "RESET_WDT": "PASS",
+    "BIN_SHA256_VALID": "PASS (64 hex)",
+    "ELF_SHA256_VALID": "PASS (64 hex)"
+  },
+  "pending_gates": [
+    "AUTO_CYCLES>=20",
+    "TRUE_LIVE_TRIALS>=10",
+    "FINAL_WAKE_POLICY_SELECTED",
+    "SOAK_CONTINUOUS>=4h"
+  ],
+  "ready_for_user_test": true,
+  "conclusion": {
+    "PHASE9_EDGE_SOFTWARE_GATE": "NOT_YET",
+    "PHASE9_EDGE_ACOUSTIC_GATE": "NEEDS_USER_LIVE_TEST"
+  }
+}

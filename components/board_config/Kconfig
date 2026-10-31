@@ -1,0 +1,82 @@
+menu "Xiaojing Configuration"
+
+    choice XIAOJING_OUTPUT_MODE
+        prompt "Output mode"
+        default XIAOJING_OUTPUT_MODE_FAKE
+        help
+            FAKE: all outputs simulated, safe for development.
+            LOW_VOLTAGE: real GPIO but no mains/24V loads.
+            REAL: full hardware output including 220VAC PTC.
+
+        config XIAOJING_OUTPUT_MODE_FAKE
+            bool "FAKE (default, safe for development)"
+
+        config XIAOJING_OUTPUT_MODE_LOW_VOLTAGE
+            bool "LOW_VOLTAGE (real GPIO, no mains/24V)"
+
+        config XIAOJING_OUTPUT_MODE_REAL
+            bool "REAL (full hardware output)"
+    endchoice
+
+    config XIAOJING_FAKE_RUNTIME_SIM
+        bool "Interactive runtime simulation in FAKE mode"
+        default n
+        depends on XIAOJING_OUTPUT_MODE_FAKE
+        help
+            Use an executor protocol simulator for phone/BLE testing on a
+            bare development board. It never drives REAL or LOW_VOLTAGE
+            outputs and is disabled by default for unit-test builds.
+
+    config XIAOJING_PTC_ENABLED
+        bool "Enable PTC heater (220VAC)"
+        default n
+        depends on XIAOJING_OUTPUT_MODE_REAL
+        help
+            PTC heater requires REAL output mode and
+            explicit safety confirmation. Keep disabled
+            until hardware bring-up T6.
+
+    config XIAOJING_HOT_AIR_MODULE_ENABLED
+        bool "Enable coupled hot-air module (single 220VAC relay)"
+        default n
+        depends on XIAOJING_OUTPUT_MODE_REAL
+        help
+            Single-relay coupled hot-air module: the manufacturer wires the
+            fixed-speed 220VAC fan and the 220VAC heating element in parallel,
+            driven by the SAME relay (MCP GPA7). There is NO independent fan
+            or heater control. Requires REAL output mode and explicit safety
+            confirmation. The module fan+heater start and stop together.
+
+    config XIAOJING_BOARD_IDENTITY_CONFIRMED
+        bool "Board identity confirmed (GPIO38/47/48 voltage domain verified)"
+        default n
+        help
+            Must be enabled after verifying the physical board's
+            module type (N16R8 vs N16R8V) and GPIO38/47/48 voltage
+            domain compatibility. Without this, GPIO38 (FAN_PWM),
+            GPIO47 (AMP_SD), and GPIO48 (IBT2_EN) real outputs are
+            blocked. Required for LOW_VOLTAGE and REAL output modes.
+
+    config XIAOJING_VOICE_ENABLED
+        bool "Enable voice agent (AI Gateway or MiMo)"
+        default n
+        help
+            Enable voice wake-up, VAD recording, HTTPS
+            AUTO_ROUTE/tool calling and TTS. Requires Wi-Fi
+            credentials plus a local voice_secrets.h API key.
+
+    config XIAOJING_DISPLAY_ENABLED
+        bool "Enable LCD display"
+        default n
+        help
+            Enable ILI9341 SPI display adapter for
+            status display.
+
+    config XIAOJING_LEGACY_BLE
+        bool "Enable legacy BLE protocol"
+        default y
+        help
+            Keep compatibility with old miniapp P/S/A
+            compact notifications.
+
+endmenu

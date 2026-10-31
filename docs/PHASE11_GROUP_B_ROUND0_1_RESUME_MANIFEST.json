@@ -1,0 +1,77 @@
+{
+  "checkpoint": {
+    "date": "2026-08-07",
+    "session": "Phase 11 Group A R1.3 + Group B R0.1 software prep",
+    "next_round": "Await Codex code review, then: fix FAN display LED (WDT), run 10k Fake HAL stress, user physical retest."
+  },
+  "firmware": {
+    "dir": "D:\\UserData\\ESP32Project\\IDF\\ESP32-IDF-Test",
+    "current_flashed": "R278 (Group A fixes + Group B drain/fan self-test software, 6-LED display)",
+    "bin_sha256": "52668ef97015e37b70eaa92ee6eebcd1e8147f598cb0d7bdd1789495a974d716",
+    "elf_sha256": "cf6e3e113d37b24276c426fc64048f626a6c68c0e9a36b194e384244681c1143",
+    "flash_verified_partitions": 5,
+    "port": "COM8"
+  },
+  "builds": {
+    "main_build": {"ok": true, "warnings": 0},
+    "unit_build": {"ok": true, "pre_existing_warnings": 6},
+    "host_tests": {
+      "test_uv_act_core": "89/89",
+      "test_display_model": "49/49",
+      "test_runner": "308/308",
+      "test_voice_vad": "4/4",
+      "test_phase11_safety": "11/11"
+    },
+    "python_tests": "23/23",
+    "miniapp_tests": "184+ PASS"
+  },
+  "group_a_fixes": {
+    "HW-FIX-1": {"status": "FIXED+device-verified", "evidence": "water_svc: initial safe-off sync: source=OFF transfer=OFF synced=1"},
+    "HW-FIX-2": {"status": "FIXED", "evidence": "detergent snapshot terminal_pending deterministic"},
+    "HW-FIX-3": {"status": "FIXED", "evidence": "UV IDLE+retained-terminal recognized as complete"},
+    "UI-P2-1": "speaker-prefix strip",
+    "UI-P2-2": "idle progress bar hidden",
+    "UI-P2-3": "backend label 6px right margin"
+  },
+  "group_b_software": {
+    "B0_audit": "DONE (evidence table in PHASE11_GROUP_B_ROUND0_1_SOFTWARE_PREPARATION_REPORT.md)",
+    "B1_drain_selftest": "IMPLEMENTED (2000ms, 180deg gate, host-tested)",
+    "B2_fan_selftest": "IMPLEMENTED (5000ms fan-only, 270deg gate, dry boot sync verified)",
+    "B3_heater_gate": "VERIFIED in safety_interlocks/dry_fsm; NO heater target; button hidden",
+    "B4_miniapp": "drain + fan buttons added (capability-negotiated)",
+    "B5_display": "fan_state in telemetry; FAN LED DEFERRED (WDT regression R277 -> reverted to 6-LED)",
+    "B6_tests": "89/89 host incl Group B; 10k Fake HAL stress PENDING (context budget)",
+    "B7_build_flash": "R278 flashed 5/5 verified, safe-OFF boot"
+  },
+  "wdt_regression": {
+    "r277_cause": "7th FAN output LED caused taskLVGL busy-loop (IDLE1 starved, anti-aliased arc draw)",
+    "resolution": "reverted to 6-LED layout (R278); WDT=0 confirmed",
+    "fan_display_fix_next_round": "render fan via static label/card, avoid per-frame AA arc redraw"
+  },
+  "soak": {
+    "firmware": "R278",
+    "log": "build_phase11_r13_soak.log",
+    "duration_s": 14400,
+    "result": "PASS: elapsed=14400s resets={} wdt=0 guru=0 panic=0 assert=0 act_open=0 emerg=0 hb=572; heap 11951->11791 (min 11663, non-monotonic); heartbeat 900->57600; WiFi 0 disconnects"
+  },
+  "gates": {
+    "PHASE11_GROUP_A_FIX_SOFTWARE_GATE": "PASS",
+    "PHASE11_GROUP_A_PASSIVE_SOAK_GATE": "PASS (4h clean)",
+    "PHASE11_GROUP_A_HARDWARE_GATE": "NOT_YET (user retest)",
+    "PHASE11_GROUP_B_SOFTWARE_PREPARATION_GATE": "PASS (software)",
+    "READY_FOR_USER_GROUP_A_RETEST": "YES",
+    "READY_FOR_USER_GROUP_B_TEST": "YES (drain/fan; heater NO)",
+    "READY_FOR_HEATER_TEST": "NO"
+  },
+  "reports": [
+    "docs/PHASE11_GROUP_A_ROUND1_3_FIX_AND_OVERNIGHT_SOAK_REPORT.md",
+    "docs/PHASE11_GROUP_B_ROUND0_1_SOFTWARE_PREPARATION_REPORT.md"
+  ],
+  "next_steps": [
+    "Wait for Codex code review",
+    "Confirm 4h soak results (append to R1.3 report soak table)",
+    "Fix FAN display LED without WDT (static render)",
+    "Run 10k Fake HAL stress with deterministic seed",
+    "User: physical Group A retest (7 items) then Group B drain/fan, heater only after fixture"
+  ]
+}

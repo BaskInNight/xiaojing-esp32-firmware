@@ -1,0 +1,14 @@
+﻿Executing action: all (aliases: build)
+Running cmake in directory D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\build
+Executing "cmake -G Ninja -DPYTHON_DEPS_CHECKED=1 -DPYTHON=D:\Program\esp\.espressif\python_env\idf5.5_py3.10_env\Scripts\python.exe -DESP_PLATFORM=1 -DCCACHE_ENABLE=0 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit"...
+-- IDF_TARGET is not set, guessed 'esp32s3' from sdkconfig 'D:/UserData/ESP32Project/IDF/ESP32-IDF-Test/test_apps/unit/sdkconfig.defaults'
+-- Found Git: D:/Program/Git/Git/cmd/git.exe (found version "2.53.0.windows.2")
+python.exe : cmake failed with exit code 4294967295, output of the command is in the D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\build\l
+og\idf_py_stderr_output_37236 and D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\test_apps\unit\build\log\idf_py_stdout_output_37236
+At line:6 char:1
++ & python "$env:IDF_PATH\tools\idf.py" build 2>&1 | Out-String | Out-F ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (cmake failed wi...ut_output_37236:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+

@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell.exe -NoProfile -Command \"$j=[Console]::In.ReadToEnd()|ConvertFrom-Json; $c=$j.tool_input.command; if($c -match '^idf\\.py\\b'){ $script='.claude\\esp-idf-activate.ps1'; @{hookSpecificOutput=@{hookEventName='PreToolUse';permissionDecision='allow';updatedInput=@{command=\\\". `'$script`'; $c\\\"}}}|ConvertTo-Json -Compress -Depth 5 }\""
+          }
+        ]
+      }
+    ]
+  }
+}

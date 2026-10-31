@@ -1,0 +1,38 @@
+{
+  "version": "1.0",
+  "generated_by": "tools/synthesize_voice_prompts.py",
+  "style": "\u5e74\u8f7b\u6210\u5e74\u5973\u6027\u7684\u871c\u7cd6\u97f3\u8272\uff0c\u751c\u6da6\u6e05\u4eae\uff0c\u4eb2\u5207\u81ea\u7136\u3002",
+  "assets": [
+    {
+      "logical_id": "chat_thinking_bright",
+      "source": "mimo_generated",
+      "file": "honey_v6/chat_thinking_bright.wav",
+      "text": "\u8ba9\u6211\u60f3\u4e00\u4e0b\u3002",
+      "sample_rate": 24000,
+      "channels": 1,
+      "bits_per_sample": 16,
+      "duration_ms": 2240,
+      "byte_size": 107564,
+      "sha256": "a3b7d571d8d4639138a1b5d6022630b004bee10a97166342fbcdc53212056be2",
+      "generation_model": "mimo-v2.5-tts",
+      "generation_voice": "mimo_default",
+      "generation_style": "\u5e74\u8f7b\u6210\u5e74\u5973\u6027\u7684\u871c\u7cd6\u97f3\u8272\uff0c\u5e26\u7b11\u610f\u548c\u5174\u8da3\uff0c\u79ef\u6781\u5730\u968f\u53e3\u63a5\u8bdd\uff1a\u8ba9\u6211\u60f3\u4e00\u4e0b\u3002\u8bf7\u7528\u504f\u5feb\u4f46\u6e05\u695a\u7684\u65e5\u5e38\u53e3\u8bed\uff0c\u4e00\u53e3\u6c14\u7d27\u51d1\u8bf4\u5b8c\uff0c\u4e94\u4e2a\u5b57\u7684\u53d1\u58f0\u63a7\u5236\u5728\u7ea6\u4e00\u79d2\u81f3\u4e00\u70b9\u4e8c\u79d2\uff0c\u4e0d\u5728\u5b57\u95f4\u505c\u987f\uff0c\u4e0d\u5ef6\u957f\u4efb\u4f55\u4e00\u4e2a\u97f3\u8282\u3002\u50cf\u6709\u4e86\u601d\u8def\u3001\u6b63\u5728\u5feb\u901f\u7422\u78e8\uff0c\u8f7b\u677e\u6d3b\u6cfc\uff0c\u6709\u81ea\u7136\u8bed\u8c03\uff0c\u7ed3\u5c3e\u8f7b\u8f7b\u6536\u4f4f\u3002\u4e0d\u8981\u6717\u8bf5\u3001\u5b57\u6b63\u8154\u5706\u6216\u6162\u541e\u541e\u3002\u53ea\u8bf4\u6b63\u6587\uff0c\u4e0d\u6dfb\u52a0\u5176\u4ed6\u5b57\u8bcd\u3002",
+      "generation_timestamp": "2026-10-31T12:54:16",
+      "validation": {
+        "valid": true,
+        "format": "PCM",
+        "channels": 1,
+        "sample_rate": 24000,
+        "bits_per_sample": 16,
+        "data_bytes": 107520,
+        "duration_ms": 2240,
+        "peak": 13724,
+        "rms": 2801,
+        "dc_offset": 10,
+        "clipping": false,
+        "errors": [],
+        "clipped_samples": 0
+      }
+    }
+  ]
+}

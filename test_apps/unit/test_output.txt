@@ -1,0 +1,2958 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x1668
+load:0x403c8700,len:0xe78
+load:0x403cb700,len:0x3158
+entry 0x403c8940
+I (24) boot: ESP-IDF v5.5.4 2nd stage bootloader
+I (25) boot: compile time Jul 26 2026 04:12:49
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (28) boot: efuse block revision: v1.3
+I (31) qio_mode: Enabling QIO for flash chip MXIC
+I (36) boot.esp32s3: Boot SPI Speed : 80MHz
+I (40) boot.esp32s3: SPI Mode       : QIO
+I (43) boot.esp32s3: SPI Flash Size : 16MB
+I (47) boot: Enabling RNG early entropy source...
+I (52) boot: Partition Table:
+I (54) boot: ## Label            Usage          Type ST Offset   Length
+I (61) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (67) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (74) boot:  2 factory          factory app      00 00 00010000 00100000
+I (80) boot: End of partition table
+I (83) esp_image: segment 0: paddr=00010020 vaddr=3c070020 size=1ae40h (110144) map
+I (107) esp_image: segment 1: paddr=0002ae68 vaddr=3fc95d00 size=051b0h ( 20912) load
+I (111) esp_image: segment 2: paddr=00030020 vaddr=42000020 size=61878h (399480) map
+I (171) esp_image: segment 3: paddr=000918a0 vaddr=3fc9aeb0 size=03d60h ( 15712) load
+I (174) esp_image: segment 4: paddr=00095608 vaddr=40374000 size=11c64h ( 72804) load
+I (188) esp_image: segment 5: paddr=000a7274 vaddr=50000000 size=00020h (    32) load
+I (197) boot: Loaded app from partition at offset 0x10000
+I (197) boot: Disabling RNG early entropy source...
+I (207) octal_psram: vendor id    : 0x0d (AP)
+I (207) octal_psram: dev id       : 0x02 (generation 3)
+I (207) octal_psram: density      : 0x03 (64 Mbit)
+I (210) octal_psram: good-die     : 0x01 (Pass)
+I (214) octal_psram: Latency      : 0x01 (Fixed)
+I (218) octal_psram: VCC          : 0x01 (3V)
+I (222) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (227) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (232) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (236) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (242) octal_psram: DriveStrength: 0x00 (1/1)
+I (246) MSPI Timing: Enter psram timing tuning
+I (251) esp_psram: Found 8MB PSRAM device
+I (254) esp_psram: Speed: 80MHz
+I (257) cpu_start: Multicore app
+I (692) esp_psram: SPI SRAM memory test OK
+I (700) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (701) cpu_start: Pro cpu start user code
+I (701) cpu_start: cpu freq: 160000000 Hz
+I (703) app_init: Application information:
+I (707) app_init: Project name:     xiaojing_unit_test
+I (711) app_init: App version:      8ec391c-dirty
+I (716) app_init: Compile time:     Jul 26 2026 04:12:11
+I (721) app_init: ELF file SHA256:  44685f5ee...
+I (725) app_init: ESP-IDF:          v5.5.4
+I (729) efuse_init: Min chip rev:     v0.0
+I (733) efuse_init: Max chip rev:     v0.99
+I (737) efuse_init: Chip rev:         v0.2
+I (741) heap_init: Initializing. RAM available for dynamic allocation:
+I (747) heap_init: At 3FCA15A8 len 00048168 (288 KiB): RAM
+I (752) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (757) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (762) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (768) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (775) spi_flash: detected chip: mxic
+I (778) spi_flash: flash io: qio
+I (782) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (787) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (794) main_task: Started on CPU0
+I (824) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (824) main_task: Calling app_main()
+=== xiaojing ESP-IDF Unity tests ===
+Auto-running all tests...
+Running revision_next: 0 goes to 1...
+./main/test_runner.c:89:revision_next: 0 goes to 1:PASS
+Running revision_next: normal increment...
+./main/test_runner.c:94:revision_next: normal increment:PASS
+Running revision_next: MAX-1 goes to MAX...
+./main/test_runner.c:100:revision_next: MAX-1 goes to MAX:PASS
+Running revision_next: MAX wraps to 1 (skip 0)...
+./main/test_runner.c:105:revision_next: MAX wraps to 1 (skip 0):PASS
+Running status_store revision ignores caller...
+I (884) status_store: Initialized
+I (884) status_store: Reset for testing
+./main/test_runner.c:114:status_store revision ignores caller:PASS
+Running status_store revision monotonic increment...
+W (904) status_store: Already initialized
+I (904) status_store: Reset for testing
+./main/test_runner.c:131:status_store revision monotonic increment:PASS
+Running status_store snapshot consistency...
+W (914) status_store: Already initialized
+I (914) status_store: Reset for testing
+./main/test_runner.c:147:status_store snapshot consistency:PASS
+Running status_store get_revision standalone...
+W (934) status_store: Already initialized
+I (934) status_store: Reset for testing
+./main/test_runner.c:167:status_store get_revision standalone:PASS
+Running status_store concurrent read/write no tearing...
+W (954) status_store: Already initialized
+I (954) status_store: Reset for testing
+./main/test_runner.c:247:status_store concurrent read/write no tearing:PASS
+Running fake_hal create/destroy/reject second...
+./main/test_runner.c:318:fake_hal create/destroy/reject second:PASS
+Running fake_hal virtual time...
+./main/test_runner.c:331:fake_hal virtual time:PASS
+Running fake_hal script triggers at correct time...
+./main/test_runner.c:342:fake_hal script triggers at correct time:PASS
+Running fake_hal script capacity boundary...
+./main/test_runner.c:375:fake_hal script capacity boundary:PASS
+Running fake_hal history overflow: oldest is (CAPACITY+1)th write...
+./main/test_runner.c:389:fake_hal history overflow: oldest is (CAPACITY+1)th write:PASS
+Running fake_hal fault injection: MCP read error...
+./main/test_runner.c:415:fake_hal fault injection: MCP read error:PASS
+Running fake_hal trigger_emergency_on_next_output...
+./main/test_runner.c:432:fake_hal trigger_emergency_on_next_output:PASS
+Running fake_hal PWM range validation...
+./main/test_runner.c:453:fake_hal PWM range validation:PASS
+Running config_validate: valid default passes (real C)...
+./main/test_runner.c:510:config_validate: valid default passes (real C):PASS
+Running config_validate: NaN pulses_per_liter rejected...
+./main/test_runner.c:516:config_validate: NaN pulses_per_liter rejected:PASS
+Running config_validate: Inf heater_cutoff rejected...
+./main/test_runner.c:523:config_validate: Inf heater_cutoff rejected:PASS
+Running config_validate: invalid policy enum rejected...
+./main/test_runner.c:530:config_validate: invalid policy enum rejected:PASS
+Running config_validate: demo > max_single rejected...
+./main/test_runner.c:537:config_validate: demo > max_single rejected:PASS
+Running config_validate: formal > max_single rejected...
+./main/test_runner.c:545:config_validate: formal > max_single rejected:PASS
+Running config_validate: wrong schema_version rejected...
+./main/test_runner.c:553:config_validate: wrong schema_version rejected:PASS
+Running NVS bad magic restores defaults...
+I (3344) machine_config: Config restored to compile defaults
+W (3344) machine_config: NVS magic mismatch: 0xdeadbeef
+W (3344) machine_config: NVS config invalid or missing (0x10a), restoring defaults
+./main/test_runner.c:573:NVS bad magic restores defaults:PASS
+Running NVS bad CRC restores defaults...
+I (3374) machine_config: Config restored to compile defaults
+W (3374) machine_config: NVS CRC mismatch: stored 0x12345678 vs computed 0x771831ab
+W (3374) machine_config: NVS config invalid or missing (0x109), restoring defaults
+./main/test_runner.c:591:NVS bad CRC restores defaults:PASS
+Running NVS bad schema_version restores defaults...
+I (3414) machine_config: Config restored to compile defaults
+W (3414) machine_config: NVS schema mismatch: got 99, expected 3
+W (3414) machine_config: NVS config invalid or missing (0x10a), restoring defaults
+./main/test_runner.c:609:NVS bad schema_version restores defaults:PASS
+Running NVS payload NaN field restores defaults...
+I (3454) machine_config: Config restored to compile defaults
+W (3454) machine_config: NVS config invalid or missing (0x0), restoring defaults
+./main/test_runner.c:626:NVS payload NaN field restores defaults:PASS
+Running MCP output whitelist rejects input pins...
+./main/test_runner.c:704:MCP output whitelist rejects input pins:PASS
+Running MCP IOCON includes ODR+MIRROR for button interrupt path...
+./main/test_runner.c:716:MCP IOCON includes ODR+MIRROR for button interrupt path:PASS
+Running MCP invalid port enum rejected...
+./main/test_runner.c:729:MCP invalid port enum rejected:PASS
+Running MCP invalid pin rejected...
+./main/test_runner.c:737:MCP invalid pin rejected:PASS
+Running MCP non-whitelist pin rejected...
+W (3514) mcp23017: Pin 4 port A not in whitelist
+W (3514) mcp23017: Pin 0 port B not in whitelist
+./main/test_runner.c:747:MCP non-whitelist pin rejected:PASS
+Running MCP close_all: A fails, B still closes...
+E (3534) mcp23017: close_all OLATA failed: 0x108
+./main/test_runner.c:761:MCP close_all: A fails, B still closes:PASS
+Running MCP close_all: failure shadow preserved for retry...
+E (3554) mcp23017: close_all OLATA failed: 0x108
+./main/test_runner.c:784:MCP close_all: failure shadow preserved for retry:PASS
+Running MCP emergency retry re-writes after failure...
+E (3564) mcp23017: close_all OLATA failed: 0x108
+./main/test_runner.c:803:MCP emergency retry re-writes after failure:PASS
+Running MCP emergency latch: ON rejected, OFF allowed...
+W (3584) mcp23017: ON rejected: emergency latched
+W (3584) mcp23017: ON rejected: emergency latched
+./main/test_runner.c:826:MCP emergency latch: ON rejected, OFF allowed:PASS
+Running MCP clear emergency latch requires safe outputs...
+E (3604) mcp23017: close_all OLATA failed: 0x108
+W (3604) mcp23017: clear_latch rejected: outputs not safe (A=0x02 B=0x00)
+./main/test_runner.c:852:MCP clear emergency latch requires safe outputs:PASS
+Running MCP PTC ON blocked when PTC disabled...
+W (3624) mcp23017: PTC ON blocked
+./main/test_runner.c:880:MCP PTC ON blocked when PTC disabled:PASS
+Running MCP shadow state snapshot correct...
+./main/test_runner.c:895:MCP shadow state snapshot correct:PASS
+Running MCP destroy NULL is safe...
+./main/test_runner.c:912:MCP destroy NULL is safe:PASS
+Running ibt2 destroy NULL is safe...
+./main/test_runner.c:923:ibt2 destroy NULL is safe:PASS
+Running ibt2 lifecycle [hw]...
+./main/test_runner.c:930:ibt2 lifecycle [hw]:IGNORE: Board not confirmed
+Running ibt2 pwm>100 rejected [hw]...
+./main/test_runner.c:945:ibt2 pwm>100 rejected [hw]:IGNORE: Board not confirmed
+Running ibt2 uncalibrated rejects CW/CCW [hw]...
+./main/test_runner.c:957:ibt2 uncalibrated rejects CW/CCW [hw]:IGNORE: Board not confirmed
+Running bl50 destroy NULL is safe...
+./main/test_runner.c:973:bl50 destroy NULL is safe:PASS
+Running bl50 lifecycle [hw]...
+./main/test_runner.c:980:bl50 lifecycle [hw]:IGNORE: Board not confirmed
+Running bl50 run(0) equals STOP [hw]...
+./main/test_runner.c:995:bl50 run(0) equals STOP [hw]:IGNORE: Board not confirmed
+Running bl50 pwm>100 rejected [hw]...
+./main/test_runner.c:1008:bl50 pwm>100 rejected [hw]:IGNORE: Board not confirmed
+Running fan destroy NULL is safe...
+./main/test_runner.c:1022:fan destroy NULL is safe:PASS
+Running fan init fails when board not confirmed...
+W (3744) fan: GPIO38 (FAN_PWM) blocked ！ board identity not confirmed
+./main/test_runner.c:1027:fan init fails when board not confirmed:PASS
+Running fan lifecycle [hw]...
+./main/test_runner.c:1039:fan lifecycle [hw]:IGNORE: Board not confirmed
+Running fan set_percent boundary [hw]...
+./main/test_runner.c:1052:fan set_percent boundary [hw]:IGNORE: Board not confirmed
+Running flow_meter destroy NULL is safe...
+./main/test_runner.c:1066:flow_meter destroy NULL is safe:PASS
+Running flow_meter init fails without hardware...
+E (3794) pcnt: pcnt_new_unit(215): invalid limit range:[0,32767]
+E (3794) flow: PCNT unit creation failed: 0x102
+./main/test_runner.c:1071:flow_meter init fails without hardware:PASS
+Running flow read/reset concurrency safe [hw]...
+E (3814) pcnt: pcnt_new_unit(215): invalid limit range:[0,32767]
+E (3814) flow: PCNT unit creation failed: 0x102
+./main/test_runner.c:1090:flow read/reset concurrency safe [hw]:IGNORE: No PCNT hardware
+Running water_level destroy NULL is safe...
+./main/test_runner.c:1107:water_level destroy NULL is safe:PASS
+Running water_level lifecycle [hw]...
+./main/test_runner.c:1114:water_level lifecycle [hw]:IGNORE: Board not confirmed
+Running turbidity destroy NULL is safe...
+./main/test_runner.c:1128:turbidity destroy NULL is safe:PASS
+Running turbidity lifecycle [hw]...
+./main/test_runner.c:1135:turbidity lifecycle [hw]:IGNORE: Board not confirmed
+Running SHT stale timeout constant...
+./main/test_runner.c:1151:SHT stale timeout constant:PASS
+Running SHT destroy NULL is safe...
+./main/test_runner.c:1156:SHT destroy NULL is safe:PASS
+Running SHT get_addr returns 0 without init...
+./main/test_runner.c:1161:SHT get_addr returns 0 without init:PASS
+Running SHT get_error_count returns 0 without init...
+./main/test_runner.c:1166:SHT get_error_count returns 0 without init:PASS
+Running SHT fresh read succeeds...
+I (3914) i2c_bus: I2C bus initialized in MOCK mode
+I (3914) sht30: SHT30 initialized (addr=0x44, stale=5000ms)
+./main/test_runner.c:1231:SHT fresh read succeeds:PASS
+Running SHT I2C failure returns last-good sample...
+I (3934) i2c_bus: I2C bus initialized in MOCK mode
+I (3934) sht30: SHT30 initialized (addr=0x44, stale=5000ms)
+./main/test_runner.c:1252:SHT I2C failure returns last-good sample:PASS
+Running SHT CRC failure returns last-good or invalid...
+I (3964) i2c_bus: I2C bus initialized in MOCK mode
+I (3964) sht30: SHT30 initialized (addr=0x44, stale=5000ms)
+W (4004) sht30: Temperature CRC failed
+./main/test_runner.c:1279:SHT CRC failure returns last-good or invalid:PASS
+Running SHT no last-good on first read returns invalid...
+I (4014) i2c_bus: I2C bus initialized in MOCK mode
+I (4014) sht30: SHT30 initialized (addr=0x44, stale=5000ms)
+./main/test_runner.c:1304:SHT no last-good on first read returns invalid:PASS
+Running audio destroy NULL is safe...
+./main/test_runner.c:1328:audio destroy NULL is safe:PASS
+Running audio is_output_enabled false without init...
+./main/test_runner.c:1333:audio is_output_enabled false without init:PASS
+Running audio init fails when board not confirmed...
+W (4054) audio: GPIO47 (AMP_SD) blocked ！ board identity not confirmed
+./main/test_runner.c:1338:audio init fails when board not confirmed:PASS
+Running audio lifecycle [hw]...
+./main/test_runner.c:1351:audio lifecycle [hw]:IGNORE: Board not confirmed
+Running real_hal destroy NULL is safe...
+./main/test_runner.c:1369:real_hal destroy NULL is safe:PASS
+Running real_hal get_interface NULL returns NULL...
+./main/test_runner.c:1374:real_hal get_interface NULL returns NULL:PASS
+Running emergency closes all 6 MCP outputs [hw]...
+./main/test_runner.c:1381:emergency closes all 6 MCP outputs [hw]:IGNORE: Board not confirmed
+Running emergency idempotent 10 times [hw]...
+./main/test_runner.c:1402:emergency idempotent 10 times [hw]:IGNORE: Board not confirmed
+Running emergency latch rejects ON in real_hal [hw]...
+./main/test_runner.c:1416:emergency latch rejects ON in real_hal [hw]:IGNORE: Board not confirmed
+Running GPIO38/47/48 rejected when board not confirmed...
+W (4144) fan: GPIO38 (FAN_PWM) blocked ！ board identity not confirmed
+W (4144) audio: GPIO47 (AMP_SD) blocked ！ board identity not confirmed
+./main/test_runner.c:1438:GPIO38/47/48 rejected when board not confirmed:PASS
+Running LEDC resource allocation no conflict...
+./main/test_runner.c:1458:LEDC resource allocation no conflict:PASS
+Running POS-T01: startup 45->IDLE_KNOWN...
+./main/test_runner.c:1799:POS-T01: startup 45->IDLE_KNOWN:PASS
+Running POS-T02: startup no hall->IDLE_UNKNOWN...
+./main/test_runner.c:1814:POS-T02: startup no hall->IDLE_UNKNOWN:PASS
+Running POS-T03: at target->OK+no active+late cancel...
+./main/test_runner.c:1828:POS-T03: at target->OK+no active+late cancel:PASS
+Running POS-T04: 270->0 cross-zero CW...
+./main/test_runner.c:1859:POS-T04: 270->0 cross-zero CW:PASS
+Running POS-T05: unknown->90 PREFER_CW...
+./main/test_runner.c:1891:POS-T05: unknown->90 PREFER_CW:PASS
+Running POS-T05b: unknown->90 PREFER_CCW...
+./main/test_runner.c:1920:POS-T05b: unknown->90 PREFER_CCW:PASS
+Running POS-T06: 10ms glitch ignored...
+./main/test_runner.c:1948:POS-T06: 10ms glitch ignored:PASS
+Running POS-T07: target stable 30ms=arrival...
+./main/test_runner.c:1971:POS-T07: target stable 30ms=arrival:PASS
+Running POS-T08: two halls->HALL_CONFLICT...
+./main/test_runner.c:2000:POS-T08: two halls->HALL_CONFLICT:PASS
+Running POS-T08b: startup double-hall->FAULT...
+./main/test_runner.c:2030:POS-T08b: startup double-hall->FAULT:PASS
+Running POS-T08c: IDLE double-hall->FAULT...
+./main/test_runner.c:2056:POS-T08c: IDLE double-hall->FAULT:PASS
+Running POS-T09: never target->TIMEOUT...
+./main/test_runner.c:2076:POS-T09: never target->TIMEOUT:PASS
+Running POS-T10: cancel->CANCELED once...
+./main/test_runner.c:2122:POS-T10: cancel->CANCELED once:PASS
+Running POS-T11: cancel/arrival race->one...
+./main/test_runner.c:2149:POS-T11: cancel/arrival race->one:PASS
+Running POS-T12: old cancel ignored...
+./main/test_runner.c:2177:POS-T12: old cancel ignored:PASS
+Running POS-T13: emergency 10x idempotent...
+./main/test_runner.c:2215:POS-T13: emergency 10x idempotent:PASS
+Running POS-T14: RPWM/LPWM never both non-zero...
+./main/test_runner.c:2254:POS-T14: RPWM/LPWM never both non-zero:PASS
+Running POS: 45->0 CCW shortest...
+./main/test_runner.c:2310:POS: 45->0 CCW shortest:PASS
+Running POS: 45->90 CW shortest...
+./main/test_runner.c:2335:POS: 45->90 CW shortest:PASS
+Running POS: 45->180 CW shortest...
+./main/test_runner.c:2359:POS: 45->180 CW shortest:PASS
+Running POS: 45->270 CCW shortest...
+./main/test_runner.c:2383:POS: 45->270 CCW shortest:PASS
+Running POS: hall loss->current=UNKNOWN...
+./main/test_runner.c:2407:POS: hall loss->current=UNKNOWN:PASS
+Running POS: uncalibrated move rejected...
+./main/test_runner.c:2441:POS: uncalibrated move rejected:PASS
+Running POS: uncalibrated at-target OK...
+./main/test_runner.c:2466:POS: uncalibrated at-target OK:PASS
+Running POS: MCP failure->FAULT...
+./main/test_runner.c:2486:POS: MCP failure->FAULT:PASS
+Running POS: input validation comprehensive...
+./main/test_runner.c:2516:POS: input validation comprehensive:PASS
+Running POS: invalid config rejected...
+./main/test_runner.c:2562:POS: invalid config rejected:PASS
+Running POS: NULL HAL callback rejected...
+./main/test_runner.c:2613:POS: NULL HAL callback rejected:PASS
+Running POS: 3-cycle init/start/stop...
+./main/test_runner.c:2640:POS: 3-cycle init/start/stop:PASS
+Running POS: double init rejected...
+./main/test_runner.c:2670:POS: double init rejected:PASS
+Running POS: double start rejected...
+./main/test_runner.c:2687:POS: double start rejected:PASS
+Running POS: emergency/arrival race->safe...
+./main/test_runner.c:2698:POS: emergency/arrival race->safe:PASS
+Running POS: startup fault reentrant sink...
+./main/test_runner.c:2730:POS: startup fault reentrant sink:PASS
+Running POS: BRAKING target lost->FAULT...
+./main/test_runner.c:2763:POS: BRAKING target lost->FAULT:PASS
+Running POS: BRAKING MCP failure->FAULT...
+./main/test_runner.c:2816:POS: BRAKING MCP failure->FAULT:PASS
+Running POS: BRAKING hall conflict->FAULT...
+./main/test_runner.c:2855:POS: BRAKING hall conflict->FAULT:PASS
+Running POS: concurrent snapshot/stop safe...
+./main/test_runner.c:2927:POS: concurrent snapshot/stop safe:PASS
+Running POS: concurrent move/stop safe...
+./main/test_runner.c:2983:POS: concurrent move/stop safe:PASS
+Running POS: concurrent double stop safe...
+./main/test_runner.c:3029:POS: concurrent double stop safe:PASS
+Running POS-R5: stop before first init -> ESP_OK...
+./main/test_runner.c:3090:POS-R5: stop before first init -> ESP_OK:PASS
+Running POS-R5: start before init -> INVALID_STATE...
+./main/test_runner.c:3100:POS-R5: start before init -> INVALID_STATE:PASS
+Running POS-R5: snapshot before init -> INVALID_STATE...
+./main/test_runner.c:3107:POS-R5: snapshot before init -> INVALID_STATE:PASS
+Running POS-R5: move/cancel/emergency before init -> INVALID_STATE...
+./main/test_runner.c:3115:POS-R5: move/cancel/emergency before init -> INVALID_STATE:PASS
+Running POS-R5: normal stop completes quickly...
+./main/test_runner.c:3128:POS-R5: normal stop completes quickly:PASS
+Running POS-R5: concurrent double stop both ESP_OK...
+./main/test_runner.c:3146:POS-R5: concurrent double stop both ESP_OK:PASS
+Running POS-R5: stop timeout then retry succeeds...
+./main/test_runner.c:3175:POS-R5: stop timeout then retry succeeds:PASS
+Running POS-R5: exit stop_motor error propagated...
+E (13314) pos_svc: task exit stop_motor failed: 0x103
+./main/test_runner.c:3214:POS-R5: exit stop_motor error propagated:PASS
+Running POS-R5.1: snapshot/stop barrier overlap...
+./main/test_runner.c:3280:POS-R5.1: snapshot/stop barrier overlap:PASS
+Running POS-R5.1: move/stop barrier overlap...
+./main/test_runner.c:3338:POS-R5.1: move/stop barrier overlap:PASS
+Running POS-R5.1: emergency/stop barrier overlap...
+./main/test_runner.c:3384:POS-R5.1: emergency/stop barrier overlap:PASS
+Running POS-R5: cancel fault.detail preserves stop error...
+./main/test_runner.c:3423:POS-R5: cancel fault.detail preserves stop error:PASS
+Running POS-R5.3: concurrent ps_sync_init both get ESP_OK...
+./main/test_runner.c:3501:POS-R5.3: concurrent ps_sync_init both get ESP_OK:PASS
+Running POS-R5.3: concurrent ps_sync_init failure propagates...
+./main/test_runner.c:3542:POS-R5.3: concurrent ps_sync_init failure propagates:PASS
+Running POS-R5.3: stop before init returns ESP_OK...
+./main/test_runner.c:3584:POS-R5.3: stop before init returns ESP_OK:PASS
+Running POS-R5.3: INITIALIZING then READY stop continues safely...
+./main/test_runner.c:3596:POS-R5.3: INITIALIZING then READY stop continues safely:PASS
+Running POS-R5.3: INITIALIZING then FAILED stop returns real error...
+./main/test_runner.c:3604:POS-R5.3: INITIALIZING then FAILED stop returns real error:PASS
+Running I2C mock: bus create/destroy lifecycle...
+I (13774) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3684:I2C mock: bus create/destroy lifecycle:PASS
+Running I2C mock: add/remove one device...
+I (13784) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3695:I2C mock: add/remove one device:PASS
+Running I2C mock: multiple devices address-aware...
+I (13804) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3709:I2C mock: multiple devices address-aware:PASS
+Running I2C mock: device from wrong bus rejected...
+I (13814) i2c_bus: I2C bus initialized in MOCK mode
+I (13814) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3736:I2C mock: device from wrong bus rejected:PASS
+Running I2C mock: remove NULL rejected...
+I (13834) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3754:I2C mock: remove NULL rejected:PASS
+Running I2C mock: real double remove...
+I (13844) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3761:I2C mock: real double remove:PASS
+Running I2C mock: destroy frees all wrappers...
+I (13864) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3772:I2C mock: destroy frees all wrappers:PASS
+Running I2C mock: destroy with mixed removed/active...
+I (13874) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3793:I2C mock: destroy with mixed removed/active:PASS
+Running I2C mock: transmit success with address...
+I (13894) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3810:I2C mock: transmit success with address:PASS
+Running I2C mock: transmit error...
+I (13904) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3825:I2C mock: transmit error:PASS
+Running I2C mock: receive success with address...
+I (13924) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3839:I2C mock: receive success with address:PASS
+Running I2C mock: receive error...
+I (13934) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3858:I2C mock: receive error:PASS
+Running I2C mock: transmit_receive success...
+I (13954) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3872:I2C mock: transmit_receive success:PASS
+Running I2C mock: transmit_receive error...
+I (13964) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3893:I2C mock: transmit_receive error:PASS
+Running I2C mock: probe present...
+I (13974) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3908:I2C mock: probe present:PASS
+Running I2C mock: probe not found...
+I (13994) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3918:I2C mock: probe not found:PASS
+Running I2C mock: no callback returns error...
+I (14004) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3927:I2C mock: no callback returns error:PASS
+Running I2C mock: removed device operations rejected...
+I (14024) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3943:I2C mock: removed device operations rejected:PASS
+Running I2C mock: cross-bus reject then correct remove...
+I (14034) i2c_bus: I2C bus initialized in MOCK mode
+I (14034) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3957:I2C mock: cross-bus reject then correct remove:PASS
+Running I2C mock: leak counter verification...
+I (14054) i2c_bus: I2C bus initialized in MOCK mode
+./main/test_runner.c:3973:I2C mock: leak counter verification:PASS
+Running SAFE-T01: PTC ON rejected at non-270 position...
+I (14074) baseline: [sm_setup] heap=8687652 hooks=0
+I (14074) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14074) safety_mgr: Running (MCP baseline OK)
+I (14074) safety_mgr: Stopped
+./main/test_runner.c:4274:SAFE-T01: PTC ON rejected at non-270 position:PASS
+Running SAFE-T02: PTC ON rejected when fan preblow < 5s...
+I (14104) baseline: [sm_setup] heap=8687652 hooks=0
+I (14104) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14104) safety_mgr: Running (MCP baseline OK)
+I (14104) safety_mgr: Stopped
+./main/test_runner.c:4300:SAFE-T02: PTC ON rejected when fan preblow < 5s:PASS
+Running SAFE-T03: PTC ON rejected when SHT invalid...
+I (14134) baseline: [sm_setup] heap=8687652 hooks=0
+I (14134) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14134) safety_mgr: Running (MCP baseline OK)
+I (14134) safety_mgr: Stopped
+./main/test_runner.c:4327:SAFE-T03: PTC ON rejected when SHT invalid:PASS
+Running SAFE-T03b: PTC ON rejected when SHT stale...
+I (14154) baseline: [sm_setup] heap=8687652 hooks=0
+I (14154) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14154) safety_mgr: Running (MCP baseline OK)
+I (14164) safety_mgr: Stopped
+./main/test_runner.c:4350:SAFE-T03b: PTC ON rejected when SHT stale:PASS
+Running SAFE-T04: overtemp latches fault and denies PTC...
+I (14184) baseline: [sm_setup] heap=8687652 hooks=0
+I (14184) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14184) safety_mgr: Running (MCP baseline OK)
+I (14184) safety_mgr: Stopped
+./main/test_runner.c:4374:SAFE-T04: overtemp latches fault and denies PTC:PASS
+Running SAFE-T05: valve conflict - source open blocks transfer...
+I (14214) baseline: [sm_setup] heap=8687652 hooks=0
+I (14214) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14214) safety_mgr: Running (MCP baseline OK)
+I (14214) safety_mgr: Stopped
+./main/test_runner.c:4400:SAFE-T05: valve conflict - source open blocks transfer:PASS
+Running SAFE-T05b: valve conflict - transfer open blocks source...
+I (14244) baseline: [sm_setup] heap=8687652 hooks=0
+I (14244) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14244) safety_mgr: Running (MCP baseline OK)
+I (14244) safety_mgr: Stopped
+./main/test_runner.c:4425:SAFE-T05b: valve conflict - transfer open blocks source:PASS
+Running SAFE-T06: drain open blocks source inlet...
+I (14274) baseline: [sm_setup] heap=8687652 hooks=0
+I (14274) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14274) safety_mgr: Running (MCP baseline OK)
+I (14274) safety_mgr: Stopped
+./main/test_runner.c:4445:SAFE-T06: drain open blocks source inlet:PASS
+Running SAFE-T06b: source open blocks drain...
+I (14304) baseline: [sm_setup] heap=8687652 hooks=0
+I (14304) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14304) safety_mgr: Running (MCP baseline OK)
+I (14304) safety_mgr: Stopped
+./main/test_runner.c:4464:SAFE-T06b: source open blocks drain:PASS
+Running SAFE-T07: motor moving blocks BL50/valves/PTC...
+I (14334) baseline: [sm_setup] heap=8687652 hooks=0
+I (14334) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14334) safety_mgr: Running (MCP baseline OK)
+I (14334) safety_mgr: Stopped
+./main/test_runner.c:4484:SAFE-T07: motor moving blocks BL50/valves/PTC:PASS
+Running SAFE-T08: latched fault blocks ON requests...
+I (14354) baseline: [sm_setup] heap=8687652 hooks=0
+I (14354) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14354) safety_mgr: Running (MCP baseline OK)
+I (14364) safety_mgr: Stopped
+./main/test_runner.c:4547:SAFE-T08: latched fault blocks ON requests:PASS
+Running SAFE-T09: fault remains latched after sensor recovery...
+I (14384) baseline: [sm_setup] heap=8687652 hooks=0
+I (14384) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14384) safety_mgr: Running (MCP baseline OK)
+I (14394) safety_mgr: Stopped
+./main/test_runner.c:4564:SAFE-T09: fault remains latched after sensor recovery:PASS
+Running SAFE-T10: fault clear rejected when dangerous conditions persist...
+I (14414) baseline: [sm_setup] heap=8687652 hooks=0
+I (14414) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14414) safety_mgr: Running (MCP baseline OK)
+I (14424) safety_mgr: Stopped
+./main/test_runner.c:4586:SAFE-T10: fault clear rejected when dangerous conditions persist:PASS
+Running SAFE-T10b: fault clear rejected when MCP outputs not safe...
+I (14444) baseline: [sm_setup] heap=8687652 hooks=0
+I (14444) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14444) safety_mgr: Running (MCP baseline OK)
+I (14454) safety_mgr: Stopped
+./main/test_runner.c:4613:SAFE-T10b: fault clear rejected when MCP outputs not safe:PASS
+Running SAFE-T11: fault clears when conditions safe and explicit clear...
+I (14484) baseline: [sm_setup] heap=8687652 hooks=0
+I (14484) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14484) safety_mgr: Running (MCP baseline OK)
+I (14484) safety_mgr: Stopped
+./main/test_runner.c:4633:SAFE-T11: fault clears when conditions safe and explicit clear:PASS
+Running SAFE-T12: emergency stop calls HAL in correct order...
+I (14514) baseline: [sm_setup] heap=8687652 hooks=0
+I (14514) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14514) safety_mgr: Running (MCP baseline OK)
+I (14514) safety_mgr: Stopped
+./main/test_runner.c:4658:SAFE-T12: emergency stop calls HAL in correct order:PASS
+Running SAFE-T13: hook failure does not prevent MCP shutdown...
+I (14544) baseline: [sm_setup] heap=8687652 hooks=0
+I (14544) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14544) safety_mgr: Running (MCP baseline OK)
+I (14544) safety_mgr: Stop hook 'fail_hook'
+I (14544) safety_mgr: Stopped
+./main/test_runner.c:4702:SAFE-T13: hook failure does not prevent MCP shutdown:PASS
+Running SAFE-T14: repeated emergency stop is idempotent...
+I (14574) baseline: [sm_setup] heap=8687652 hooks=0
+I (14574) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14574) safety_mgr: Running (MCP baseline OK)
+I (14574) safety_mgr: Stopped
+./main/test_runner.c:4731:SAFE-T14: repeated emergency stop is idempotent:PASS
+Running SAFE-T15: MCP write failure latches fault, blocks ON...
+I (14604) baseline: [sm_setup] heap=8687652 hooks=0
+I (14604) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14604) safety_mgr: Running (MCP baseline OK)
+E (14604) safety_mgr: MCP write failed op=2 err=0x103
+I (14614) safety_mgr: Stopped
+./main/test_runner.c:4753:SAFE-T15: MCP write failure latches fault, blocks ON:PASS
+Running SAFE-T16: OFF requests allowed under fault...
+I (14634) baseline: [sm_setup] heap=8687652 hooks=0
+I (14634) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14634) safety_mgr: Running (MCP baseline OK)
+I (14634) safety_mgr: Stopped
+./main/test_runner.c:4786:SAFE-T16: OFF requests allowed under fault:PASS
+Running SAFE-T17: apply re-checks, rejects if state changed after check...
+I (14664) baseline: [sm_setup] heap=8687652 hooks=0
+I (14664) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14664) safety_mgr: Running (MCP baseline OK)
+I (14664) safety_mgr: Stopped
+./main/test_runner.c:4815:SAFE-T17: apply re-checks, rejects if state changed after check:PASS
+Running SAFE-T18: concurrent conflicting applies cannot both succeed...
+I (14694) baseline: [sm_setup] heap=8687652 hooks=0
+I (14694) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14694) safety_mgr: Running (MCP baseline OK)
+I (14704) safety_mgr: Stopped
+./main/test_runner.c:4842:SAFE-T18: concurrent conflicting applies cannot both succeed:PASS
+Running SAFE-T19: invalid parameters rejected...
+I (14724) baseline: [sm_setup] heap=8687652 hooks=0
+I (14724) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14724) safety_mgr: Running (MCP baseline OK)
+I (14724) safety_mgr: Stopped
+./main/test_runner.c:4870:SAFE-T19: invalid parameters rejected:PASS
+Running SAFE-T20: fault mask bounds check...
+I (14754) baseline: [sm_setup] heap=8687652 hooks=0
+I (14754) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14754) safety_mgr: Running (MCP baseline OK)
+I (14754) safety_mgr: Stopped
+./main/test_runner.c:4907:SAFE-T20: fault mask bounds check:PASS
+Running SAFE-T21: lifecycle idempotent start/stop...
+I (14784) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+W (14784) safety_mgr: Already initialized
+I (14784) safety_mgr: Running (MCP baseline OK)
+I (14784) safety_mgr: Stopped
+./main/test_runner.c:4935:SAFE-T21: lifecycle idempotent start/stop:PASS
+Running SAFE-T22: cannot apply ON after emergency stop...
+I (14804) baseline: [sm_setup] heap=8687652 hooks=0
+I (14804) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14804) safety_mgr: Running (MCP baseline OK)
+I (14814) safety_mgr: Stopped
+./main/test_runner.c:4985:SAFE-T22: cannot apply ON after emergency stop:PASS
+Running SAFE-T23: PTC duration timeout blocks ON...
+I (14834) baseline: [sm_setup] heap=8687652 hooks=0
+I (14834) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14834) safety_mgr: Running (MCP baseline OK)
+I (14834) safety_mgr: Stopped
+./main/test_runner.c:5010:SAFE-T23: PTC duration timeout blocks ON:PASS
+Running SAFE-T24: UV rejected at wrong position or motor moving...
+I (14864) baseline: [sm_setup] heap=8687652 hooks=0
+I (14864) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14864) safety_mgr: Running (MCP baseline OK)
+I (14864) safety_mgr: Stopped
+./main/test_runner.c:5038:SAFE-T24: UV rejected at wrong position or motor moving:PASS
+Running SAFE-T25: inlet at wrong position rejected...
+I (14894) baseline: [sm_setup] heap=8687652 hooks=0
+I (14894) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14894) safety_mgr: Running (MCP baseline OK)
+I (14894) safety_mgr: Stopped
+./main/test_runner.c:5068:SAFE-T25: inlet at wrong position rejected:PASS
+Running SAFE-T25b: drain at wrong position rejected...
+I (14924) baseline: [sm_setup] heap=8687652 hooks=0
+I (14924) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14924) safety_mgr: Running (MCP baseline OK)
+I (14924) safety_mgr: Stopped
+./main/test_runner.c:5087:SAFE-T25b: drain at wrong position rejected:PASS
+Running SAFE-T25c: transfer at wrong position rejected...
+I (14954) baseline: [sm_setup] heap=8687652 hooks=0
+I (14954) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14954) safety_mgr: Running (MCP baseline OK)
+I (14954) safety_mgr: Stopped
+./main/test_runner.c:5106:SAFE-T25c: transfer at wrong position rejected:PASS
+Running SAFE-T25d: detergent at wrong position rejected...
+I (14974) baseline: [sm_setup] heap=8687652 hooks=0
+I (14974) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (14974) safety_mgr: Running (MCP baseline OK)
+I (14984) safety_mgr: Stopped
+./main/test_runner.c:5124:SAFE-T25d: detergent at wrong position rejected:PASS
+Running SAFE-T25e: drain at 180 allowed...
+I (15004) baseline: [sm_setup] heap=8687652 hooks=0
+I (15004) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15004) safety_mgr: Running (MCP baseline OK)
+I (15014) safety_mgr: Stopped
+./main/test_runner.c:5142:SAFE-T25e: drain at 180 allowed:PASS
+Running SAFE-extra: PTC OFF request always allowed...
+I (15034) baseline: [sm_setup] heap=8687652 hooks=0
+I (15034) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15034) safety_mgr: Running (MCP baseline OK)
+I (15034) safety_mgr: Stopped
+./main/test_runner.c:5160:SAFE-extra: PTC OFF request always allowed:PASS
+Running SAFE-extra: unknown position blocks ON...
+I (15064) baseline: [sm_setup] heap=8687652 hooks=0
+I (15064) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15064) safety_mgr: Running (MCP baseline OK)
+I (15064) safety_mgr: Stopped
+./main/test_runner.c:5175:SAFE-extra: unknown position blocks ON:PASS
+Running SAFE-extra: MCP IO error blocks subsequent MCP ON...
+I (15084) baseline: [sm_setup] heap=8687652 hooks=0
+I (15094) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15094) safety_mgr: Running (MCP baseline OK)
+E (15094) safety_mgr: MCP write failed op=2 err=0x107
+I (15094) safety_mgr: Stopped
+./main/test_runner.c:5193:SAFE-extra: MCP IO error blocks subsequent MCP ON:PASS
+Running SAFE-extra: snapshot shows correct safe states...
+I (15124) baseline: [sm_setup] heap=8687652 hooks=0
+I (15124) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15124) safety_mgr: Running (MCP baseline OK)
+I (15124) safety_mgr: Stopped
+./main/test_runner.c:5219:SAFE-extra: snapshot shows correct safe states:PASS
+Running SAFE-extra: interlock mask bits in valid range...
+I (15154) baseline: [sm_setup] heap=8687652 hooks=0
+I (15154) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15154) safety_mgr: Running (MCP baseline OK)
+I (15154) safety_mgr: Stopped
+./main/test_runner.c:5245:SAFE-extra: interlock mask bits in valid range:PASS
+Running SAFE-F01: position fresh + correct: allowed...
+I (15184) baseline: [sm_setup] heap=8687652 hooks=0
+I (15184) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15184) safety_mgr: Running (MCP baseline OK)
+I (15184) safety_mgr: Stopped
+./main/test_runner.c:5280:SAFE-F01: position fresh + correct: allowed:PASS
+Running SAFE-F02: position invalid: rejected...
+I (15204) baseline: [sm_setup] heap=8687652 hooks=0
+I (15204) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15204) safety_mgr: Running (MCP baseline OK)
+I (15214) safety_mgr: Stopped
+./main/test_runner.c:5298:SAFE-F02: position invalid: rejected:PASS
+Running SAFE-F03: position UNKNOWN: rejected...
+I (15234) baseline: [sm_setup] heap=8687652 hooks=0
+I (15234) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15234) safety_mgr: Running (MCP baseline OK)
+I (15234) safety_mgr: Stopped
+./main/test_runner.c:5313:SAFE-F03: position UNKNOWN: rejected:PASS
+Running SAFE-F04: position stale just before timeout: allowed...
+I (15264) baseline: [sm_setup] heap=8687652 hooks=0
+I (15264) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15264) safety_mgr: Running (MCP baseline OK)
+I (15264) safety_mgr: Stopped
+./main/test_runner.c:5329:SAFE-F04: position stale just before timeout: allowed:PASS
+Running SAFE-F05: position stale exactly at timeout: rejected...
+I (15294) baseline: [sm_setup] heap=8687652 hooks=0
+I (15294) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15294) safety_mgr: Running (MCP baseline OK)
+I (15294) safety_mgr: Stopped
+./main/test_runner.c:5346:SAFE-F05: position stale exactly at timeout: rejected:PASS
+Running SAFE-F06: position stale after timeout: rejected...
+I (15324) baseline: [sm_setup] heap=8687652 hooks=0
+I (15324) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15324) safety_mgr: Running (MCP baseline OK)
+I (15324) safety_mgr: Stopped
+./main/test_runner.c:5365:SAFE-F06: position stale after timeout: rejected:PASS
+Running SAFE-F07: position stale elapsed wrap-safe...
+I (15354) baseline: [sm_setup] heap=8687652 hooks=0
+I (15354) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15354) safety_mgr: Running (MCP baseline OK)
+I (15354) safety_mgr: Stopped
+./main/test_runner.c:5383:SAFE-F07: position stale elapsed wrap-safe:PASS
+Running SAFE-F08: position stale OFF still executes...
+I (15374) baseline: [sm_setup] heap=8687652 hooks=0
+I (15374) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15374) safety_mgr: Running (MCP baseline OK)
+I (15384) safety_mgr: Stopped
+./main/test_runner.c:5402:SAFE-F08: position stale OFF still executes:PASS
+Running SAFE-F09: position stale emergency still executes...
+I (15404) baseline: [sm_setup] heap=8687652 hooks=0
+I (15404) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15404) safety_mgr: Running (MCP baseline OK)
+I (15414) safety_mgr: Stopped
+./main/test_runner.c:5416:SAFE-F09: position stale emergency still executes:PASS
+Running SAFE-F10: position stale blocks PTC...
+I (15434) baseline: [sm_setup] heap=8687652 hooks=0
+I (15434) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15434) safety_mgr: Running (MCP baseline OK)
+I (15434) safety_mgr: Stopped
+./main/test_runner.c:5432:SAFE-F10: position stale blocks PTC:PASS
+Running SAFE-F11: fresh position sample restores authorization...
+I (15464) baseline: [sm_setup] heap=8687652 hooks=0
+I (15464) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15464) safety_mgr: Running (MCP baseline OK)
+I (15464) safety_mgr: Stopped
+./main/test_runner.c:5456:SAFE-F11: fresh position sample restores authorization:PASS
+Running SAFE-F12: non-position ops not affected by position stale...
+I (15494) baseline: [sm_setup] heap=8687652 hooks=0
+I (15494) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15494) safety_mgr: Running (MCP baseline OK)
+I (15494) safety_mgr: Stopped
+./main/test_runner.c:5479:SAFE-F12: non-position ops not affected by position stale:PASS
+Running SAFE-R11-01: UNKNOWN position + MOTOR ON allowed...
+I (15524) baseline: [sm_setup] heap=8687652 hooks=0
+I (15524) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15524) safety_mgr: Running (MCP baseline OK)
+I (15524) safety_mgr: Stopped
+./main/test_runner.c:5503:SAFE-R11-01: UNKNOWN position + MOTOR ON allowed:PASS
+Running SAFE-R11-02: stale position + MOTOR ON allowed...
+I (15554) baseline: [sm_setup] heap=8687652 hooks=0
+I (15554) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15554) safety_mgr: Running (MCP baseline OK)
+I (15554) safety_mgr: Stopped
+./main/test_runner.c:5522:SAFE-R11-02: stale position + MOTOR ON allowed:PASS
+Running SAFE-R11-03: FAN ON allowed with stale position...
+I (15584) baseline: [sm_setup] heap=8687652 hooks=0
+I (15584) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15584) safety_mgr: Running (MCP baseline OK)
+I (15584) safety_mgr: Stopped
+./main/test_runner.c:5541:SAFE-R11-03: FAN ON allowed with stale position:PASS
+Running SAFE-R11-04: FAN ON allowed when motor moving...
+I (15614) baseline: [sm_setup] heap=8687652 hooks=0
+I (15614) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15614) safety_mgr: Running (MCP baseline OK)
+I (15614) safety_mgr: Stopped
+./main/test_runner.c:5559:SAFE-R11-04: FAN ON allowed when motor moving:PASS
+Running SAFE-R11-05: valve ON rejected when stale...
+I (15634) baseline: [sm_setup] heap=8687652 hooks=0
+I (15634) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15634) safety_mgr: Running (MCP baseline OK)
+I (15644) safety_mgr: Stopped
+./main/test_runner.c:5575:SAFE-R11-05: valve ON rejected when stale:PASS
+Running SAFE-R11-06: MCP UNKNOWN blocks fault clear...
+I (15664) baseline: [sm_setup] heap=8687652 hooks=0
+I (15664) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15664) safety_mgr: Running (MCP baseline OK)
+I (15674) safety_mgr: Stopped
+./main/test_runner.c:5593:SAFE-R11-06: MCP UNKNOWN blocks fault clear:PASS
+Running SAFE-R11-07: MCP write failure marks output UNKNOWN...
+I (15694) baseline: [sm_setup] heap=8687652 hooks=0
+I (15694) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15694) safety_mgr: Running (MCP baseline OK)
+E (15694) safety_mgr: MCP write failed op=2 err=0x107
+I (15704) safety_mgr: Stopped
+./main/test_runner.c:5614:SAFE-R11-07: MCP write failure marks output UNKNOWN:PASS
+Running SAFE-R11-08: all outputs known after successful writes...
+I (15734) baseline: [sm_setup] heap=8687652 hooks=0
+I (15734) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15734) safety_mgr: Running (MCP baseline OK)
+I (15734) safety_mgr: Stopped
+./main/test_runner.c:5641:SAFE-R11-08: all outputs known after successful writes:PASS
+Running SAFE-R11-09: emergency per-output tracking...
+I (15754) baseline: [sm_setup] heap=8687652 hooks=0
+I (15754) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15754) safety_mgr: Running (MCP baseline OK)
+I (15764) safety_mgr: Stopped
+./main/test_runner.c:5663:SAFE-R11-09: emergency per-output tracking:PASS
+Running SAFE-R11-10: MCP UNKNOWN + MOTOR ON rejected...
+I (15784) baseline: [sm_setup] heap=8687652 hooks=0
+I (15784) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15784) safety_mgr: Running (MCP baseline OK)
+I (15794) safety_mgr: Stopped
+./main/test_runner.c:5685:SAFE-R11-10: MCP UNKNOWN + MOTOR ON rejected:PASS
+Running SAFE-L01: get_state before init returns UNINITIALIZED...
+./main/test_runner.c:5708:SAFE-L01: get_state before init returns UNINITIALIZED:PASS
+Running SAFE-L02: get_state after stop returns STOPPED...
+I (15824) baseline: [sm_setup] heap=8687652 hooks=0
+I (15824) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15824) safety_mgr: Running (MCP baseline OK)
+I (15834) safety_mgr: Stopped
+./main/test_runner.c:5717:SAFE-L02: get_state after stop returns STOPPED:PASS
+Running SAFE-L03: get_state after failed start returns INITIALIZED...
+I (15854) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15854) safety_mgr: Stopped
+./main/test_runner.c:5726:SAFE-L03: get_state after failed start returns INITIALIZED:PASS
+Running SAFE-L04: double stop idempotent...
+I (15874) baseline: [sm_setup] heap=8687652 hooks=0
+I (15874) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15874) safety_mgr: Running (MCP baseline OK)
+I (15884) safety_mgr: Stopped
+./main/test_runner.c:5751:SAFE-L04: double stop idempotent:PASS
+Running SAFE-L05: apply before start returns INVALID_STATE...
+I (15904) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15904) safety_mgr: Stopped
+./main/test_runner.c:5760:SAFE-L05: apply before start returns INVALID_STATE:PASS
+Running SAFE-L06: get_state returns RUNNING during active operation...
+I (15924) baseline: [sm_setup] heap=8687652 hooks=0
+I (15924) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15924) safety_mgr: Running (MCP baseline OK)
+I (15934) safety_mgr: Stopped
+./main/test_runner.c:5787:SAFE-L06: get_state returns RUNNING during active operation:PASS
+Running SAFE-L07: full lifecycle state transitions...
+I (15954) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15954) safety_mgr: Running (MCP baseline OK)
+I (15954) safety_mgr: Stopped
+I (15954) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15964) safety_mgr: Running (MCP baseline OK)
+I (15964) safety_mgr: Stopped
+./main/test_runner.c:5803:SAFE-L07: full lifecycle state transitions:PASS
+Running SAFE-L08: 20-round setup/teardown heap stable...
+I (15994) baseline: [sm_setup] heap=8687652 hooks=0
+I (15994) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (15994) safety_mgr: Running (MCP baseline OK)
+I (15994) safety_mgr: Stopped
+I (15994) baseline: [sm_setup] heap=8687652 hooks=0
+I (16004) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16004) safety_mgr: Running (MCP baseline OK)
+I (16014) safety_mgr: Stopped
+I (16014) baseline: [sm_setup] heap=8687652 hooks=0
+I (16014) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16024) safety_mgr: Running (MCP baseline OK)
+I (16024) safety_mgr: Stopped
+I (16034) baseline: [sm_setup] heap=8687652 hooks=0
+I (16034) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16044) safety_mgr: Running (MCP baseline OK)
+I (16044) safety_mgr: Stopped
+I (16044) baseline: [sm_setup] heap=8687652 hooks=0
+I (16054) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16054) safety_mgr: Running (MCP baseline OK)
+I (16064) safety_mgr: Stopped
+I (16064) baseline: [sm_setup] heap=8687652 hooks=0
+I (16064) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16074) safety_mgr: Running (MCP baseline OK)
+I (16074) safety_mgr: Stopped
+I (16084) baseline: [sm_setup] heap=8687652 hooks=0
+I (16084) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16094) safety_mgr: Running (MCP baseline OK)
+I (16094) safety_mgr: Stopped
+I (16094) baseline: [sm_setup] heap=8687652 hooks=0
+I (16104) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16104) safety_mgr: Running (MCP baseline OK)
+I (16114) safety_mgr: Stopped
+I (16114) baseline: [sm_setup] heap=8687652 hooks=0
+I (16114) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16124) safety_mgr: Running (MCP baseline OK)
+I (16124) safety_mgr: Stopped
+I (16134) baseline: [sm_setup] heap=8687652 hooks=0
+I (16134) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16144) safety_mgr: Running (MCP baseline OK)
+I (16144) safety_mgr: Stopped
+I (16144) baseline: [sm_setup] heap=8687652 hooks=0
+I (16154) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16154) safety_mgr: Running (MCP baseline OK)
+I (16164) safety_mgr: Stopped
+I (16164) baseline: [sm_setup] heap=8687652 hooks=0
+I (16164) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16174) safety_mgr: Running (MCP baseline OK)
+I (16174) safety_mgr: Stopped
+I (16184) baseline: [sm_setup] heap=8687652 hooks=0
+I (16184) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16194) safety_mgr: Running (MCP baseline OK)
+I (16194) safety_mgr: Stopped
+I (16194) baseline: [sm_setup] heap=8687652 hooks=0
+I (16204) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16204) safety_mgr: Running (MCP baseline OK)
+I (16214) safety_mgr: Stopped
+I (16214) baseline: [sm_setup] heap=8687652 hooks=0
+I (16214) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16224) safety_mgr: Running (MCP baseline OK)
+I (16224) safety_mgr: Stopped
+I (16234) baseline: [sm_setup] heap=8687652 hooks=0
+I (16234) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16244) safety_mgr: Running (MCP baseline OK)
+I (16244) safety_mgr: Stopped
+I (16244) baseline: [sm_setup] heap=8687652 hooks=0
+I (16254) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16254) safety_mgr: Running (MCP baseline OK)
+I (16264) safety_mgr: Stopped
+I (16264) baseline: [sm_setup] heap=8687652 hooks=0
+I (16264) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16274) safety_mgr: Running (MCP baseline OK)
+I (16274) safety_mgr: Stopped
+I (16284) baseline: [sm_setup] heap=8687652 hooks=0
+I (16284) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16294) safety_mgr: Running (MCP baseline OK)
+I (16294) safety_mgr: Stopped
+I (16294) baseline: [sm_setup] heap=8687652 hooks=0
+I (16304) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16304) safety_mgr: Running (MCP baseline OK)
+I (16314) safety_mgr: Stopped
+I (16314) baseline: [sm_setup] heap=8687652 hooks=0
+I (16314) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16324) safety_mgr: Running (MCP baseline OK)
+I (16324) safety_mgr: Stopped
+I (16334) heap_test: start=8687652 end=8687652 min=8687652 drop=0
+./main/test_runner.c:5857:SAFE-L08: 20-round setup/teardown heap stable:PASS
+Running SAFE-R13-01: BL50 correct pos + KNOWN_OFF allowed...
+I (16354) baseline: [sm_setup] heap=8687652 hooks=0
+I (16354) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16354) safety_mgr: Running (MCP baseline OK)
+I (16364) safety_mgr: Stopped
+./main/test_runner.c:5890:SAFE-R13-01: BL50 correct pos + KNOWN_OFF allowed:PASS
+Running SAFE-R13-02: BL50 MCP UNKNOWN rejected...
+I (16384) baseline: [sm_setup] heap=8687652 hooks=0
+I (16384) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16384) safety_mgr: Running (MCP baseline OK)
+I (16394) safety_mgr: Stopped
+./main/test_runner.c:5912:SAFE-R13-02: BL50 MCP UNKNOWN rejected:PASS
+Running SAFE-R13-03: BL50 MCP ON rejected...
+I (16414) baseline: [sm_setup] heap=8687652 hooks=0
+I (16414) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16414) safety_mgr: Running (MCP baseline OK)
+I (16414) safety_mgr: Stopped
+./main/test_runner.c:5933:SAFE-R13-03: BL50 MCP ON rejected:PASS
+Running SAFE-R13-04: BL50 OFF + MCP UNKNOWN allowed...
+I (16444) baseline: [sm_setup] heap=8687652 hooks=0
+I (16444) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16444) safety_mgr: Running (MCP baseline OK)
+I (16444) safety_mgr: Stopped
+./main/test_runner.c:5954:SAFE-R13-04: BL50 OFF + MCP UNKNOWN allowed:PASS
+Running SAFE-R13-05: PTC UV ON rejected...
+I (16464) baseline: [sm_setup] heap=8687652 hooks=0
+I (16464) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16464) safety_mgr: Running (MCP baseline OK)
+I (16474) safety_mgr: Stopped
+./main/test_runner.c:5969:SAFE-R13-05: PTC UV ON rejected:PASS
+Running SAFE-R13-06: PTC valve ON rejected...
+I (16494) baseline: [sm_setup] heap=8687652 hooks=0
+I (16494) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16494) safety_mgr: Running (MCP baseline OK)
+I (16494) safety_mgr: Stopped
+./main/test_runner.c:5990:SAFE-R13-06: PTC valve ON rejected:PASS
+Running SAFE-R13-07: PTC MCP UNKNOWN rejected...
+I (16524) baseline: [sm_setup] heap=8687652 hooks=0
+I (16524) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16524) safety_mgr: Running (MCP baseline OK)
+I (16524) safety_mgr: Stopped
+./main/test_runner.c:6011:SAFE-R13-07: PTC MCP UNKNOWN rejected:PASS
+Running SAFE-R13-08: PTC FAKE mode rejected...
+I (16544) safety_mgr: Initialized (mode=0 ptc=1 board=1)
+I (16544) safety_mgr: Running (MCP baseline OK)
+I (16544) safety_mgr: Stopped
+./main/test_runner.c:6032:SAFE-R13-08: PTC FAKE mode rejected:PASS
+Running SAFE-R13-09: PTC disabled rejected...
+I (16574) safety_mgr: Initialized (mode=2 ptc=0 board=1)
+I (16574) safety_mgr: Running (MCP baseline OK)
+I (16574) safety_mgr: Stopped
+./main/test_runner.c:6073:SAFE-R13-09: PTC disabled rejected:PASS
+Running SAFE-R13-10: PTC board unconfirmed rejected...
+I (16594) safety_mgr: Initialized (mode=2 ptc=1 board=0)
+I (16594) safety_mgr: Running (MCP baseline OK)
+I (16594) safety_mgr: Stopped
+./main/test_runner.c:6113:SAFE-R13-10: PTC board unconfirmed rejected:PASS
+Running SAFE-R13-11: start establishes KNOWN_OFF baseline...
+I (16614) baseline: [sm_setup] heap=8687652 hooks=0
+I (16614) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16614) safety_mgr: Running (MCP baseline OK)
+I (16624) safety_mgr: Stopped
+./main/test_runner.c:6155:SAFE-R13-11: start establishes KNOWN_OFF baseline:PASS
+Running SAFE-R13-12: baseline failure enters FAILED state...
+I (16644) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+E (16644) safety_mgr: MCP baseline failed, entering FAILED state
+I (16644) safety_mgr: Stopped
+./main/test_runner.c:6174:SAFE-R13-12: baseline failure enters FAILED state:PASS
+Running SAFE-R13-13: stop returns STOPPED after completion...
+I (16674) baseline: [sm_setup] heap=8687652 hooks=0
+I (16674) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16674) safety_mgr: Running (MCP baseline OK)
+I (16674) safety_mgr: Stopped
+./main/test_runner.c:6216:SAFE-R13-13: stop returns STOPPED after completion:PASS
+Running SAFE-R13-14: double stop idempotent...
+I (16704) baseline: [sm_setup] heap=8687652 hooks=0
+I (16704) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16704) safety_mgr: Running (MCP baseline OK)
+I (16704) safety_mgr: Stopped
+./main/test_runner.c:6226:SAFE-R13-14: double stop idempotent:PASS
+Running SAFE-R13-15: stop before init returns OK...
+./main/test_runner.c:6237:SAFE-R13-15: stop before init returns OK:PASS
+Running SAFE-R13-16: stop then reinit/start works...
+I (16734) baseline: [sm_setup] heap=8687652 hooks=0
+I (16744) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16744) safety_mgr: Running (MCP baseline OK)
+I (16744) safety_mgr: Stopped
+I (16744) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16754) safety_mgr: Running (MCP baseline OK)
+I (16754) safety_mgr: Stopped
+./main/test_runner.c:6246:SAFE-R13-16: stop then reinit/start works:PASS
+Running SAFE-R13-17: snapshot UNKNOWN shows safe=false...
+I (16784) baseline: [sm_setup] heap=8687652 hooks=0
+I (16784) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16784) safety_mgr: Running (MCP baseline OK)
+I (16784) safety_mgr: Stopped
+./main/test_runner.c:6285:SAFE-R13-17: snapshot UNKNOWN shows safe=false:PASS
+Running SAFE-R13-18: snapshot all known+off shows safe...
+I (16804) baseline: [sm_setup] heap=8687652 hooks=0
+I (16804) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16804) safety_mgr: Running (MCP baseline OK)
+I (16814) safety_mgr: Stopped
+./main/test_runner.c:6301:SAFE-R13-18: snapshot all known+off shows safe:PASS
+Running SAFE-R13-19: allowed mask BL50 bit matches check when stable...
+I (16834) baseline: [sm_setup] heap=8687652 hooks=0
+I (16834) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16834) safety_mgr: Running (MCP baseline OK)
+I (16844) safety_mgr: Stopped
+./main/test_runner.c:6319:SAFE-R13-19: allowed mask BL50 bit matches check when stable:PASS
+Running SAFE-R13-20: allowed mask BL50 bit clear when MCP UNKNOWN...
+I (16864) baseline: [sm_setup] heap=8687652 hooks=0
+I (16864) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16864) safety_mgr: Running (MCP baseline OK)
+I (16874) safety_mgr: Stopped
+./main/test_runner.c:6346:SAFE-R13-20: allowed mask BL50 bit clear when MCP UNKNOWN:PASS
+Running SAFE-R13-21: allowed mask all clear under fault...
+I (16894) baseline: [sm_setup] heap=8687652 hooks=0
+I (16894) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (16894) safety_mgr: Running (MCP baseline OK)
+I (16904) safety_mgr: Stopped
+./main/test_runner.c:6365:SAFE-R13-21: allowed mask all clear under fault:PASS
+Running WATER-R2-01: VALIDATING outputs RESET_FLOW...
+./main/test_runner.c:6535:WATER-R2-01: VALIDATING outputs RESET_FLOW:PASS
+Running WATER-R2-02: reset success then OPENING_SOURCE...
+./main/test_runner.c:6548:WATER-R2-02: reset success then OPENING_SOURCE:PASS
+Running WATER-R2-03: reset failure prevents valve open...
+./main/test_runner.c:6563:WATER-R2-03: reset failure prevents valve open:PASS
+Running WATER-R2-04: each batch resets flow once...
+./main/test_runner.c:6579:WATER-R2-04: each batch resets flow once:PASS
+Running WATER-R2-07: accepted request has terminal signal...
+./main/test_runner.c:6616:WATER-R2-07: accepted request has terminal signal:PASS
+Running WATER-R2-09: terminal event exactly once...
+./main/test_runner.c:6626:WATER-R2-09: terminal event exactly once:PASS
+Running WATER-R2-10: cancel outputs CLOSE_ALL...
+./main/test_runner.c:6638:WATER-R2-10: cancel outputs CLOSE_ALL:PASS
+Running WATER-R2-11: close failure marks UNKNOWN...
+./main/test_runner.c:6649:WATER-R2-11: close failure marks UNKNOWN:PASS
+Running WATER-R2-12: emergency outputs CLOSE_ALL...
+./main/test_runner.c:6669:WATER-R2-12: emergency outputs CLOSE_ALL:PASS
+Running WATER-R2-14: COMPLETE returns to IDLE...
+./main/test_runner.c:6679:WATER-R2-14: COMPLETE returns to IDLE:PASS
+Running WATER-R2-15: FAULT returns to IDLE...
+./main/test_runner.c:6700:WATER-R2-15: FAULT returns to IDLE:PASS
+Running WATER-R2-16: consecutive fills possible...
+./main/test_runner.c:6718:WATER-R2-16: consecutive fills possible:PASS
+Running WATER-R2-23: per-valve commit CLOSE_ALL...
+./main/test_runner.c:6737:WATER-R2-23: per-valve commit CLOSE_ALL:PASS
+Running WATER-R2-24: flow IO uses FAULT_FLOW_METER_IO...
+./main/test_runner.c:6750:WATER-R2-24: flow IO uses FAULT_FLOW_METER_IO:PASS
+Running WATER-T01: drum full at start \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 COMPLETE...
+./main/test_runner.c:6772:WATER-T01: drum full at start \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 COMPLETE:PASS
+Running WATER-T02: one batch then full at CHECK_DRUM_LEVEL...
+./main/test_runner.c:6790:WATER-T02: one batch then full at CHECK_DRUM_LEVEL:PASS
+Running WATER-T04: no flow timeout...
+./main/test_runner.c:6830:WATER-T04: no flow timeout:PASS
+Running WATER-T07: total timeout...
+./main/test_runner.c:6846:WATER-T07: total timeout:PASS
+Running WATER-T11: position lost...
+./main/test_runner.c:6861:WATER-T11: position lost:PASS
+Running WATER-EXTRA: request_id wrap...
+./main/test_runner.c:6876:WATER-EXTRA: request_id wrap:PASS
+Running WATER-R3-01: OPEN_SOURCE failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_MCP_IO...
+./main/test_runner.c:6887:WATER-R3-01: OPEN_SOURCE failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_MCP_IO:PASS
+Running WATER-R3-03: FSM not IDLE during SOURCE_FILL...
+./main/test_runner.c:6918:WATER-R3-03: FSM not IDLE during SOURCE_FILL:PASS
+Running WATER-R3-04: FSM returns to IDLE after terminal...
+./main/test_runner.c:6928:WATER-R3-04: FSM returns to IDLE after terminal:PASS
+Running WATER-R3-08: cancel close failure \xE2\x86\x92 FAULT not CANCELED...
+./main/test_runner.c:6952:WATER-R3-08: cancel close failure \xE2\x86\x92 FAULT not CANCELED:PASS
+Running WATER-R3-09: emergency close \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT terminal...
+./main/test_runner.c:6970:WATER-R3-09: emergency close \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT terminal:PASS
+Running WATER-R3-10: SOURCE_FILL close failure blocks settle...
+./main/test_runner.c:6989:WATER-R3-10: SOURCE_FILL close failure blocks settle:PASS
+Running WATER-R3-11: TRANSFER close failure blocks check...
+./main/test_runner.c:7008:WATER-R3-11: TRANSFER close failure blocks check:PASS
+Running WATER-R3-23: four consecutive FSM cycles with OPENING...
+./main/test_runner.c:7043:WATER-R3-23: four consecutive FSM cycles with OPENING:PASS
+Running WATER-R3-24: FSM terminal emit exactly once...
+./main/test_runner.c:7085:WATER-R3-24: FSM terminal emit exactly once:PASS
+Running WATER-R3-CLOSE-SUCCESS: close source then settle...
+./main/test_runner.c:7099:WATER-R3-CLOSE-SUCCESS: close source then settle:PASS
+Running WATER-R3-CANCEL-SUCCESS: cancel close success \xE2\x86\x92 CANCELED...
+./main/test_runner.c:7116:WATER-R3-CANCEL-SUCCESS: cancel close success \xE2\x86\x92 CANCELED:PASS
+Running WATER-R4-01: reset success \xE2\x86\x92 OPENING_SOURCE...
+./main/test_runner.c:7137:WATER-R4-01: reset success \xE2\x86\x92 OPENING_SOURCE:PASS
+Running WATER-R4-02: OPEN_SOURCE success \xE2\x86\x92 SOURCE_FILL...
+./main/test_runner.c:7154:WATER-R4-02: OPEN_SOURCE success \xE2\x86\x92 SOURCE_FILL:PASS
+Running WATER-R4-03: OPEN_SOURCE failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_MCP_IO...
+./main/test_runner.c:7174:WATER-R4-03: OPEN_SOURCE failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_MCP_IO:PASS
+Running WATER-R4-04: ACTION_RESULT in OPENING_SOURCE ignores flow/no-flow...
+./main/test_runner.c:7201:WATER-R4-04: ACTION_RESULT in OPENING_SOURCE ignores flow/no-flow:PASS
+Running WATER-R4-05: wrong action ID \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_INTERNAL...
+./main/test_runner.c:7223:WATER-R4-05: wrong action ID \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_INTERNAL:PASS
+Running WATER-R4-06: OPEN_TRANSFER success \xE2\x86\x92 TRANSFER with timer...
+./main/test_runner.c:7249:WATER-R4-06: OPEN_TRANSFER success \xE2\x86\x92 TRANSFER with timer:PASS
+Running WATER-R4-07: OPEN_TRANSFER failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_MCP_IO...
+./main/test_runner.c:7278:WATER-R4-07: OPEN_TRANSFER failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT_MCP_IO:PASS
+Running WATER-R4-08: ACTION_RESULT in non-pending \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT...
+./main/test_runner.c:7308:WATER-R4-08: ACTION_RESULT in non-pending \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT:PASS
+Running WATER-R4-09: cancel during OPENING_SOURCE \xE2\x86\x92 CLOSING_ALL...
+./main/test_runner.c:7327:WATER-R4-09: cancel during OPENING_SOURCE \xE2\x86\x92 CLOSING_ALL:PASS
+Running WATER-R4-10: emergency during OPENING_TRANSFER \xE2\x86\x92 CLOSING_ALL...
+./main/test_runner.c:7350:WATER-R4-10: emergency during OPENING_TRANSFER \xE2\x86\x92 CLOSING_ALL:PASS
+Running WATER-R4-11: OPENING_SOURCE only processes matching ACTION_RESULT...
+./main/test_runner.c:7377:WATER-R4-11: OPENING_SOURCE only processes matching ACTION_RESULT:PASS
+Running WATER-R4-12: OPENING_TRANSFER only processes matching ACTION_RESULT...
+./main/test_runner.c:7394:WATER-R4-12: OPENING_TRANSFER only processes matching ACTION_RESULT:PASS
+Running WATER-R4-13: complete flow with all OPENING states...
+./main/test_runner.c:7416:WATER-R4-13: complete flow with all OPENING states:PASS
+Running WATER-R4-14: cancel during CLOSING_SOURCE \xE2\x86\x92 CLOSING_ALL...
+./main/test_runner.c:7478:WATER-R4-14: cancel during CLOSING_SOURCE \xE2\x86\x92 CLOSING_ALL:PASS
+Running WATER-R4-15: FAULT pending cannot be overwritten by CANCELED...
+./main/test_runner.c:7499:WATER-R4-15: FAULT pending cannot be overwritten by CANCELED:PASS
+Running WATER-R4-16: total timeout in SOURCE_FILL \xE2\x86\x92 CLOSE_ALL...
+./main/test_runner.c:7518:WATER-R4-16: total timeout in SOURCE_FILL \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R4-17: total timeout in TRANSFER \xE2\x86\x92 CLOSE_ALL...
+./main/test_runner.c:7531:WATER-R4-17: total timeout in TRANSFER \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R4-18: OPENING wrong action \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT...
+./main/test_runner.c:7559:WATER-R4-18: OPENING wrong action \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT:PASS
+Running WATER-R4-19: no_flow_timeout triggers from OPEN success time...
+./main/test_runner.c:7583:WATER-R4-19: no_flow_timeout triggers from OPEN success time:PASS
+Running WATER-R4-20: open failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT \xE2\x86\x92 IDLE...
+./main/test_runner.c:7612:WATER-R4-20: open failure \xE2\x86\x92 CLOSE_ALL \xE2\x86\x92 FAULT \xE2\x86\x92 IDLE:PASS
+Running WATER-R4-21: flow IO error threshold still works in SOURCE_FILL...
+./main/test_runner.c:7640:WATER-R4-21: flow IO error threshold still works in SOURCE_FILL:PASS
+Running WATER-R4-22: safety_gpa0_active_ok false in SOURCE_FILL \xE2\x86\x92 close...
+./main/test_runner.c:7657:WATER-R4-22: safety_gpa0_active_ok false in SOURCE_FILL \xE2\x86\x92 close:PASS
+Running WATER-R4-23: CLOSING_ALL ignores non-ACTION_RESULT events...
+./main/test_runner.c:7669:WATER-R4-23: CLOSING_ALL ignores non-ACTION_RESULT events:PASS
+Running WATER-R4-24: CLOSING_ALL close failure \xE2\x86\x92 FAULT_MCP_IO not CANCELED...
+./main/test_runner.c:7684:WATER-R4-24: CLOSING_ALL close failure \xE2\x86\x92 FAULT_MCP_IO not CANCELED:PASS
+Running WATER-R5-01: service start/fill_async/stop lifecycle...
+I (17684) baseline: [r5_setup] heap=8687652 hooks=0
+I (17684) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (17684) safety_mgr: Running (MCP baseline OK)
+I (18334) safety_mgr: Stopped
+./main/test_runner.c:7885:WATER-R5-01: service start/fill_async/stop lifecycle:PASS
+Running WATER-R5-02: OPEN_SOURCE success does not fault on ACTION_RESULT...
+I (18354) baseline: [r5_setup] heap=8687388 hooks=0
+I (18354) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (18354) safety_mgr: Running (MCP baseline OK)
+I (18504) safety_mgr: Stopped
+./main/test_runner.c:7901:WATER-R5-02: OPEN_SOURCE success does not fault on ACTION_RESULT:PASS
+Running WATER-R5-03: real OPEN_TRANSFER success \xE2\x86\x92 TRANSFER...
+I (18524) baseline: [r5_setup] heap=8687388 hooks=0
+I (18524) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (18524) safety_mgr: Running (MCP baseline OK)
+I (18824) safety_mgr: Stopped
+./main/test_runner.c:7917:WATER-R5-03: real OPEN_TRANSFER success \xE2\x86\x92 TRANSFER:PASS
+Running WATER-R5-04: concurrent fill_async only one ESP_OK...
+I (18844) baseline: [r5_setup] heap=8687388 hooks=0
+I (18844) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (18844) safety_mgr: Running (MCP baseline OK)
+I (18894) safety_mgr: Stopped
+./main/test_runner.c:7935:WATER-R5-04: concurrent fill_async only one ESP_OK:PASS
+Running WATER-R5-05: fill_async request receives terminal event...
+I (18914) baseline: [r5_setup] heap=8687388 hooks=0
+I (18914) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (18914) safety_mgr: Running (MCP baseline OK)
+I (19064) safety_mgr: Stopped
+./main/test_runner.c:7947:WATER-R5-05: fill_async request receives terminal event:PASS
+Running WATER-R5-06: event sink timeout then recovery...
+I (19084) baseline: [r5_setup] heap=8687388 hooks=0
+I (19084) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (19084) safety_mgr: Running (MCP baseline OK)
+I (19334) safety_mgr: Stopped
+./main/test_runner.c:7963:WATER-R5-06: event sink timeout then recovery:PASS
+Running WATER-R5-07: permanent sink timeout \xE2\x86\x92 stop timeout, then recovery...
+I (19354) baseline: [r5_setup] heap=8687388 hooks=0
+I (19354) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (19354) safety_mgr: Running (MCP baseline OK)
+I (25054) safety_mgr: Stopped
+./main/test_runner.c:7981:WATER-R5-07: permanent sink timeout \xE2\x86\x92 stop timeout, then recovery:PASS
+Running WATER-R5-08: sink recovery then stop succeeds...
+I (25064) baseline: [r5_setup] heap=8687388 hooks=0
+I (25064) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (25064) safety_mgr: Running (MCP baseline OK)
+I (25274) safety_mgr: Stopped
+./main/test_runner.c:8003:WATER-R5-08: sink recovery then stop succeeds:PASS
+Running WATER-R5-09: cancel sends CANCELED terminal...
+I (25284) baseline: [r5_setup] heap=8687388 hooks=0
+I (25284) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (25294) safety_mgr: Running (MCP baseline OK)
+I (25444) safety_mgr: Stopped
+./main/test_runner.c:8017:WATER-R5-09: cancel sends CANCELED terminal:PASS
+Running WATER-R5-10: OPEN_SOURCE apply failure \xE2\x86\x92 CLOSE_ALL...
+I (25464) baseline: [r5_setup] heap=8687388 hooks=0
+I (25464) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (25464) safety_mgr: Running (MCP baseline OK)
+E (25514) safety_mgr: MCP write failed op=2 err=0xffffffff
+E (25514) safety_mgr: MCP write failed op=2 err=0xffffffff
+E (25514) safety_mgr: MCP write failed op=3 err=0xffffffff
+I (25614) safety_mgr: Stopped
+./main/test_runner.c:8034:WATER-R5-10: OPEN_SOURCE apply failure \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R5-11: OPEN_TRANSFER failure \xE2\x86\x92 CLOSE_ALL...
+I (25634) baseline: [r5_setup] heap=8687388 hooks=0
+I (25634) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (25634) safety_mgr: Running (MCP baseline OK)
+E (25834) safety_mgr: MCP write failed op=3 err=0xffffffff
+E (25834) safety_mgr: MCP write failed op=2 err=0xffffffff
+E (25834) safety_mgr: MCP write failed op=3 err=0xffffffff
+I (25934) safety_mgr: Stopped
+./main/test_runner.c:8053:WATER-R5-11: OPEN_TRANSFER failure \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R5-12: CLOSE_ALL failure shows UNKNOWN in snapshot...
+I (25954) baseline: [r5_setup] heap=8687388 hooks=0
+I (25954) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (25954) safety_mgr: Running (MCP baseline OK)
+E (26004) safety_mgr: MCP write failed op=2 err=0xffffffff
+E (26004) safety_mgr: MCP write failed op=2 err=0xffffffff
+E (26004) safety_mgr: MCP write failed op=3 err=0xffffffff
+I (26104) safety_mgr: Stopped
+./main/test_runner.c:8075:WATER-R5-12: CLOSE_ALL failure shows UNKNOWN in snapshot:PASS
+Running WATER-R5-13: initial drum_full confirms valves OFF...
+I (26124) baseline: [r5_setup] heap=8687388 hooks=0
+I (26124) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (26124) safety_mgr: Running (MCP baseline OK)
+I (26274) safety_mgr: Stopped
+./main/test_runner.c:8098:WATER-R5-13: initial drum_full confirms valves OFF:PASS
+Running WATER-R5-14: start/stop linearization no STOPPING overwrite...
+I (26294) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (26294) safety_mgr: Running (MCP baseline OK)
+I (26344) safety_mgr: Stopped
+./main/test_runner.c:8117:WATER-R5-14: start/stop linearization no STOPPING overwrite:PASS
+Running WATER-R5-15: shutdown_draining rejects fill_async...
+I (26364) baseline: [r5_setup] heap=8687388 hooks=0
+I (26364) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (26364) safety_mgr: Running (MCP baseline OK)
+I (26514) safety_mgr: Stopped
+./main/test_runner.c:8147:WATER-R5-15: shutdown_draining rejects fill_async:PASS
+Running WATER-R5-16: hook unregister failure preserves registered flag...
+I (26534) baseline: [r5_setup] heap=8687388 hooks=0
+I (26534) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (26534) safety_mgr: Running (MCP baseline OK)
+I (26684) safety_mgr: Stopped
+./main/test_runner.c:8165:WATER-R5-16: hook unregister failure preserves registered flag:PASS
+Running WATER-R5-17: start/stop 20 rounds no hook leak...
+I (26704) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (26704) safety_mgr: Running (MCP baseline OK)
+I (27704) safety_mgr: Stopped
+./main/test_runner.c:8179:WATER-R5-17: start/stop 20 rounds no hook leak:PASS
+Running WATER-R5-18: consumer ready timeout preserves resources...
+I (27724) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (27724) safety_mgr: Running (MCP baseline OK)
+I (27724) safety_mgr: Stopped
+./main/test_runner.c:8214:WATER-R5-18: consumer ready timeout preserves resources:PASS
+Running WATER-R5-19: water stop failure preserves position/safety...
+I (27744) baseline: [r5_setup] heap=8687388 hooks=0
+I (27744) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (27744) safety_mgr: Running (MCP baseline OK)
+I (27794) safety_mgr: Stopped
+./main/test_runner.c:8234:WATER-R5-19: water stop failure preserves position/safety:PASS
+Running WATER-R5-20: position stop failure preserves safety/consumer...
+I (27814) baseline: [r5_setup] heap=8687388 hooks=0
+I (27814) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (27814) safety_mgr: Running (MCP baseline OK)
+I (27864) safety_mgr: Stopped
+./main/test_runner.c:8243:WATER-R5-20: position stop failure preserves safety/consumer:PASS
+Running WATER-R5-21: consumer stop failure preserves queue/HAL...
+I (27884) baseline: [r5_setup] heap=8687388 hooks=0
+I (27884) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (27884) safety_mgr: Running (MCP baseline OK)
+I (27934) safety_mgr: Stopped
+./main/test_runner.c:8251:WATER-R5-21: consumer stop failure preserves queue/HAL:PASS
+Running WATER-R5-22: deinit retry eventual cleanup...
+I (27954) baseline: [r5_setup] heap=8687388 hooks=0
+I (27954) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (27954) safety_mgr: Running (MCP baseline OK)
+I (28004) safety_mgr: Stopped
+./main/test_runner.c:8259:WATER-R5-22: deinit retry eventual cleanup:PASS
+Running WATER-R5-23: four consecutive service requests...
+I (28014) baseline: [r5_setup] heap=8687388 hooks=0
+I (28014) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (28024) safety_mgr: Running (MCP baseline OK)
+I (28574) safety_mgr: Stopped
+./main/test_runner.c:8269:WATER-R5-23: four consecutive service requests:PASS
+Running WATER-R5-24: teardown no residual task/queue/hook...
+I (28594) baseline: [r5_setup] heap=8687388 hooks=0
+I (28594) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (28594) safety_mgr: Running (MCP baseline OK)
+I (28844) safety_mgr: Stopped
+I (28844) baseline: [r5_setup] heap=8687388 hooks=0
+I (28844) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (28844) safety_mgr: Running (MCP baseline OK)
+I (28904) safety_mgr: Stopped
+./main/test_runner.c:8292:WATER-R5-24: teardown no residual task/queue/hook:PASS
+Running WATER-R5_1-01: SOURCE_FILL late ACTION_RESULT \xE2\x86\x92 CLOSE_ALL...
+./main/test_runner.c:8310:WATER-R5_1-01: SOURCE_FILL late ACTION_RESULT \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R5_1-02: TRANSFER late ACTION_RESULT \xE2\x86\x92 CLOSE_ALL...
+./main/test_runner.c:8329:WATER-R5_1-02: TRANSFER late ACTION_RESULT \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R5_1-03: OPENING_SOURCE wrong action ID \xE2\x86\x92 CLOSE_ALL...
+./main/test_runner.c:8362:WATER-R5_1-03: OPENING_SOURCE wrong action ID \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R5_1-04: OPENING_TRANSFER wrong action ID \xE2\x86\x92 CLOSE_ALL...
+./main/test_runner.c:8385:WATER-R5_1-04: OPENING_TRANSFER wrong action ID \xE2\x86\x92 CLOSE_ALL:PASS
+Running WATER-R5_1-05: FAULT pending cannot be overwritten by CANCELED...
+./main/test_runner.c:8413:WATER-R5_1-05: FAULT pending cannot be overwritten by CANCELED:PASS
+Running WATER-R5_1-06: hook count verified after start/stop...
+I (28994) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (28994) safety_mgr: Running (MCP baseline OK)
+I (29044) safety_mgr: Stopped
+./main/test_runner.c:8434:WATER-R5_1-06: hook count verified after start/stop:PASS
+Running WATER-R5_1-07: init success/start failure stops rollback...
+I (29064) baseline: [r5_setup] heap=8687388 hooks=0
+I (29064) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (29064) safety_mgr: Running (MCP baseline OK)
+I (29114) safety_mgr: Stopped
+./main/test_runner.c:8462:WATER-R5_1-07: init success/start failure stops rollback:PASS
+Running WATER-R5_1-08: wrong action in CLOSING_ALL \xE2\x86\x92 re-issue CLOSE_ALL...
+./main/test_runner.c:8474:WATER-R5_1-08: wrong action in CLOSING_ALL \xE2\x86\x92 re-issue CLOSE_ALL:PASS
+Running WATER-R5_2-01: CLOSING_SOURCE rejects wrong action ID...
+./main/test_runner.c:8503:WATER-R5_2-01: CLOSING_SOURCE rejects wrong action ID:PASS
+Running WATER-R5_2-02: CLOSING_TRANSFER rejects wrong action ID...
+./main/test_runner.c:8521:WATER-R5_2-02: CLOSING_TRANSFER rejects wrong action ID:PASS
+Running WATER-R5_2-03: CLOSING_ALL rejects OPEN_SOURCE success...
+./main/test_runner.c:8551:WATER-R5_2-03: CLOSING_ALL rejects OPEN_SOURCE success:PASS
+Running WATER-R5_2-04: stale commit rejected after pending consumed...
+./main/test_runner.c:8567:WATER-R5_2-04: stale commit rejected after pending consumed:PASS
+Running WATER-R5_2-05: duplicate ACTION_RESULT not double-committed...
+./main/test_runner.c:8586:WATER-R5_2-05: duplicate ACTION_RESULT not double-committed:PASS
+Running WATER-R5_2-06: hook count verified fresh after start...
+I (29214) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (29214) safety_mgr: Running (MCP baseline OK)
+I (29264) safety_mgr: Stopped
+./main/test_runner.c:8608:WATER-R5_2-06: hook count verified fresh after start:PASS
+Running WATER-R5_2-07: task_handle null after stop, no notify deleted task...
+I (29284) baseline: [r5_setup] heap=8687388 hooks=0
+I (29284) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (29284) safety_mgr: Running (MCP baseline OK)
+I (29534) safety_mgr: Stopped
+./main/test_runner.c:8635:WATER-R5_2-07: task_handle null after stop, no notify deleted task:PASS
+Running WATER-R5_2-08: smoke: double stop idempotent...
+I (29554) baseline: [r5_setup] heap=8687388 hooks=0
+I (29554) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (29554) safety_mgr: Running (MCP baseline OK)
+I (29804) safety_mgr: Stopped
+./main/test_runner.c:8647:WATER-R5_2-08: smoke: double stop idempotent:PASS
+Running WATER-R5_2-09: r5_setup position fresh, valve authorized...
+I (29824) baseline: [r5_setup] heap=8687388 hooks=0
+I (29824) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (29824) safety_mgr: Running (MCP baseline OK)
+I (29874) safety_mgr: Stopped
+./main/test_runner.c:8660:WATER-R5_2-09: r5_setup position fresh, valve authorized:PASS
+Running WATER-R5_2-10: smoke: teardown succeeds...
+I (29894) baseline: [r5_setup] heap=8687388 hooks=0
+I (29894) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (29894) safety_mgr: Running (MCP baseline OK)
+I (30144) safety_mgr: Stopped
+./main/test_runner.c:8672:WATER-R5_2-10: smoke: teardown succeeds:PASS
+Running WATER-R5_2-11: hook registration failure \xE2\x86\x92 start fails...
+I (30164) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (30164) safety_mgr: Running (MCP baseline OK)
+E (30164) water_svc: stop hook failed: 0x101
+I (30214) safety_mgr: Stopped
+./main/test_runner.c:8693:WATER-R5_2-11: hook registration failure \xE2\x86\x92 start fails:PASS
+Running WATER-R5_2-12: smoke: consumer lifecycle...
+I (30234) baseline: [r5_setup] heap=8687388 hooks=0
+I (30234) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (30234) safety_mgr: Running (MCP baseline OK)
+I (30284) safety_mgr: Stopped
+./main/test_runner.c:8738:WATER-R5_2-12: smoke: consumer lifecycle:PASS
+Running WATER-R5_3-01: pending NONE rejects OPEN_SOURCE commit...
+./main/test_runner.c:8749:WATER-R5_3-01: pending NONE rejects OPEN_SOURCE commit:PASS
+Running WATER-R5_3-02: pending NONE rejects CLOSE_TRANSFER commit...
+./main/test_runner.c:8766:WATER-R5_3-02: pending NONE rejects CLOSE_TRANSFER commit:PASS
+Running WATER-R5_3-03: pending mismatch rejects commit...
+./main/test_runner.c:8781:WATER-R5_3-03: pending mismatch rejects commit:PASS
+Running WATER-R5_3-04: CLOSE_ALL both succeed \xE2\x86\x92 both KNOWN_OFF...
+./main/test_runner.c:8801:WATER-R5_3-04: CLOSE_ALL both succeed \xE2\x86\x92 both KNOWN_OFF:PASS
+Running WATER-R5_3-05: CLOSE_ALL source OK transfer FAIL...
+./main/test_runner.c:8818:WATER-R5_3-05: CLOSE_ALL source OK transfer FAIL:PASS
+Running WATER-R5_3-06: CLOSE_ALL source FAIL transfer OK...
+./main/test_runner.c:8839:WATER-R5_3-06: CLOSE_ALL source FAIL transfer OK:PASS
+Running WATER-R5_3-07: CLOSE_ALL both fail \xE2\x86\x92 FAULT not COMPLETE...
+./main/test_runner.c:8857:WATER-R5_3-07: CLOSE_ALL both fail \xE2\x86\x92 FAULT not COMPLETE:PASS
+Running WATER-R5_3-08: stale commit after ACTION_RESULT rejected...
+./main/test_runner.c:8876:WATER-R5_3-08: stale commit after ACTION_RESULT rejected:PASS
+Running WATER-R5_3-09: wrong ACTION_RESULT re-issues CLOSE_ALL...
+./main/test_runner.c:8902:WATER-R5_3-09: wrong ACTION_RESULT re-issues CLOSE_ALL:PASS
+Running WATER-R5_4-01: pending NONE rejects OPEN_SOURCE, shadow unchanged...
+./main/test_runner.c:8930:WATER-R5_4-01: pending NONE rejects OPEN_SOURCE, shadow unchanged:PASS
+Running WATER-R5_4-02: pending NONE rejects CLOSE_TRANSFER, shadow unchanged...
+./main/test_runner.c:8944:WATER-R5_4-02: pending NONE rejects CLOSE_TRANSFER, shadow unchanged:PASS
+Running WATER-R5_4-03: pending mismatch rejects commit, shadow unchanged...
+./main/test_runner.c:8957:WATER-R5_4-03: pending mismatch rejects commit, shadow unchanged:PASS
+Running WATER-R5_4-04: correct OPEN_SOURCE commit \xE2\x86\x92 KNOWN_ON...
+./main/test_runner.c:8978:WATER-R5_4-04: correct OPEN_SOURCE commit \xE2\x86\x92 KNOWN_ON:PASS
+Running WATER-R5_4-05: ACTION_RESULT success without commit \xE2\x86\x92 FAULT...
+./main/test_runner.c:8997:WATER-R5_4-05: ACTION_RESULT success without commit \xE2\x86\x92 FAULT:PASS
+Running WATER-R5_4-06: correct commit + ACTION_RESULT \xE2\x86\x92 next state...
+./main/test_runner.c:9017:WATER-R5_4-06: correct commit + ACTION_RESULT \xE2\x86\x92 next state:PASS
+Running WATER-R5_4-07: stale commit after ACTION_RESULT rejected...
+./main/test_runner.c:9029:WATER-R5_4-07: stale commit after ACTION_RESULT rejected:PASS
+Running WATER-R5_4-08: CLOSE_ALL both succeed commit \xE2\x86\x92 KNOWN_OFF...
+./main/test_runner.c:9055:WATER-R5_4-08: CLOSE_ALL both succeed commit \xE2\x86\x92 KNOWN_OFF:PASS
+Running WATER-R5_4-09: CLOSE_ALL success without commit \xE2\x86\x92 FAULT...
+./main/test_runner.c:9077:WATER-R5_4-09: CLOSE_ALL success without commit \xE2\x86\x92 FAULT:PASS
+Running WATER-R5_4-10: CLOSE_ALL partial failure per-valve shadow...
+./main/test_runner.c:9094:WATER-R5_4-10: CLOSE_ALL partial failure per-valve shadow:PASS
+Running WATER-R5_4-11: safety_manager unregister injection one-shot...
+I (30574) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (30574) safety_mgr: Running (MCP baseline OK)
+I (30574) safety_mgr: Stopped
+./main/test_runner.c:9116:WATER-R5_4-11: safety_manager unregister injection one-shot:PASS
+Running WATER-R5_4-12: double-stop smoke test...
+I (30604) baseline: [r5_setup] heap=8687388 hooks=0
+I (30604) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (30604) safety_mgr: Running (MCP baseline OK)
+I (30854) baseline: [r5_setup] heap=8680808 hooks=0
+I (30854) safety_mgr: Stopped
+I (30854) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (30854) safety_mgr: Running (MCP baseline OK)
+I (30914) safety_mgr: Stopped
+./main/test_runner.c:9154:WATER-R5_4-12: double-stop smoke test:PASS
+Running WATER-R5_4-13: safety_manager unregister preserves hook on failure...
+I (30934) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (30934) safety_mgr: Running (MCP baseline OK)
+I (30934) safety_mgr: Stopped
+./main/test_runner.c:9170:WATER-R5_4-13: safety_manager unregister preserves hook on failure:PASS
+Running WATER-R5_4-14: hook registration failure cleanup...
+I (30954) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (30954) safety_mgr: Running (MCP baseline OK)
+E (30954) water_svc: stop hook failed: 0x101
+I (31004) safety_mgr: Stopped
+./main/test_runner.c:9210:WATER-R5_4-14: hook registration failure cleanup:PASS
+Running WATER-R5_4_1-01: pending NONE in handler rejects ACTION_RESULT...
+./main/test_runner.c:9258:WATER-R5_4_1-01: pending NONE in handler rejects ACTION_RESULT:PASS
+Running WATER-R5_4_1-02: CLOSE_ALL shadow mismatch retry recovery...
+./main/test_runner.c:9284:WATER-R5_4_1-02: CLOSE_ALL shadow mismatch retry recovery:PASS
+Running WATER-R5_4_1-03: CLOSE_ALL shadow mismatch retry exhaustion...
+./main/test_runner.c:9314:WATER-R5_4_1-03: CLOSE_ALL shadow mismatch retry exhaustion:PASS
+Running WATER-R5_4_1-04: water_service stop retry real injection...
+I (31064) baseline: [r5_setup] heap=8687300 hooks=0
+I (31064) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (31064) safety_mgr: Running (MCP baseline OK)
+E (31314) water_svc: hook unregister failed: 0xffffffff, preserving for retry
+I (31314) safety_mgr: Stopped
+I (31314) baseline: [r5_setup] heap=8687300 hooks=0
+I (31314) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (31324) safety_mgr: Running (MCP baseline OK)
+I (31374) safety_mgr: Stopped
+./main/test_runner.c:9331:WATER-R5_4_1-04: water_service stop retry real injection:PASS
+Running WATER-R5_4_1-05: teardown failure preserves resources...
+I (31394) baseline: [r5_setup] heap=8687300 hooks=0
+I (31394) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (31394) safety_mgr: Running (MCP baseline OK)
+E (31644) water_svc: hook unregister failed: 0xffffffff, preserving for retry
+I (31644) safety_mgr: Stopped
+I (31644) baseline: [r5_setup] heap=8687300 hooks=0
+I (31644) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (31654) safety_mgr: Running (MCP baseline OK)
+I (31704) safety_mgr: Stopped
+./main/test_runner.c:9377:WATER-R5_4_1-05: teardown failure preserves resources:PASS
+Running WATER-R5_4_1-06: second stop no notify proven...
+I (31724) baseline: [r5_setup] heap=8687300 hooks=0
+I (31724) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (31724) safety_mgr: Running (MCP baseline OK)
+I (31974) safety_mgr: Stopped
+I (31974) baseline: [r5_setup] heap=8687300 hooks=0
+I (31974) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (31974) safety_mgr: Running (MCP baseline OK)
+I (32034) safety_mgr: Stopped
+./main/test_runner.c:9408:WATER-R5_4_1-06: second stop no notify proven:PASS
+Running DRY-F01: non-270 position rejects fan start [dry][phase6][group_a]...
+./main/test_runner.c:9562:DRY-F01: non-270 position rejects fan start [dry][phase6][group_a]:PASS
+Running DRY-F02: position unknown rejects [dry][phase6][group_a]...
+./main/test_runner.c:9585:DRY-F02: position unknown rejects [dry][phase6][group_a]:PASS
+Running DRY-F03: position stale rejects [dry][phase6][group_a]...
+./main/test_runner.c:9605:DRY-F03: position stale rejects [dry][phase6][group_a]:PASS
+Running DRY-F04: position moving rejects [dry][phase6][group_a]...
+./main/test_runner.c:9625:DRY-F04: position moving rejects [dry][phase6][group_a]:PASS
+Running DRY-F06: pre-blow 4999ms blocks PTC [dry][phase6][group_a]...
+./main/test_runner.c:9654:DRY-F06: pre-blow 4999ms blocks PTC [dry][phase6][group_a]:PASS
+Running DRY-F07: pre-blow 5000ms allows heating [dry][phase6][group_a]...
+./main/test_runner.c:9677:DRY-F07: pre-blow 5000ms allows heating [dry][phase6][group_a]:PASS
+Running DRY-F08: fan-only happy path [dry][phase6][group_a]...
+./main/test_runner.c:9697:DRY-F08: fan-only happy path [dry][phase6][group_a]:PASS
+Running DRY-F13: 54.9C continues heating [dry][phase6][group_a]...
+./main/test_runner.c:9730:DRY-F13: 54.9C continues heating [dry][phase6][group_a]:PASS
+Running DRY-F14: 55.0C cuts PTC [dry][phase6][group_a]...
+./main/test_runner.c:9758:DRY-F14: 55.0C cuts PTC [dry][phase6][group_a]:PASS
+Running DRY-F15: 45.1C no resume [dry][phase6][group_a]...
+./main/test_runner.c:9784:DRY-F15: 45.1C no resume [dry][phase6][group_a]:PASS
+Running DRY-F16: 45C + rest resumes [dry][phase6][group_a]...
+./main/test_runner.c:9817:DRY-F16: 45C + rest resumes [dry][phase6][group_a]:PASS
+Running DRY-F17: heat_on_max_ms boundary [dry][phase6][group_a]...
+./main/test_runner.c:9852:DRY-F17: heat_on_max_ms boundary [dry][phase6][group_a]:PASS
+Running DRY-F19: duration expires cooldown [dry][phase6][group_a]...
+./main/test_runner.c:9879:DRY-F19: duration expires cooldown [dry][phase6][group_a]:PASS
+Running DRY-F20: over 30min config boundary [dry][phase6][group_a]...
+./main/test_runner.c:9901:DRY-F20: over 30min config boundary [dry][phase6][group_a]:PASS
+Running DRY-F21: cancel during PRE_FAN [dry][phase6][group_a]...
+./main/test_runner.c:9917:DRY-F21: cancel during PRE_FAN [dry][phase6][group_a]:PASS
+Running DRY-F22: cancel heating PTC off first [dry][phase6][group_a]...
+./main/test_runner.c:9944:DRY-F22: cancel heating PTC off first [dry][phase6][group_a]:PASS
+Running DRY-F23: emergency during heating [dry][phase6][group_a]...
+./main/test_runner.c:9982:DRY-F23: emergency during heating [dry][phase6][group_a]:PASS
+Running DRY-F24: position lost during heating [dry][phase6][group_a]...
+./main/test_runner.c:10007:DRY-F24: position lost during heating [dry][phase6][group_a]:PASS
+Running DRY-F10: SHT invalid blocks PTC [dry][phase6][group_a]...
+./main/test_runner.c:10034:DRY-F10: SHT invalid blocks PTC [dry][phase6][group_a]:PASS
+Running DRY-F11: SHT stale blocks PTC [dry][phase6][group_a]...
+./main/test_runner.c:10060:DRY-F11: SHT stale blocks PTC [dry][phase6][group_a]:PASS
+Running DRY-F12: SHT IO failure PTC off [dry][phase6][group_a]...
+./main/test_runner.c:10085:DRY-F12: SHT IO failure PTC off [dry][phase6][group_a]:PASS
+Running DRY-F18: heat_off_min_ms boundary [dry][phase6][group_a]...
+./main/test_runner.c:10113:DRY-F18: heat_off_min_ms boundary [dry][phase6][group_a]:PASS
+Running DRY-F25: wrong cancel ignored [dry][phase6][group_a]...
+./main/test_runner.c:10152:DRY-F25: wrong cancel ignored [dry][phase6][group_a]:PASS
+Running DRY-F26: terminal exactly once [dry][phase6][group_a]...
+./main/test_runner.c:10173:DRY-F26: terminal exactly once [dry][phase6][group_a]:PASS
+Running DRY-F27: PTC off failure fault [dry][phase6][group_a]...
+./main/test_runner.c:10201:DRY-F27: PTC off failure fault [dry][phase6][group_a]:PASS
+Running R6-01: fan-only 270 happy path [dry][phase6][group_a][service]...
+I (32394) baseline: [dry_r6_setup] heap=8687300 hooks=0
+I (32394) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (32394) safety_mgr: Running (MCP baseline OK)
+I (32794) safety_mgr: Stopped
+./main/test_runner.c:10373:R6-01: fan-only 270 happy path [dry][phase6][group_a][service]:PASS
+Running R6-04: heater PTC disabled rejected [dry][phase6][group_a][service]...
+I (32814) baseline: [dry_r6_setup] heap=8687300 hooks=0
+I (32814) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (32814) safety_mgr: Running (MCP baseline OK)
+I (32864) safety_mgr: Stopped
+./main/test_runner.c:10386:R6-04: heater PTC disabled rejected [dry][phase6][group_a][service]:PASS
+Running R6-06: FAN ON committed [dry][phase6][group_a][service]...
+I (32884) baseline: [dry_r6_setup] heap=8687300 hooks=0
+I (32884) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (32884) safety_mgr: Running (MCP baseline OK)
+I (33234) safety_mgr: Stopped
+./main/test_runner.c:10396:R6-06: FAN ON committed [dry][phase6][group_a][service]:PASS
+Running R6-13: concurrent run_async [dry][phase6][group_a][service]...
+I (33254) baseline: [dry_r6_setup] heap=8687300 hooks=0
+I (33254) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (33254) safety_mgr: Running (MCP baseline OK)
+I (33304) safety_mgr: Stopped
+./main/test_runner.c:10410:R6-13: concurrent run_async [dry][phase6][group_a][service]:PASS
+Running R6-17: emergency returns error [dry][phase6][group_a][service]...
+I (33324) baseline: [dry_r6_setup] heap=8687300 hooks=0
+I (33324) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (33324) safety_mgr: Running (MCP baseline OK)
+I (33824) safety_mgr: Stopped
+./main/test_runner.c:10422:R6-17: emergency returns error [dry][phase6][group_a][service]:PASS
+Running R6-18: start stop restart [dry][phase6][group_a][service]...
+I (33834) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (33834) safety_mgr: Running (MCP baseline OK)
+I (33984) safety_mgr: Stopped
+./main/test_runner.c:10433:R6-18: start stop restart [dry][phase6][group_a][service]:PASS
+Running R6-15: unregister fail retry [dry][phase6][group_a][service]...
+I (34004) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34004) safety_mgr: Running (MCP baseline OK)
+I (34054) safety_mgr: Stopped
+./main/test_runner.c:10458:R6-15: unregister fail retry [dry][phase6][group_a][service]:PASS
+Running BL50-T01: HOME at 45 OK [bl50][phase6][group_b]...
+I (34074) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34074) safety_mgr: Running (MCP baseline OK)
+I (34074) safety_mgr: Stopped
+./main/test_runner.c:10575:BL50-T01: HOME at 45 OK [bl50][phase6][group_b]:PASS
+Running BL50-T02: HOME non-45 reject [bl50][phase6][group_b]...
+I (34094) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34094) safety_mgr: Running (MCP baseline OK)
+I (34094) safety_mgr: Stopped
+./main/test_runner.c:10609:BL50-T02: HOME non-45 reject [bl50][phase6][group_b]:PASS
+Running BL50-T05: PULSATOR only 0 [bl50][phase6][group_b]...
+I (34124) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34124) safety_mgr: Running (MCP baseline OK)
+I (34124) safety_mgr: Stopped
+./main/test_runner.c:10634:BL50-T05: PULSATOR only 0 [bl50][phase6][group_b]:PASS
+Running BL50-T06: DRUM only 90 [bl50][phase6][group_b]...
+I (34144) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34144) safety_mgr: Running (MCP baseline OK)
+I (34144) safety_mgr: Stopped
+./main/test_runner.c:10669:BL50-T06: DRUM only 90 [bl50][phase6][group_b]:PASS
+Running BL50-T07: SPIN only 180 [bl50][phase6][group_b]...
+I (34164) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34174) safety_mgr: Running (MCP baseline OK)
+I (34174) safety_mgr: Stopped
+./main/test_runner.c:10701:BL50-T07: SPIN only 180 [bl50][phase6][group_b]:PASS
+Running BL50-T08: UNKNOWN pos reject [bl50][phase6][group_b]...
+I (34194) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34194) safety_mgr: Running (MCP baseline OK)
+I (34194) safety_mgr: Stopped
+./main/test_runner.c:10733:BL50-T08: UNKNOWN pos reject [bl50][phase6][group_b]:PASS
+Running BL50-T13: ramp non-blocking [bl50][phase6][group_b]...
+I (34214) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34224) safety_mgr: Running (MCP baseline OK)
+I (34224) safety_mgr: Stopped
+./main/test_runner.c:10755:BL50-T13: ramp non-blocking [bl50][phase6][group_b]:PASS
+Running BL50-T15: cancel correct rid [bl50][phase6][group_b]...
+I (34244) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34244) safety_mgr: Running (MCP baseline OK)
+I (34244) safety_mgr: Stopped
+./main/test_runner.c:10792:BL50-T15: cancel correct rid [bl50][phase6][group_b]:PASS
+Running BL50-T16: cancel wrong rid ignore [bl50][phase6][group_b]...
+I (34274) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34274) safety_mgr: Running (MCP baseline OK)
+I (34274) safety_mgr: Stopped
+./main/test_runner.c:10818:BL50-T16: cancel wrong rid ignore [bl50][phase6][group_b]:PASS
+Running BL50-T17: emergency any state STOP [bl50][phase6][group_b]...
+I (34294) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34294) safety_mgr: Running (MCP baseline OK)
+I (34294) safety_mgr: Stopped
+./main/test_runner.c:10845:BL50-T17: emergency any state STOP [bl50][phase6][group_b]:PASS
+Running BL50-T19: STOP fail FAULT retry [bl50][phase6][group_b]...
+I (34324) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34324) safety_mgr: Running (MCP baseline OK)
+I (34324) safety_mgr: Stopped
+./main/test_runner.c:10870:BL50-T19: STOP fail FAULT retry [bl50][phase6][group_b]:PASS
+Running BL50-T20: terminal exactly once [bl50][phase6][group_b]...
+I (34344) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34344) safety_mgr: Running (MCP baseline OK)
+I (34344) safety_mgr: Stopped
+./main/test_runner.c:10899:BL50-T20: terminal exactly once [bl50][phase6][group_b]:PASS
+Running BL50-T23: concurrent run only one [bl50][phase6][group_b]...
+I (34374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34374) safety_mgr: Running (MCP baseline OK)
+I (34374) bl50_svc: task started
+I (34374) bl50_svc: started
+I (34544) bl50_svc: task exiting (stop_err=0x0)
+I (34544) bl50_svc: stopped
+I (34544) safety_mgr: Stopped
+./main/test_runner.c:10948:BL50-T23: concurrent run only one [bl50][phase6][group_b]:PASS
+Running BL50-T26: start stop restart [bl50][phase6][group_b]...
+I (34564) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34564) safety_mgr: Running (MCP baseline OK)
+I (34564) bl50_svc: task started
+I (34564) bl50_svc: started
+I (34634) bl50_svc: task exiting (stop_err=0x0)
+I (34634) bl50_svc: stopped
+I (34634) bl50_svc: task started
+I (34634) bl50_svc: started
+I (34704) bl50_svc: task exiting (stop_err=0x0)
+I (34704) bl50_svc: stopped
+I (34704) safety_mgr: Stopped
+./main/test_runner.c:10984:BL50-T26: start stop restart [bl50][phase6][group_b]:PASS
+Running BL50-T29: four consecutive actions [bl50][phase6][group_b]...
+I (34724) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34724) safety_mgr: Running (MCP baseline OK)
+I (34724) safety_mgr: Stopped
+./main/test_runner.c:11013:BL50-T29: four consecutive actions [bl50][phase6][group_b]:PASS
+Running BL50-T30: request_id boundary [bl50][phase6][group_b]...
+I (34744) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34744) safety_mgr: Running (MCP baseline OK)
+I (34744) safety_mgr: Stopped
+./main/test_runner.c:11051:BL50-T30: request_id boundary [bl50][phase6][group_b]:PASS
+Running BL50-T31: safety motor moving reject [bl50][phase6][group_b]...
+I (34774) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34774) safety_mgr: Running (MCP baseline OK)
+I (34774) safety_mgr: Stopped
+./main/test_runner.c:11071:BL50-T31: safety motor moving reject [bl50][phase6][group_b]:PASS
+Running BL50-T03: HOME triggered direct OK [bl50][phase6][group_b]...
+I (34804) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34804) safety_mgr: Running (MCP baseline OK)
+I (34804) safety_mgr: Stopped
+./main/test_runner.c:11096:BL50-T03: HOME triggered direct OK [bl50][phase6][group_b]:PASS
+Running BL50-T04: HOME timeout STOP FAULT [bl50][phase6][group_b]...
+I (34824) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34824) safety_mgr: Running (MCP baseline OK)
+I (34824) safety_mgr: Stopped
+./main/test_runner.c:11119:BL50-T04: HOME timeout STOP FAULT [bl50][phase6][group_b]:PASS
+Running BL50-T09: position stale reject [bl50][phase6][group_b]...
+I (34854) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34854) safety_mgr: Running (MCP baseline OK)
+I (34854) safety_mgr: Stopped
+./main/test_runner.c:11145:BL50-T09: position stale reject [bl50][phase6][group_b]:PASS
+Running BL50-T10: MCP UNKNOWN reject BL50 [bl50][phase6][group_b]...
+I (34874) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34884) safety_mgr: Running (MCP baseline OK)
+I (34884) safety_mgr: Stopped
+./main/test_runner.c:11175:BL50-T10: MCP UNKNOWN reject BL50 [bl50][phase6][group_b]:PASS
+Running BL50-T11: MCP ON reject BL50 [bl50][phase6][group_b]...
+I (34904) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34904) safety_mgr: Running (MCP baseline OK)
+I (34904) safety_mgr: Stopped
+./main/test_runner.c:11212:BL50-T11: MCP ON reject BL50 [bl50][phase6][group_b]:PASS
+Running BL50-T14: CW to CCW reversal [bl50][phase6][group_b]...
+I (34934) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34934) safety_mgr: Running (MCP baseline OK)
+I (34934) safety_mgr: Stopped
+./main/test_runner.c:11247:BL50-T14: CW to CCW reversal [bl50][phase6][group_b]:PASS
+Running BL50-T18: RUN fail UNKNOWN state [bl50][phase6][group_b]...
+I (34954) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (34954) safety_mgr: Running (MCP baseline OK)
+I (34954) bl50_svc: task started
+I (34954) bl50_svc: started
+I (35224) bl50_svc: task exiting (stop_err=0x0)
+I (35224) bl50_svc: stopped
+I (35224) safety_mgr: Stopped
+./main/test_runner.c:11300:BL50-T18: RUN fail UNKNOWN state [bl50][phase6][group_b]:PASS
+Running BL50-T21: late result no pollution [bl50][phase6][group_b]...
+I (35244) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35244) safety_mgr: Running (MCP baseline OK)
+I (35244) safety_mgr: Stopped
+./main/test_runner.c:11336:BL50-T21: late result no pollution [bl50][phase6][group_b]:PASS
+Running BL50-T32: BL50 running blocks IBT2 [bl50][phase6][group_b]...
+I (35274) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35274) safety_mgr: Running (MCP baseline OK)
+I (35274) safety_mgr: Stopped
+./main/test_runner.c:11372:BL50-T32: BL50 running blocks IBT2 [bl50][phase6][group_b]:PASS
+Running BL50-T33: BL50 unknown blocks IBT2 [bl50][phase6][group_b]...
+I (35294) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35294) safety_mgr: Running (MCP baseline OK)
+I (35294) safety_mgr: Stopped
+./main/test_runner.c:11397:BL50-T33: BL50 unknown blocks IBT2 [bl50][phase6][group_b]:PASS
+Running BL50-T34: BL50 stopped allows IBT2 [bl50][phase6][group_b]...
+I (35324) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35324) safety_mgr: Running (MCP baseline OK)
+I (35324) safety_mgr: Stopped
+./main/test_runner.c:11422:BL50-T34: BL50 stopped allows IBT2 [bl50][phase6][group_b]:PASS
+Running BL50-T35: BL50 stop fail IBT2 rej [bl50][phase6][group_b]...
+I (35344) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35344) safety_mgr: Running (MCP baseline OK)
+I (35344) safety_mgr: Stopped
+./main/test_runner.c:11446:BL50-T35: BL50 stop fail IBT2 rej [bl50][phase6][group_b]:PASS
+Running BL50-T36: snapshot shows BL50 state [bl50][phase6][group_b]...
+I (35374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35374) safety_mgr: Running (MCP baseline OK)
+I (35374) safety_mgr: Stopped
+./main/test_runner.c:11491:BL50-T36: snapshot shows BL50 state [bl50][phase6][group_b]:PASS
+Running BL50-T37: STOP always allowed [bl50][phase6][group_b]...
+I (35404) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35404) safety_mgr: Running (MCP baseline OK)
+I (35404) safety_mgr: Stopped
+./main/test_runner.c:11518:BL50-T37: STOP always allowed [bl50][phase6][group_b]:PASS
+Running BL50-T38: baseline STOP KNOWN [bl50][phase6][group_b]...
+I (35424) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35424) safety_mgr: Running (MCP baseline OK)
+I (35424) bl50_svc: task started
+I (35424) bl50_svc: started
+I (35494) bl50_svc: task exiting (stop_err=0x0)
+I (35494) bl50_svc: stopped
+I (35494) safety_mgr: Stopped
+./main/test_runner.c:11540:BL50-T38: baseline STOP KNOWN [bl50][phase6][group_b]:PASS
+Running BL50-T39: RUN success KNOWN_RUN [bl50][phase6][group_b]...
+I (35514) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35514) safety_mgr: Running (MCP baseline OK)
+I (35514) safety_mgr: Stopped
+./main/test_runner.c:11562:BL50-T39: RUN success KNOWN_RUN [bl50][phase6][group_b]:PASS
+Running BL50-T40: RUN failure UNKNOWN [bl50][phase6][group_b]...
+I (35534) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35534) safety_mgr: Running (MCP baseline OK)
+I (35534) safety_mgr: Stopped
+./main/test_runner.c:11593:BL50-T40: RUN failure UNKNOWN [bl50][phase6][group_b]:PASS
+Running BL50-T41: STOP failure UNKNOWN [bl50][phase6][group_b]...
+I (35564) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35564) safety_mgr: Running (MCP baseline OK)
+I (35564) safety_mgr: Stopped
+./main/test_runner.c:11627:BL50-T41: STOP failure UNKNOWN [bl50][phase6][group_b]:PASS
+Running BL50-T42: IDLE no override UNKNOWN [bl50][phase6][group_b]...
+I (35594) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35594) safety_mgr: Running (MCP baseline OK)
+I (35594) safety_mgr: Stopped
+./main/test_runner.c:11658:BL50-T42: IDLE no override UNKNOWN [bl50][phase6][group_b]:PASS
+Running BL50-T43: GPB5 LOW triggered [bl50][phase6][group_b]...
+I (35614) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35614) safety_mgr: Running (MCP baseline OK)
+I (35614) safety_mgr: Stopped
+./main/test_runner.c:11680:BL50-T43: GPB5 LOW triggered [bl50][phase6][group_b]:PASS
+Running BL50-T44: GPB5 HIGH not triggered [bl50][phase6][group_b]...
+I (35644) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35644) safety_mgr: Running (MCP baseline OK)
+I (35644) safety_mgr: Stopped
+./main/test_runner.c:11695:BL50-T44: GPB5 HIGH not triggered [bl50][phase6][group_b]:PASS
+Running BL50-T45: MCP error not false [bl50][phase6][group_b]...
+I (35664) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35664) safety_mgr: Running (MCP baseline OK)
+I (35664) safety_mgr: Stopped
+./main/test_runner.c:11710:BL50-T45: MCP error not false [bl50][phase6][group_b]:PASS
+Running BL50-T46: HOME IO error BL50 STOP [bl50][phase6][group_b]...
+I (35694) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (35694) safety_mgr: Running (MCP baseline OK)
+I (35694) bl50_svc: task started
+I (35694) bl50_svc: started
+I (36364) bl50_svc: task exiting (stop_err=0x0)
+I (36364) bl50_svc: stopped
+I (36364) safety_mgr: Stopped
+./main/test_runner.c:11736:BL50-T46: HOME IO error BL50 STOP [bl50][phase6][group_b]:PASS
+Running BL50-T47: 10ms glitch no trigger [bl50][phase6][group_b]...
+I (36384) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (36384) safety_mgr: Running (MCP baseline OK)
+I (36384) safety_mgr: Stopped
+./main/test_runner.c:11806:BL50-T47: 10ms glitch no trigger [bl50][phase6][group_b]:PASS
+Running BL50-T48: 20ms glitch no trigger [bl50][phase6][group_b]...
+I (36404) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (36404) safety_mgr: Running (MCP baseline OK)
+I (36414) safety_mgr: Stopped
+./main/test_runner.c:11832:BL50-T48: 20ms glitch no trigger [bl50][phase6][group_b]:PASS
+Running BL50-T49: 29ms no trigger boundary [bl50][phase6][group_b]...
+I (36434) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (36434) safety_mgr: Running (MCP baseline OK)
+I (36434) safety_mgr: Stopped
+./main/test_runner.c:11858:BL50-T49: 29ms no trigger boundary [bl50][phase6][group_b]:PASS
+Running BL50-T50: 30ms stable triggers [bl50][phase6][group_b]...
+I (36464) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (36464) safety_mgr: Running (MCP baseline OK)
+I (36464) safety_mgr: Stopped
+./main/test_runner.c:11879:BL50-T50: 30ms stable triggers [bl50][phase6][group_b]:PASS
+Running BL50-T51: HOME already LOW no RUN [bl50][phase6][group_b]...
+I (36484) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (36484) safety_mgr: Running (MCP baseline OK)
+I (36484) bl50_svc: task started
+I (36484) bl50_svc: started
+I (37054) bl50_svc: task exiting (stop_err=0x0)
+I (37054) bl50_svc: stopped
+I (37054) safety_mgr: Stopped
+./main/test_runner.c:11900:BL50-T51: HOME already LOW no RUN [bl50][phase6][group_b]:PASS
+Running BL50-T52: HOME timeout STOP FAULT [bl50][phase6][group_b]...
+I (37074) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (37074) safety_mgr: Running (MCP baseline OK)
+I (37074) bl50_svc: task started
+I (37074) bl50_svc: started
+I (38244) bl50_svc: task exiting (stop_err=0x0)
+I (38244) bl50_svc: stopped
+I (38244) safety_mgr: Stopped
+./main/test_runner.c:11953:BL50-T52: HOME timeout STOP FAULT [bl50][phase6][group_b]:PASS
+Running BL50-T53: test-only BL50 state inject [bl50][phase6][group_b]...
+I (38264) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (38264) safety_mgr: Running (MCP baseline OK)
+I (38264) safety_mgr: Stopped
+./main/test_runner.c:12021:BL50-T53: test-only BL50 state inject [bl50][phase6][group_b]:PASS
+Running BL50-T54: normal stop no emergency [bl50][phase6][group_b]...
+I (38294) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (38294) safety_mgr: Running (MCP baseline OK)
+I (38294) bl50_svc: task started
+I (38294) bl50_svc: started
+I (38364) bl50_svc: task exiting (stop_err=0x0)
+I (38364) bl50_svc: stopped
+I (38364) safety_mgr: Stopped
+./main/test_runner.c:12036:BL50-T54: normal stop no emergency [bl50][phase6][group_b]:PASS
+Running BL50-T55: BL50 emerg no whole [bl50][phase6][group_b]...
+I (38384) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (38384) safety_mgr: Running (MCP baseline OK)
+I (38384) bl50_svc: task started
+I (38384) bl50_svc: started
+I (38554) bl50_svc: task exiting (stop_err=0x0)
+I (38554) bl50_svc: stopped
+I (38554) safety_mgr: Stopped
+./main/test_runner.c:12060:BL50-T55: BL50 emerg no whole [bl50][phase6][group_b]:PASS
+Running BL50-T56: IDLE GPB5 err safe [bl50][phase6][group_b]...
+I (38574) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (38574) safety_mgr: Running (MCP baseline OK)
+I (38574) bl50_svc: task started
+I (38574) bl50_svc: started
+I (38844) bl50_svc: task exiting (stop_err=0x0)
+I (38844) bl50_svc: stopped
+I (38844) safety_mgr: Stopped
+./main/test_runner.c:12085:BL50-T56: IDLE GPB5 err safe [bl50][phase6][group_b]:PASS
+Running BL50-T57: IO err resets debounce [bl50][phase6][group_b]...
+I (38864) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (38864) safety_mgr: Running (MCP baseline OK)
+I (38864) safety_mgr: Stopped
+./main/test_runner.c:12112:BL50-T57: IO err resets debounce [bl50][phase6][group_b]:PASS
+Running BL50-T58: stop timeout ERR_TIMEOUT [bl50][phase6][group_b]...
+I (38884) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (38884) safety_mgr: Running (MCP baseline OK)
+I (38884) bl50_svc: task started
+I (38894) bl50_svc: started
+W (41944) bl50_svc: stop timeout
+I (41954) bl50_svc: task exiting (stop_err=0x0)
+I (41954) bl50_svc: stopped
+I (41954) safety_mgr: Stopped
+./main/test_runner.c:12152:BL50-T58: stop timeout ERR_TIMEOUT [bl50][phase6][group_b]:PASS
+Running BL50-T59: HOME IO+stop fail retry [bl50][phase6][group_b]...
+I (41974) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (41974) safety_mgr: Running (MCP baseline OK)
+I (41974) bl50_svc: task started
+I (41974) bl50_svc: started
+I (42644) bl50_svc: task exiting (stop_err=0x103)
+E (42644) bl50_svc: task BL50 STOP failed (0x103), retry needed
+I (42644) bl50_svc: stopped
+I (42644) safety_mgr: Stopped
+./main/test_runner.c:12201:BL50-T59: HOME IO+stop fail retry [bl50][phase6][group_b]:PASS
+Running BL50-T60: stop HAL fail propagates [bl50][phase6][group_b]...
+I (42664) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (42664) safety_mgr: Running (MCP baseline OK)
+I (42674) bl50_svc: task started
+I (42674) bl50_svc: started
+I (42744) bl50_svc: task exiting (stop_err=0x103)
+E (42744) bl50_svc: task BL50 STOP failed (0x103), retry needed
+I (42744) bl50_svc: stopped
+I (42744) safety_mgr: Stopped
+./main/test_runner.c:12283:BL50-T60: stop HAL fail propagates [bl50][phase6][group_b]:PASS
+Running BL50-T61: emergency queue full fallback [bl50][phase6][group_b]...
+I (42774) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (42774) safety_mgr: Running (MCP baseline OK)
+I (42774) bl50_svc: task started
+I (42774) bl50_svc: started
+I (42844) bl50_svc: task exiting (stop_err=0x0)
+I (42844) bl50_svc: stopped
+I (42844) safety_mgr: Stopped
+./main/test_runner.c:12338:BL50-T61: emergency queue full fallback [bl50][phase6][group_b]:PASS
+Running BL50-T99: isolation abort_cleanup recovery [bl50][phase6][group_b]...
+./main/test_runner.c:12382:BL50-T99: isolation abort_cleanup recovery [bl50][phase6][group_b]:PASS
+Running DRAIN-F01: non-180 position rejects [drain][phase6][group_c]...
+./main/test_runner.c:12546:DRAIN-F01: non-180 position rejects [drain][phase6][group_c]:PASS
+Running DRAIN-F02: unknown position rejects [drain][phase6][group_c]...
+./main/test_runner.c:12565:DRAIN-F02: unknown position rejects [drain][phase6][group_c]:PASS
+Running DRAIN-F03: stale position rejects [drain][phase6][group_c]...
+./main/test_runner.c:12583:DRAIN-F03: stale position rejects [drain][phase6][group_c]:PASS
+Running DRAIN-F04: moving position rejects [drain][phase6][group_c]...
+./main/test_runner.c:12601:DRAIN-F04: moving position rejects [drain][phase6][group_c]:PASS
+Running DRAIN-F05: 180 happy path complete [drain][phase6][group_c]...
+./main/test_runner.c:12624:DRAIN-F05: 180 happy path complete [drain][phase6][group_c]:PASS
+Running DRAIN-F06: cancel during running [drain][phase6][group_c]...
+./main/test_runner.c:12659:DRAIN-F06: cancel during running [drain][phase6][group_c]:PASS
+Running DRAIN-F07: wrong cancel ignored [drain][phase6][group_c]...
+./main/test_runner.c:12691:DRAIN-F07: wrong cancel ignored [drain][phase6][group_c]:PASS
+Running DRAIN-F08: emergency any state [drain][phase6][group_c]...
+./main/test_runner.c:12716:DRAIN-F08: emergency any state [drain][phase6][group_c]:PASS
+Running DRAIN-F09: ON failure transitions to STOPPING [drain][phase6][group_c]...
+./main/test_runner.c:12739:DRAIN-F09: ON failure transitions to STOPPING [drain][phase6][group_c]:PASS
+Running DRAIN-F10: terminal event exactly once [drain][phase6][group_c]...
+./main/test_runner.c:12762:DRAIN-F10: terminal event exactly once [drain][phase6][group_c]:PASS
+Running DRAIN-F11: stale action result ignored [drain][phase6][group_c]...
+./main/test_runner.c:12794:DRAIN-F11: stale action result ignored [drain][phase6][group_c]:PASS
+Running DRAIN-F12: tick=0 boundary [drain][phase6][group_c]...
+./main/test_runner.c:12815:DRAIN-F12: tick=0 boundary [drain][phase6][group_c]:PASS
+Running DRAIN-F13: invalid request rejected [drain][phase6][group_c]...
+./main/test_runner.c:12832:DRAIN-F13: invalid request rejected [drain][phase6][group_c]:PASS
+Running DRAIN-F14: busy rejects second request [drain][phase6][group_c]...
+./main/test_runner.c:12855:DRAIN-F14: busy rejects second request [drain][phase6][group_c]:PASS
+Running DETG-F01: non-0 position rejects [detergent][phase6][group_c]...
+./main/test_runner.c:12875:DETG-F01: non-0 position rejects [detergent][phase6][group_c]:PASS
+Running DETG-F02: unknown position rejects [detergent][phase6][group_c]...
+./main/test_runner.c:12893:DETG-F02: unknown position rejects [detergent][phase6][group_c]:PASS
+Running DETG-F03: stale position rejects [detergent][phase6][group_c]...
+./main/test_runner.c:12910:DETG-F03: stale position rejects [detergent][phase6][group_c]:PASS
+Running DETG-F04: moving position rejects [detergent][phase6][group_c]...
+./main/test_runner.c:12927:DETG-F04: moving position rejects [detergent][phase6][group_c]:PASS
+Running DETG-F05: happy path complete [detergent][phase6][group_c]...
+./main/test_runner.c:12949:DETG-F05: happy path complete [detergent][phase6][group_c]:PASS
+Running DETG-F06: cancel during running [detergent][phase6][group_c]...
+./main/test_runner.c:12983:DETG-F06: cancel during running [detergent][phase6][group_c]:PASS
+Running DETG-F07: wrong cancel ignored [detergent][phase6][group_c]...
+./main/test_runner.c:13013:DETG-F07: wrong cancel ignored [detergent][phase6][group_c]:PASS
+Running DETG-F08: emergency any state [detergent][phase6][group_c]...
+./main/test_runner.c:13037:DETG-F08: emergency any state [detergent][phase6][group_c]:PASS
+Running DETG-F09: ON failure fault [detergent][phase6][group_c]...
+./main/test_runner.c:13059:DETG-F09: ON failure fault [detergent][phase6][group_c]:PASS
+Running DETG-F10: terminal exactly once [detergent][phase6][group_c]...
+./main/test_runner.c:13081:DETG-F10: terminal exactly once [detergent][phase6][group_c]:PASS
+Running DETG-F11: stale result ignored [detergent][phase6][group_c]...
+./main/test_runner.c:13111:DETG-F11: stale result ignored [detergent][phase6][group_c]:PASS
+Running DETG-F12: invalid request rejected [detergent][phase6][group_c]...
+./main/test_runner.c:13131:DETG-F12: invalid request rejected [detergent][phase6][group_c]:PASS
+Running DETG-F13: demo duration 3s [detergent][phase6][group_c]...
+./main/test_runner.c:13151:DETG-F13: demo duration 3s [detergent][phase6][group_c]:PASS
+Running DETG-F14: formal duration 6s [detergent][phase6][group_c]...
+./main/test_runner.c:13173:DETG-F14: formal duration 6s [detergent][phase6][group_c]:PASS
+Running UV-F01: non-0 position rejects [uv][phase6][group_c]...
+./main/test_runner.c:13204:UV-F01: non-0 position rejects [uv][phase6][group_c]:PASS
+Running UV-F02: unknown position rejects [uv][phase6][group_c]...
+./main/test_runner.c:13222:UV-F02: unknown position rejects [uv][phase6][group_c]:PASS
+Running UV-F03: happy path complete [uv][phase6][group_c]...
+./main/test_runner.c:13239:UV-F03: happy path complete [uv][phase6][group_c]:PASS
+Running UV-F04: cancel during running [uv][phase6][group_c]...
+./main/test_runner.c:13271:UV-F04: cancel during running [uv][phase6][group_c]:PASS
+Running UV-F05: skip during running [uv][phase6][group_c]...
+./main/test_runner.c:13301:UV-F05: skip during running [uv][phase6][group_c]:PASS
+Running UV-F06: wrong cancel ignored [uv][phase6][group_c]...
+./main/test_runner.c:13331:UV-F06: wrong cancel ignored [uv][phase6][group_c]:PASS
+Running UV-F07: emergency any state [uv][phase6][group_c]...
+./main/test_runner.c:13355:UV-F07: emergency any state [uv][phase6][group_c]:PASS
+Running UV-F08: ON failure fault [uv][phase6][group_c]...
+./main/test_runner.c:13376:UV-F08: ON failure fault [uv][phase6][group_c]:PASS
+Running UV-F09: terminal exactly once [uv][phase6][group_c]...
+./main/test_runner.c:13397:UV-F09: terminal exactly once [uv][phase6][group_c]:PASS
+Running UV-F10: stale result ignored [uv][phase6][group_c]...
+./main/test_runner.c:13426:UV-F10: stale result ignored [uv][phase6][group_c]:PASS
+Running UV-F11: skip wrong id ignored [uv][phase6][group_c]...
+./main/test_runner.c:13446:UV-F11: skip wrong id ignored [uv][phase6][group_c]:PASS
+Running UV-F12: invalid request rejected [uv][phase6][group_c]...
+./main/test_runner.c:13470:UV-F12: invalid request rejected [uv][phase6][group_c]:PASS
+Running UV-F13: busy rejects second request [uv][phase6][group_c]...
+./main/test_runner.c:13490:UV-F13: busy rejects second request [uv][phase6][group_c]:PASS
+Running UV-F14: default duration 10min [uv][phase6][group_c]...
+./main/test_runner.c:13505:UV-F14: default duration 10min [uv][phase6][group_c]:PASS
+Running SM-ACTIVE-01: drain validate_active 180 OK [safety][phase6][group_c]...
+I (43464) baseline: [sm_setup] heap=8687300 hooks=0
+I (43464) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43464) safety_mgr: Running (MCP baseline OK)
+I (43474) safety_mgr: Stopped
+./main/test_runner.c:13538:SM-ACTIVE-01: drain validate_active 180 OK [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-02: drain validate_active pos change rej [safety][phase6][group_c]...
+I (43504) baseline: [sm_setup] heap=8687300 hooks=0
+I (43504) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43504) safety_mgr: Running (MCP baseline OK)
+I (43504) safety_mgr: Stopped
+./main/test_runner.c:13567:SM-ACTIVE-02: drain validate_active pos change rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-03: drain validate_active stale rej [safety][phase6][group_c]...
+I (43534) baseline: [sm_setup] heap=8687300 hooks=0
+I (43534) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43534) safety_mgr: Running (MCP baseline OK)
+I (43534) safety_mgr: Stopped
+./main/test_runner.c:13592:SM-ACTIVE-03: drain validate_active stale rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-04: drain validate_active motor mov rej [safety][phase6][group_c]...
+I (43564) baseline: [sm_setup] heap=8687300 hooks=0
+I (43564) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43564) safety_mgr: Running (MCP baseline OK)
+I (43574) safety_mgr: Stopped
+./main/test_runner.c:13617:SM-ACTIVE-04: drain validate_active motor mov rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-05: drain validate_active fault rej [safety][phase6][group_c]...
+I (43604) baseline: [sm_setup] heap=8687300 hooks=0
+I (43604) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43604) safety_mgr: Running (MCP baseline OK)
+I (43604) safety_mgr: Stopped
+./main/test_runner.c:13643:SM-ACTIVE-05: drain validate_active fault rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-06: drain validate_active conflict rej [safety][phase6][group_c]...
+I (43634) baseline: [sm_setup] heap=8687300 hooks=0
+I (43634) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43634) safety_mgr: Running (MCP baseline OK)
+I (43634) safety_mgr: Stopped
+./main/test_runner.c:13671:SM-ACTIVE-06: drain validate_active conflict rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-07: drain validate_active self unknown rej [safety][phase6][group_c]...
+I (43664) baseline: [sm_setup] heap=8687300 hooks=0
+I (43674) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43674) safety_mgr: Running (MCP baseline OK)
+I (43674) safety_mgr: Stopped
+./main/test_runner.c:13698:SM-ACTIVE-07: drain validate_active self unknown rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-08: detergent validate_active 0 OK [safety][phase6][group_c]...
+I (43704) baseline: [sm_setup] heap=8687300 hooks=0
+I (43704) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43704) safety_mgr: Running (MCP baseline OK)
+I (43704) safety_mgr: Stopped
+./main/test_runner.c:13723:SM-ACTIVE-08: detergent validate_active 0 OK [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-09: detergent validate_active wrong pos rej [safety][phase6][group_c]...
+I (43734) baseline: [sm_setup] heap=8687300 hooks=0
+I (43734) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43734) safety_mgr: Running (MCP baseline OK)
+I (43744) safety_mgr: Stopped
+./main/test_runner.c:13747:SM-ACTIVE-09: detergent validate_active wrong pos rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-10: UV validate_active 0 OK [safety][phase6][group_c]...
+I (43774) baseline: [sm_setup] heap=8687300 hooks=0
+I (43774) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43774) safety_mgr: Running (MCP baseline OK)
+I (43774) safety_mgr: Stopped
+./main/test_runner.c:13772:SM-ACTIVE-10: UV validate_active 0 OK [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-11: UV validate_active self unknown rej [safety][phase6][group_c]...
+I (43804) baseline: [sm_setup] heap=8687300 hooks=0
+I (43804) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43804) safety_mgr: Running (MCP baseline OK)
+I (43804) safety_mgr: Stopped
+./main/test_runner.c:13796:SM-ACTIVE-11: UV validate_active self unknown rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-12: UV validate_active emergency rej [safety][phase6][group_c]...
+I (43834) baseline: [sm_setup] heap=8687300 hooks=0
+I (43834) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43834) safety_mgr: Running (MCP baseline OK)
+I (43834) safety_mgr: Stopped
+./main/test_runner.c:13821:SM-ACTIVE-12: UV validate_active emergency rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-13: drain validate_active conflict unknown rej [safety][phase6][group_c]...
+I (43874) baseline: [sm_setup] heap=8687300 hooks=0
+I (43874) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43874) safety_mgr: Running (MCP baseline OK)
+I (43874) safety_mgr: Stopped
+./main/test_runner.c:13847:SM-ACTIVE-13: drain validate_active conflict unknown rej [safety][phase6][group_c]:PASS
+Running SM-ACTIVE-14: detergent validate_active pos unknown rej [safety][phase6][group_c]...
+I (43904) baseline: [sm_setup] heap=8687300 hooks=0
+I (43904) safety_mgr: Initialized (mode=2 ptc=1 board=1)
+I (43904) safety_mgr: Running (MCP baseline OK)
+I (43904) safety_mgr: Stopped
+./main/test_runner.c:13873:SM-ACTIVE-14: detergent validate_active pos unknown rej [safety][phase6][group_c]:PASS
+Running NVS-MIG-01: schema 2 blob recovers defaults [nvs][phase6][group_c]...
+./main/test_runner.c:13898:NVS-MIG-01: schema 2 blob recovers defaults [nvs][phase6][group_c]:PASS
+Running NVS-MIG-02: schema 3 valid passes [nvs][phase6][group_c]...
+./main/test_runner.c:13941:NVS-MIG-02: schema 3 valid passes [nvs][phase6][group_c]:PASS
+Running DRAIN-SVC-01: run cancel closes output [drain][phase6][group_c][service]...
+I (43964) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (43964) safety_mgr: Running (MCP baseline OK)
+I (44364) safety_mgr: Stopped
+./main/test_runner.c:14044:DRAIN-SVC-01: run cancel closes output [drain][phase6][group_c][service]:PASS
+Running DRAIN-SVC-02: emergency closes output [drain][phase6][group_c][service]...
+I (44384) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (44384) safety_mgr: Running (MCP baseline OK)
+I (44784) safety_mgr: Stopped
+./main/test_runner.c:14070:DRAIN-SVC-02: emergency closes output [drain][phase6][group_c][service]:PASS
+Running DRAIN-SVC-03: start stop 5 rounds [drain][phase6][group_c][service]...
+I (44804) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (44804) safety_mgr: Running (MCP baseline OK)
+I (44804) safety_mgr: Stopped
+I (44804) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (44814) safety_mgr: Running (MCP baseline OK)
+I (44814) safety_mgr: Stopped
+I (44814) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (44824) safety_mgr: Running (MCP baseline OK)
+I (44824) safety_mgr: Stopped
+I (44824) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (44834) safety_mgr: Running (MCP baseline OK)
+I (44834) safety_mgr: Stopped
+I (44844) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (44844) safety_mgr: Running (MCP baseline OK)
+I (44854) safety_mgr: Stopped
+./main/test_runner.c:14090:DRAIN-SVC-03: start stop 5 rounds [drain][phase6][group_c][service]:PASS
+Running DRAIN-SVC-04: concurrent run rejected [drain][phase6][group_c][service]...
+I (44884) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (44884) safety_mgr: Running (MCP baseline OK)
+I (44984) safety_mgr: Stopped
+./main/test_runner.c:14100:DRAIN-SVC-04: concurrent run rejected [drain][phase6][group_c][service]:PASS
+Running UV-SVC-01: cancel closes output [uv][phase6][group_c][service]...
+I (45004) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (45004) safety_mgr: Running (MCP baseline OK)
+I (45404) safety_mgr: Stopped
+./main/test_runner.c:14162:UV-SVC-01: cancel closes output [uv][phase6][group_c][service]:PASS
+Running UV-SVC-02: skip closes output [uv][phase6][group_c][service]...
+I (45424) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (45424) safety_mgr: Running (MCP baseline OK)
+I (45824) safety_mgr: Stopped
+./main/test_runner.c:14179:UV-SVC-02: skip closes output [uv][phase6][group_c][service]:PASS
+Running UV-SVC-03: emergency closes output [uv][phase6][group_c][service]...
+I (45844) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (45844) safety_mgr: Running (MCP baseline OK)
+I (46244) safety_mgr: Stopped
+./main/test_runner.c:14196:UV-SVC-03: emergency closes output [uv][phase6][group_c][service]:PASS
+Running UV-SVC-04: start stop 5 rounds [uv][phase6][group_c][service]...
+I (46264) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (46264) safety_mgr: Running (MCP baseline OK)
+I (46264) safety_mgr: Stopped
+I (46264) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (46264) safety_mgr: Running (MCP baseline OK)
+I (46274) safety_mgr: Stopped
+I (46274) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (46284) safety_mgr: Running (MCP baseline OK)
+I (46284) safety_mgr: Stopped
+I (46284) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (46294) safety_mgr: Running (MCP baseline OK)
+I (46294) safety_mgr: Stopped
+I (46304) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (46304) safety_mgr: Running (MCP baseline OK)
+I (46304) safety_mgr: Stopped
+./main/test_runner.c:14213:UV-SVC-04: start stop 5 rounds [uv][phase6][group_c][service]:PASS
+Running DET-SVC-01: run cancel closes output [detergent][phase6][group_c][service]...
+I (46334) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (46334) safety_mgr: Running (MCP baseline OK)
+I (46734) safety_mgr: Stopped
+./main/test_runner.c:14274:DET-SVC-01: run cancel closes output [detergent][phase6][group_c][service]:PASS
+Running DET-SVC-02: emergency closes output [detergent][phase6][group_c][service]...
+I (46754) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (46754) safety_mgr: Running (MCP baseline OK)
+I (47154) safety_mgr: Stopped
+./main/test_runner.c:14298:DET-SVC-02: emergency closes output [detergent][phase6][group_c][service]:PASS
+Running DET-SVC-03: concurrent run rejected [detergent][phase6][group_c][service]...
+I (47174) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47174) safety_mgr: Running (MCP baseline OK)
+I (47274) safety_mgr: Stopped
+./main/test_runner.c:14315:DET-SVC-03: concurrent run rejected [detergent][phase6][group_c][service]:PASS
+Running DET-SVC-04: start stop 5 rounds [detergent][phase6][group_c][service]...
+I (47294) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47294) safety_mgr: Running (MCP baseline OK)
+I (47294) safety_mgr: Stopped
+I (47294) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47304) safety_mgr: Running (MCP baseline OK)
+I (47304) safety_mgr: Stopped
+I (47304) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47314) safety_mgr: Running (MCP baseline OK)
+I (47314) safety_mgr: Stopped
+I (47314) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47324) safety_mgr: Running (MCP baseline OK)
+I (47324) safety_mgr: Stopped
+I (47334) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47334) safety_mgr: Running (MCP baseline OK)
+I (47344) safety_mgr: Stopped
+./main/test_runner.c:14327:DET-SVC-04: start stop 5 rounds [detergent][phase6][group_c][service]:PASS
+Running DRAIN-SVC-10: start stop 20 rounds heap [drain][phase6][group_c][stress]...
+I (47374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47374) safety_mgr: Running (MCP baseline OK)
+I (47374) safety_mgr: Stopped
+I (47374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47374) safety_mgr: Running (MCP baseline OK)
+I (47384) safety_mgr: Stopped
+I (47384) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47384) safety_mgr: Running (MCP baseline OK)
+I (47394) safety_mgr: Stopped
+I (47394) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47404) safety_mgr: Running (MCP baseline OK)
+I (47404) safety_mgr: Stopped
+I (47404) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47414) safety_mgr: Running (MCP baseline OK)
+I (47414) safety_mgr: Stopped
+I (47414) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47424) safety_mgr: Running (MCP baseline OK)
+I (47424) safety_mgr: Stopped
+I (47434) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47434) safety_mgr: Running (MCP baseline OK)
+I (47444) safety_mgr: Stopped
+I (47444) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47444) safety_mgr: Running (MCP baseline OK)
+I (47454) safety_mgr: Stopped
+I (47454) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47464) safety_mgr: Running (MCP baseline OK)
+I (47464) safety_mgr: Stopped
+I (47464) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47474) safety_mgr: Running (MCP baseline OK)
+I (47474) safety_mgr: Stopped
+I (47474) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47484) safety_mgr: Running (MCP baseline OK)
+I (47484) safety_mgr: Stopped
+I (47494) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47494) safety_mgr: Running (MCP baseline OK)
+I (47504) safety_mgr: Stopped
+I (47504) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47504) safety_mgr: Running (MCP baseline OK)
+I (47514) safety_mgr: Stopped
+I (47514) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47524) safety_mgr: Running (MCP baseline OK)
+I (47524) safety_mgr: Stopped
+I (47524) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47534) safety_mgr: Running (MCP baseline OK)
+I (47534) safety_mgr: Stopped
+I (47534) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47544) safety_mgr: Running (MCP baseline OK)
+I (47544) safety_mgr: Stopped
+I (47554) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47554) safety_mgr: Running (MCP baseline OK)
+I (47564) safety_mgr: Stopped
+I (47564) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47564) safety_mgr: Running (MCP baseline OK)
+I (47574) safety_mgr: Stopped
+I (47574) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47584) safety_mgr: Running (MCP baseline OK)
+I (47584) safety_mgr: Stopped
+I (47584) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47594) safety_mgr: Running (MCP baseline OK)
+I (47594) safety_mgr: Stopped
+./main/test_runner.c:14338:DRAIN-SVC-10: start stop 20 rounds heap [drain][phase6][group_c][stress]:PASS
+Running DET-SVC-10: start stop 20 rounds heap [detergent][phase6][group_c][stress]...
+I (47624) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47624) safety_mgr: Running (MCP baseline OK)
+I (47624) safety_mgr: Stopped
+I (47624) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47634) safety_mgr: Running (MCP baseline OK)
+I (47634) safety_mgr: Stopped
+I (47644) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47644) safety_mgr: Running (MCP baseline OK)
+I (47644) safety_mgr: Stopped
+I (47654) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47654) safety_mgr: Running (MCP baseline OK)
+I (47664) safety_mgr: Stopped
+I (47664) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47664) safety_mgr: Running (MCP baseline OK)
+I (47674) safety_mgr: Stopped
+I (47674) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47684) safety_mgr: Running (MCP baseline OK)
+I (47684) safety_mgr: Stopped
+I (47684) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47694) safety_mgr: Running (MCP baseline OK)
+I (47694) safety_mgr: Stopped
+I (47704) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47704) safety_mgr: Running (MCP baseline OK)
+I (47704) safety_mgr: Stopped
+I (47714) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47714) safety_mgr: Running (MCP baseline OK)
+I (47724) safety_mgr: Stopped
+I (47724) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47724) safety_mgr: Running (MCP baseline OK)
+I (47734) safety_mgr: Stopped
+I (47734) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47744) safety_mgr: Running (MCP baseline OK)
+I (47744) safety_mgr: Stopped
+I (47744) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47754) safety_mgr: Running (MCP baseline OK)
+I (47754) safety_mgr: Stopped
+I (47764) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47764) safety_mgr: Running (MCP baseline OK)
+I (47764) safety_mgr: Stopped
+I (47774) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47774) safety_mgr: Running (MCP baseline OK)
+I (47784) safety_mgr: Stopped
+I (47784) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47784) safety_mgr: Running (MCP baseline OK)
+I (47794) safety_mgr: Stopped
+I (47794) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47804) safety_mgr: Running (MCP baseline OK)
+I (47804) safety_mgr: Stopped
+I (47804) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47814) safety_mgr: Running (MCP baseline OK)
+I (47814) safety_mgr: Stopped
+I (47814) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47824) safety_mgr: Running (MCP baseline OK)
+I (47824) safety_mgr: Stopped
+I (47834) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47834) safety_mgr: Running (MCP baseline OK)
+I (47844) safety_mgr: Stopped
+I (47844) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47844) safety_mgr: Running (MCP baseline OK)
+I (47854) safety_mgr: Stopped
+./main/test_runner.c:14350:DET-SVC-10: start stop 20 rounds heap [detergent][phase6][group_c][stress]:PASS
+Running UV-SVC-10: start stop 20 rounds heap [uv][phase6][group_c][stress]...
+I (47884) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47884) safety_mgr: Running (MCP baseline OK)
+I (47884) safety_mgr: Stopped
+I (47884) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47884) safety_mgr: Running (MCP baseline OK)
+I (47894) safety_mgr: Stopped
+I (47894) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47904) safety_mgr: Running (MCP baseline OK)
+I (47904) safety_mgr: Stopped
+I (47904) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47914) safety_mgr: Running (MCP baseline OK)
+I (47914) safety_mgr: Stopped
+I (47924) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47924) safety_mgr: Running (MCP baseline OK)
+I (47924) safety_mgr: Stopped
+I (47934) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47934) safety_mgr: Running (MCP baseline OK)
+I (47944) safety_mgr: Stopped
+I (47944) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47944) safety_mgr: Running (MCP baseline OK)
+I (47954) safety_mgr: Stopped
+I (47954) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47964) safety_mgr: Running (MCP baseline OK)
+I (47964) safety_mgr: Stopped
+I (47964) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47974) safety_mgr: Running (MCP baseline OK)
+I (47974) safety_mgr: Stopped
+I (47984) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47984) safety_mgr: Running (MCP baseline OK)
+I (47984) safety_mgr: Stopped
+I (47994) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (47994) safety_mgr: Running (MCP baseline OK)
+I (48004) safety_mgr: Stopped
+I (48004) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48004) safety_mgr: Running (MCP baseline OK)
+I (48014) safety_mgr: Stopped
+I (48014) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48024) safety_mgr: Running (MCP baseline OK)
+I (48024) safety_mgr: Stopped
+I (48024) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48034) safety_mgr: Running (MCP baseline OK)
+I (48034) safety_mgr: Stopped
+I (48044) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48044) safety_mgr: Running (MCP baseline OK)
+I (48044) safety_mgr: Stopped
+I (48054) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48054) safety_mgr: Running (MCP baseline OK)
+I (48064) safety_mgr: Stopped
+I (48064) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48064) safety_mgr: Running (MCP baseline OK)
+I (48074) safety_mgr: Stopped
+I (48074) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48084) safety_mgr: Running (MCP baseline OK)
+I (48084) safety_mgr: Stopped
+I (48084) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48094) safety_mgr: Running (MCP baseline OK)
+I (48094) safety_mgr: Stopped
+I (48094) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48104) safety_mgr: Running (MCP baseline OK)
+I (48104) safety_mgr: Stopped
+./main/test_runner.c:14362:UV-SVC-10: start stop 20 rounds heap [uv][phase6][group_c][stress]:PASS
+Running DRAIN-SVC-11: wrong cancel ignored [drain][phase6][group_c][service]...
+I (48134) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48134) safety_mgr: Running (MCP baseline OK)
+I (48684) safety_mgr: Stopped
+./main/test_runner.c:14376:DRAIN-SVC-11: wrong cancel ignored [drain][phase6][group_c][service]:PASS
+Running DET-SVC-11: wrong cancel ignored [detergent][phase6][group_c][service]...
+I (48704) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (48704) safety_mgr: Running (MCP baseline OK)
+I (49254) safety_mgr: Stopped
+./main/test_runner.c:14391:DET-SVC-11: wrong cancel ignored [detergent][phase6][group_c][service]:PASS
+Running UV-SVC-11: wrong cancel ignored [uv][phase6][group_c][service]...
+I (49274) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (49274) safety_mgr: Running (MCP baseline OK)
+I (49824) safety_mgr: Stopped
+./main/test_runner.c:14406:UV-SVC-11: wrong cancel ignored [uv][phase6][group_c][service]:PASS
+Running DRAIN-SVC-20: run before init rejected [drain][phase6][group_c][r41]...
+./main/test_runner.c:14423:DRAIN-SVC-20: run before init rejected [drain][phase6][group_c][r41]:PASS
+Running DRAIN-SVC-21: cancel before init rejected [drain][phase6][group_c][r41]...
+./main/test_runner.c:14431:DRAIN-SVC-21: cancel before init rejected [drain][phase6][group_c][r41]:PASS
+Running DRAIN-SVC-22: snapshot before init rejected [drain][phase6][group_c][r41]...
+./main/test_runner.c:14438:DRAIN-SVC-22: snapshot before init rejected [drain][phase6][group_c][r41]:PASS
+Running DET-SVC-20: run before init rejected [detergent][phase6][group_c][r41]...
+./main/test_runner.c:14446:DET-SVC-20: run before init rejected [detergent][phase6][group_c][r41]:PASS
+Running DET-SVC-21: cancel before init rejected [detergent][phase6][group_c][r41]...
+./main/test_runner.c:14454:DET-SVC-21: cancel before init rejected [detergent][phase6][group_c][r41]:PASS
+Running UV-SVC-20: run before init rejected [uv][phase6][group_c][r41]...
+./main/test_runner.c:14461:UV-SVC-20: run before init rejected [uv][phase6][group_c][r41]:PASS
+Running UV-SVC-21: skip before init rejected [uv][phase6][group_c][r41]...
+./main/test_runner.c:14469:UV-SVC-21: skip before init rejected [uv][phase6][group_c][r41]:PASS
+Running UV-SVC-22: snapshot before init rejected [uv][phase6][group_c][r41]...
+./main/test_runner.c:14476:UV-SVC-22: snapshot before init rejected [uv][phase6][group_c][r41]:PASS
+Running DRAIN-SVC-23: run after stop rejected [drain][phase6][group_c][r41]...
+I (49974) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (49974) safety_mgr: Running (MCP baseline OK)
+I (49974) safety_mgr: Stopped
+./main/test_runner.c:14484:DRAIN-SVC-23: run after stop rejected [drain][phase6][group_c][r41]:PASS
+Running UV-SVC-23: run after stop rejected [uv][phase6][group_c][r41]...
+I (49994) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (49994) safety_mgr: Running (MCP baseline OK)
+I (49994) safety_mgr: Stopped
+./main/test_runner.c:14494:UV-SVC-23: run after stop rejected [uv][phase6][group_c][r41]:PASS
+Running DRAIN-R42-01: emergency before init safe [drain][phase6][group_c][r42]...
+./main/test_runner.c:14544:DRAIN-R42-01: emergency before init safe [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-01: emergency before init safe [detergent][phase6][group_c][r42]...
+./main/test_runner.c:14555:DETG-R42-01: emergency before init safe [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-01: emergency before init safe [uv][phase6][group_c][r42]...
+./main/test_runner.c:14563:UV-R42-01: emergency before init safe [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-02: emergency after stop safe [drain][phase6][group_c][r42]...
+I (50074) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (50074) safety_mgr: Running (MCP baseline OK)
+I (50074) safety_mgr: Stopped
+./main/test_runner.c:14573:DRAIN-R42-02: emergency after stop safe [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-02: emergency after stop safe [detergent][phase6][group_c][r42]...
+I (50104) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (50104) safety_mgr: Running (MCP baseline OK)
+I (50104) safety_mgr: Stopped
+./main/test_runner.c:14583:DETG-R42-02: emergency after stop safe [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-02: emergency after stop safe [uv][phase6][group_c][r42]...
+I (50134) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (50134) safety_mgr: Running (MCP baseline OK)
+I (50134) safety_mgr: Stopped
+./main/test_runner.c:14592:UV-R42-02: emergency after stop safe [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-03: snapshot vs stop overlap [drain][phase6][group_c][r42]...
+I (50154) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (50154) safety_mgr: Running (MCP baseline OK)
+I (50254) safety_mgr: Stopped
+I (50454) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (50454) safety_mgr: Running (MCP baseline OK)
+I (50554) safety_mgr: Stopped
+I (50754) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (50754) safety_mgr: Running (MCP baseline OK)
+I (50854) safety_mgr: Stopped
+I (51054) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (51054) safety_mgr: Running (MCP baseline OK)
+I (51154) safety_mgr: Stopped
+I (51354) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (51354) safety_mgr: Running (MCP baseline OK)
+I (51454) safety_mgr: Stopped
+I (51654) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (51654) safety_mgr: Running (MCP baseline OK)
+I (51754) safety_mgr: Stopped
+I (51954) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (51954) safety_mgr: Running (MCP baseline OK)
+I (52054) safety_mgr: Stopped
+I (52254) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (52254) safety_mgr: Running (MCP baseline OK)
+I (52354) safety_mgr: Stopped
+I (52554) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (52554) safety_mgr: Running (MCP baseline OK)
+I (52654) safety_mgr: Stopped
+I (52854) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (52854) safety_mgr: Running (MCP baseline OK)
+I (52954) safety_mgr: Stopped
+./main/test_runner.c:14619:DRAIN-R42-03: snapshot vs stop overlap [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-03: snapshot vs stop overlap [detergent][phase6][group_c][r42]...
+I (53164) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (53164) safety_mgr: Running (MCP baseline OK)
+I (53264) safety_mgr: Stopped
+I (53464) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (53464) safety_mgr: Running (MCP baseline OK)
+I (53564) safety_mgr: Stopped
+I (53764) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (53764) safety_mgr: Running (MCP baseline OK)
+I (53864) safety_mgr: Stopped
+I (54064) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (54064) safety_mgr: Running (MCP baseline OK)
+I (54164) safety_mgr: Stopped
+I (54364) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (54364) safety_mgr: Running (MCP baseline OK)
+I (54464) safety_mgr: Stopped
+I (54664) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (54664) safety_mgr: Running (MCP baseline OK)
+I (54764) safety_mgr: Stopped
+I (54964) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (54964) safety_mgr: Running (MCP baseline OK)
+I (55064) safety_mgr: Stopped
+I (55264) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (55264) safety_mgr: Running (MCP baseline OK)
+I (55364) safety_mgr: Stopped
+I (55564) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (55564) safety_mgr: Running (MCP baseline OK)
+I (55664) safety_mgr: Stopped
+I (55864) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (55864) safety_mgr: Running (MCP baseline OK)
+I (55964) safety_mgr: Stopped
+./main/test_runner.c:14647:DETG-R42-03: snapshot vs stop overlap [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-03: snapshot vs stop overlap [uv][phase6][group_c][r42]...
+I (56174) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (56174) safety_mgr: Running (MCP baseline OK)
+I (56274) safety_mgr: Stopped
+I (56474) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (56474) safety_mgr: Running (MCP baseline OK)
+I (56574) safety_mgr: Stopped
+I (56774) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (56774) safety_mgr: Running (MCP baseline OK)
+I (56874) safety_mgr: Stopped
+I (57074) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (57074) safety_mgr: Running (MCP baseline OK)
+I (57174) safety_mgr: Stopped
+I (57374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (57374) safety_mgr: Running (MCP baseline OK)
+I (57474) safety_mgr: Stopped
+I (57674) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (57674) safety_mgr: Running (MCP baseline OK)
+I (57774) safety_mgr: Stopped
+I (57974) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (57974) safety_mgr: Running (MCP baseline OK)
+I (58074) safety_mgr: Stopped
+I (58274) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (58274) safety_mgr: Running (MCP baseline OK)
+I (58374) safety_mgr: Stopped
+I (58574) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (58574) safety_mgr: Running (MCP baseline OK)
+I (58674) safety_mgr: Stopped
+I (58874) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (58874) safety_mgr: Running (MCP baseline OK)
+I (58974) safety_mgr: Stopped
+./main/test_runner.c:14674:UV-R42-03: snapshot vs stop overlap [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-04: concurrent stop [drain][phase6][group_c][r42]...
+I (59184) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (59184) safety_mgr: Running (MCP baseline OK)
+I (64384) safety_mgr: Stopped
+./main/test_runner.c:14758:DRAIN-R42-04: concurrent stop [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-04: concurrent stop [detergent][phase6][group_c][r42]...
+I (64394) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (64394) safety_mgr: Running (MCP baseline OK)
+I (69594) safety_mgr: Stopped
+./main/test_runner.c:14761:DETG-R42-04: concurrent stop [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-04: concurrent stop [uv][phase6][group_c][r42]...
+I (69604) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (69604) safety_mgr: Running (MCP baseline OK)
+I (74804) safety_mgr: Stopped
+./main/test_runner.c:14764:UV-R42-04: concurrent stop [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-05: final OFF retry [drain][phase6][group_c][r42]...
+I (74814) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (74814) safety_mgr: Running (MCP baseline OK)
+E (75014) safety_mgr: MCP write failed op=4 err=0x103
+E (75064) safety_mgr: MCP write failed op=4 err=0x103
+E (75064) safety_mgr: MCP write failed op=4 err=0x103
+I (75064) safety_mgr: Stopped
+./main/test_runner.c:14769:DRAIN-R42-05: final OFF retry [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-05: final OFF retry [detergent][phase6][group_c][r42]...
+I (75094) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (75094) safety_mgr: Running (MCP baseline OK)
+E (75294) safety_mgr: MCP write failed op=5 err=0x103
+E (75344) safety_mgr: MCP write failed op=5 err=0x103
+E (75344) safety_mgr: MCP write failed op=5 err=0x103
+I (75344) safety_mgr: Stopped
+./main/test_runner.c:14803:DETG-R42-05: final OFF retry [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-05: final OFF retry [uv][phase6][group_c][r42]...
+I (75374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (75374) safety_mgr: Running (MCP baseline OK)
+E (75574) safety_mgr: MCP write failed op=6 err=0x103
+E (75624) safety_mgr: MCP write failed op=6 err=0x103
+E (75624) safety_mgr: MCP write failed op=6 err=0x103
+I (75624) safety_mgr: Stopped
+./main/test_runner.c:14833:UV-R42-05: final OFF retry [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-06: hook unregister fail cleanup_pending [drain][phase6][group_c][r42]...
+I (75654) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (75654) safety_mgr: Running (MCP baseline OK)
+E (75654) drain_svc: hook unregister failed: 0x103, preserving resources
+I (75654) safety_mgr: Stopped
+./main/test_runner.c:14865:DRAIN-R42-06: hook unregister fail cleanup_pending [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-06: hook unregister fail cleanup_pending [detergent][phase6][group_c][r42]...
+I (75684) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (75694) safety_mgr: Running (MCP baseline OK)
+I (75694) safety_mgr: Stopped
+./main/test_runner.c:14891:DETG-R42-06: hook unregister fail cleanup_pending [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-06: hook unregister fail cleanup_pending [uv][phase6][group_c][r42]...
+I (75714) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (75724) safety_mgr: Running (MCP baseline OK)
+I (75724) safety_mgr: Stopped
+./main/test_runner.c:14910:UV-R42-06: hook unregister fail cleanup_pending [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-07: reservation ID cleanup after cancel [drain][phase6][group_c][r42]...
+I (75744) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (75744) safety_mgr: Running (MCP baseline OK)
+I (76144) safety_mgr: Stopped
+./main/test_runner.c:14931:DRAIN-R42-07: reservation ID cleanup after cancel [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-07: reservation ID cleanup after cancel [detergent][phase6][group_c][r42]...
+I (76164) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (76164) safety_mgr: Running (MCP baseline OK)
+I (76564) safety_mgr: Stopped
+./main/test_runner.c:14947:DETG-R42-07: reservation ID cleanup after cancel [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-07: reservation ID cleanup after skip [uv][phase6][group_c][r42]...
+I (76584) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (76584) safety_mgr: Running (MCP baseline OK)
+I (76984) safety_mgr: Stopped
+./main/test_runner.c:14962:UV-R42-07: reservation ID cleanup after skip [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-08: terminal sink recovery [drain][phase6][group_c][r42]...
+I (77004) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (77004) safety_mgr: Running (MCP baseline OK)
+W (80104) drain_svc: stop timeout, task still alive
+I (80104) safety_mgr: Stopped
+./main/test_runner.c:14979:DRAIN-R42-08: terminal sink recovery [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-08: terminal sink recovery [detergent][phase6][group_c][r42]...
+I (80124) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (80124) safety_mgr: Running (MCP baseline OK)
+W (83224) detergent_svc: stop timeout
+I (83224) safety_mgr: Stopped
+./main/test_runner.c:15051:DETG-R42-08: terminal sink recovery [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-08: terminal sink recovery [uv][phase6][group_c][r42]...
+I (83244) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (83244) safety_mgr: Running (MCP baseline OK)
+W (86344) uv_svc: stop timeout
+I (86344) safety_mgr: Stopped
+./main/test_runner.c:15110:UV-R42-08: terminal sink recovery [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-09: deterministic mailbox path [drain][phase6][group_c][r42]...
+I (86364) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (86364) safety_mgr: Running (MCP baseline OK)
+I (86964) safety_mgr: Stopped
+./main/test_runner.c:15171:DRAIN-R42-09: deterministic mailbox path [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-09: deterministic mailbox path [detergent][phase6][group_c][r42]...
+I (86984) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (86984) safety_mgr: Running (MCP baseline OK)
+I (87584) safety_mgr: Stopped
+./main/test_runner.c:15212:DETG-R42-09: deterministic mailbox path [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-09: deterministic mailbox path [uv][phase6][group_c][r42]...
+I (87604) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (87604) safety_mgr: Running (MCP baseline OK)
+I (88204) safety_mgr: Stopped
+./main/test_runner.c:15244:UV-R42-09: deterministic mailbox path [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-10: test_reset isolation recovery [drain][phase6][group_c][r42]...
+I (88224) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (88224) safety_mgr: Running (MCP baseline OK)
+I (88374) safety_mgr: Stopped
+I (88374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (88374) safety_mgr: Running (MCP baseline OK)
+I (88624) safety_mgr: Stopped
+./main/test_runner.c:15278:DRAIN-R42-10: test_reset isolation recovery [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-10: test_reset isolation recovery [detergent][phase6][group_c][r42]...
+I (88644) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (88644) safety_mgr: Running (MCP baseline OK)
+I (88794) safety_mgr: Stopped
+I (88794) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (88794) safety_mgr: Running (MCP baseline OK)
+I (89044) safety_mgr: Stopped
+./main/test_runner.c:15327:DETG-R42-10: test_reset isolation recovery [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-10: test_reset isolation recovery [uv][phase6][group_c][r42]...
+I (89064) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (89064) safety_mgr: Running (MCP baseline OK)
+I (89214) safety_mgr: Stopped
+I (89214) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (89214) safety_mgr: Running (MCP baseline OK)
+I (89464) safety_mgr: Stopped
+./main/test_runner.c:15374:UV-R42-10: test_reset isolation recovery [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-11: concurrent run_async [drain][phase6][group_c][r42]...
+I (89484) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (89484) safety_mgr: Running (MCP baseline OK)
+I (90034) safety_mgr: Stopped
+./main/test_runner.c:15468:DRAIN-R42-11: concurrent run_async [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-11: concurrent run_async [detergent][phase6][group_c][r42]...
+I (90054) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (90054) safety_mgr: Running (MCP baseline OK)
+I (90604) safety_mgr: Stopped
+./main/test_runner.c:15490:DETG-R42-11: concurrent run_async [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-11: concurrent run_async [uv][phase6][group_c][r42]...
+I (90624) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (90624) safety_mgr: Running (MCP baseline OK)
+I (91174) safety_mgr: Stopped
+./main/test_runner.c:15511:UV-R42-11: concurrent run_async [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-12: second stop fast [drain][phase6][group_c][r42]...
+I (91194) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91194) safety_mgr: Running (MCP baseline OK)
+I (91194) safety_mgr: Stopped
+./main/test_runner.c:15534:DRAIN-R42-12: second stop fast [drain][phase6][group_c][r42]:PASS
+Running DETG-R42-12: second stop fast [detergent][phase6][group_c][r42]...
+I (91214) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91214) safety_mgr: Running (MCP baseline OK)
+I (91214) safety_mgr: Stopped
+./main/test_runner.c:15553:DETG-R42-12: second stop fast [detergent][phase6][group_c][r42]:PASS
+Running UV-R42-12: second stop fast [uv][phase6][group_c][r42]...
+I (91244) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91244) safety_mgr: Running (MCP baseline OK)
+I (91244) safety_mgr: Stopped
+./main/test_runner.c:15572:UV-R42-12: second stop fast [uv][phase6][group_c][r42]:PASS
+Running DRAIN-R42-13: heap stable after r42 cycle [drain][phase6][group_c][r42][stress]...
+I (91274) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91274) safety_mgr: Running (MCP baseline OK)
+I (91274) safety_mgr: Stopped
+I (91274) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91274) safety_mgr: Running (MCP baseline OK)
+I (91284) safety_mgr: Stopped
+I (91284) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91294) safety_mgr: Running (MCP baseline OK)
+I (91294) safety_mgr: Stopped
+I (91294) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91304) safety_mgr: Running (MCP baseline OK)
+I (91304) safety_mgr: Stopped
+I (91314) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91314) safety_mgr: Running (MCP baseline OK)
+I (91314) safety_mgr: Stopped
+I (91324) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91324) safety_mgr: Running (MCP baseline OK)
+I (91334) safety_mgr: Stopped
+I (91334) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91334) safety_mgr: Running (MCP baseline OK)
+I (91344) safety_mgr: Stopped
+I (91344) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91354) safety_mgr: Running (MCP baseline OK)
+I (91354) safety_mgr: Stopped
+I (91354) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91364) safety_mgr: Running (MCP baseline OK)
+I (91364) safety_mgr: Stopped
+I (91374) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91374) safety_mgr: Running (MCP baseline OK)
+I (91374) safety_mgr: Stopped
+./main/test_runner.c:15593:DRAIN-R42-13: heap stable after r42 cycle [drain][phase6][group_c][r42][stress]:PASS
+Running DETG-R42-13: heap stable after r42 cycle [detergent][phase6][group_c][r42][stress]...
+I (91414) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91414) safety_mgr: Running (MCP baseline OK)
+I (91414) safety_mgr: Stopped
+I (91414) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91414) safety_mgr: Running (MCP baseline OK)
+I (91424) safety_mgr: Stopped
+I (91424) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91424) safety_mgr: Running (MCP baseline OK)
+I (91434) safety_mgr: Stopped
+I (91434) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91444) safety_mgr: Running (MCP baseline OK)
+I (91444) safety_mgr: Stopped
+I (91444) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91454) safety_mgr: Running (MCP baseline OK)
+I (91454) safety_mgr: Stopped
+I (91464) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91464) safety_mgr: Running (MCP baseline OK)
+I (91464) safety_mgr: Stopped
+I (91474) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91474) safety_mgr: Running (MCP baseline OK)
+I (91484) safety_mgr: Stopped
+I (91484) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91484) safety_mgr: Running (MCP baseline OK)
+I (91494) safety_mgr: Stopped
+I (91494) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91504) safety_mgr: Running (MCP baseline OK)
+I (91504) safety_mgr: Stopped
+I (91504) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91514) safety_mgr: Running (MCP baseline OK)
+I (91514) safety_mgr: Stopped
+./main/test_runner.c:15606:DETG-R42-13: heap stable after r42 cycle [detergent][phase6][group_c][r42][stress]:PASS
+Running UV-R42-13: heap stable after r42 cycle [uv][phase6][group_c][r42][stress]...
+I (91544) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91544) safety_mgr: Running (MCP baseline OK)
+I (91544) safety_mgr: Stopped
+I (91554) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91554) safety_mgr: Running (MCP baseline OK)
+I (91554) safety_mgr: Stopped
+I (91564) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91564) safety_mgr: Running (MCP baseline OK)
+I (91574) safety_mgr: Stopped
+I (91574) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91574) safety_mgr: Running (MCP baseline OK)
+I (91584) safety_mgr: Stopped
+I (91584) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91594) safety_mgr: Running (MCP baseline OK)
+I (91594) safety_mgr: Stopped
+I (91594) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91604) safety_mgr: Running (MCP baseline OK)
+I (91604) safety_mgr: Stopped
+I (91604) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91614) safety_mgr: Running (MCP baseline OK)
+I (91614) safety_mgr: Stopped
+I (91624) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91624) safety_mgr: Running (MCP baseline OK)
+I (91634) safety_mgr: Stopped
+I (91634) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91634) safety_mgr: Running (MCP baseline OK)
+I (91644) safety_mgr: Stopped
+I (91644) safety_mgr: Initialized (mode=0 ptc=0 board=1)
+I (91654) safety_mgr: Running (MCP baseline OK)
+I (91654) safety_mgr: Stopped
+./main/test_runner.c:15619:UV-R42-13: heap stable after r42 cycle [uv][phase6][group_c][r42][stress]:PASS
+Running BTN-D01: all HIGH no events...
+./main/group_d_tests.c:51:BTN-D01: all HIGH no events:PASS
+Running BTN-D02: 10ms glitch no event...
+./main/group_d_tests.c:60:BTN-D02: 10ms glitch no event:PASS
+Running BTN-D03: stable press+release CLICK timestamp=confirmed...
+./main/group_d_tests.c:71:BTN-D03: stable press+release CLICK timestamp=confirmed:PASS
+Running BTN-D04: bounce then stable one CLICK...
+./main/group_d_tests.c:86:BTN-D04: bounce then stable one CLICK:PASS
+Running BTN-D05: long hold no repeated CLICK...
+./main/group_d_tests.c:104:BTN-D05: long hold no repeated CLICK:PASS
+Running BTN-D06: BTN1+BTN2 simultaneous two CLICKs...
+./main/group_d_tests.c:117:BTN-D06: BTN1+BTN2 simultaneous two CLICKs:PASS
+Running BTN-D09: tick=0...
+./main/group_d_tests.c:133:BTN-D09: tick=0:PASS
+Running BTN-D10: uint32 wrap safe...
+./main/group_d_tests.c:147:BTN-D10: uint32 wrap safe:PASS
+Running BTN-D11: irrelevant bits ignored...
+./main/group_d_tests.c:160:BTN-D11: irrelevant bits ignored:PASS
+Running BTN-D22: sequence monotonic...
+./main/group_d_tests.c:179:BTN-D22: sequence monotonic:PASS
+Running BTN-D-seed: all released...
+./main/group_d_tests.c:200:BTN-D-seed: all released:PASS
+Running BTN-D-seed: BTN1 held no false click...
+./main/group_d_tests.c:214:BTN-D-seed: BTN1 held no false click:PASS
+Running BTN-D-seed: held > debounce release no click...
+./main/group_d_tests.c:241:BTN-D-seed: held > debounce release no click:PASS
+Running BTN-D-seed: BTN1+BTN3 held...
+./main/group_d_tests.c:253:BTN-D-seed: BTN1+BTN3 held:PASS
+Running BTN-D30: deadline correct for confirmed press/release click...
+./main/group_d_tests.c:271:BTN-D30: deadline correct for confirmed press/release click:PASS
+Running BTN-D31: deadline re-sample...
+./main/group_d_tests.c:315:BTN-D31: deadline re-sample:PASS
+Running BTN-D-deadline: overdue returns due_now...
+./main/group_d_tests.c:333:BTN-D-deadline: overdue returns due_now:PASS
+Running BTN-D-deadline: seed release deadline...
+./main/group_d_tests.c:346:BTN-D-deadline: seed release deadline:PASS
+Running BTN-D15: IOCON is 0x44...
+./main/group_d_tests.c:365:BTN-D15: IOCON is 0x44:PASS
+Running BTN-D25: INTCONA any-change mode...
+./main/group_d_tests.c:370:BTN-D25: INTCONA any-change mode:PASS
+Running BTN-D-RMW: GPINTENA enable/disable only 0x70...
+./main/group_d_tests.c:380:BTN-D-RMW: GPINTENA enable/disable only 0x70:PASS
+Running BTN-D29: GPPUA RMW preserves unrelated...
+./main/group_d_tests.c:391:BTN-D29: GPPUA RMW preserves unrelated:PASS
+Running BTN-D28: Port B unchanged...
+./main/group_d_tests.c:402:BTN-D28: Port B unchanged:PASS
+Running BTN-D16: INTFA before INTCAPA read order...
+./main/group_d_tests.c:417:BTN-D16: INTFA before INTCAPA read order:PASS
+Running BTN-D26: INTFA nonzero + INTCAPA all-low = Port A...
+./main/group_d_tests.c:436:BTN-D26: INTFA nonzero + INTCAPA all-low = Port A:PASS
+Running BTN-D27: INTA+INTB simultaneous both flagged...
+./main/group_d_tests.c:448:BTN-D27: INTA+INTB simultaneous both flagged:PASS
+Running BTN-D-INTF-FAIL: failure outputs unchanged...
+./main/group_d_tests.c:460:BTN-D-INTF-FAIL: failure outputs unchanged:PASS
+Running BTN-D-pin-mask: rejects pins outside 0x70...
+./main/group_d_tests.c:474:BTN-D-pin-mask: rejects pins outside 0x70:PASS
+Running BTN-D-rollback: partial failure rolls back...
+./main/group_d_tests.c:485:BTN-D-rollback: partial failure rolls back:PASS
+Running BTN-D23: init rejects NULL MCP...
+./main/group_d_tests.c:502:BTN-D23: init rejects NULL MCP:PASS
+Running BTN-D-NULL-URGENT: init rejects NULL urgent sink...
+./main/group_d_tests.c:509:BTN-D-NULL-URGENT: init rejects NULL urgent sink:PASS
+Running BTN-D-start-FAIL: configure failure returns error stays retryable...
+E (92004) btn_svc: configure failed: 0x108
+I (92054) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:519:BTN-D-start-FAIL: configure failure returns error stays retryable:PASS
+Running BTN-D17: 20 rounds no leak...
+I (92124) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92174) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92224) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92274) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92324) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92374) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92424) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92474) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92524) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92574) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92624) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92674) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92724) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92774) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92824) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92874) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92924) btn_svc: stopped (disable=0x0 flush=0x0)
+I (92974) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93024) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93074) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:538:BTN-D17: 20 rounds no leak:PASS
+Running BTN-D34: abort cleanup releases resources...
+I (93134) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:556:BTN-D34: abort cleanup releases resources:PASS
+Running BTN-D35: heap stable 10 cycles...
+I (93194) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93234) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93274) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93314) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93354) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93394) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93434) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93474) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93514) btn_svc: stopped (disable=0x0 flush=0x0)
+I (93554) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:571:BTN-D35: heap stable 10 cycles:PASS
+Running BTN-D07: BTN3 real press/release urgent exactly once...
+I (93794) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:596:BTN-D07: BTN3 real press/release urgent exactly once:PASS
+Running BTN-D08: normal drop does not block urgent...
+I (94254) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:639:BTN-D08: normal drop does not block urgent:PASS
+Running BTN-D12: FAIL_NEXT one error then recovery click...
+I (94554) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:691:BTN-D12: FAIL_NEXT one error then recovery click:PASS
+Running BTN-D13: UNTIL_CLEARED multiple failures then recovery...
+I (95074) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:737:BTN-D13: UNTIL_CLEARED multiple failures then recovery:PASS
+Running BTN-D14: service interrupt coalescing via GPIO burst...
+I (95364) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:795:BTN-D14: service interrupt coalescing via GPIO burst:PASS
+Running BTN-D18: stop timeout then barrier release succeeds...
+I (101384) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:842:BTN-D18: stop timeout then barrier release succeeds:PASS
+Running BTN-D19: start/stop overlap via two tasks...
+I (107394) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:899:BTN-D19: start/stop overlap via two tasks:PASS
+Running BTN-D20: concurrent stop single join commit...
+[D20] waiting for DONE bits...
+[D20] task calling stop(), result ptr=0x3fca4f2c
+[D20] task calling stop(), result ptr=0x3fca4f30
+I (107504) btn_svc: stopped (disable=0x0 flush=0x0)
+[D20] task stop returned: 0x0, setting done_bit=0x100
+[D20] task stop returned: 0x103, setting done_bit=0x200
+[D20] done_bits=0x313 t1=0x0 t2=0x103
+[D20] before: join=0 disable=0 after: join=1 disable=1
+./main/group_d_tests.c:967:BTN-D20: concurrent stop single join commit:PASS
+Running BTN-D21: sink reentrant get_snapshot no deadlock...
+I (107764) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:1034:BTN-D21: sink reentrant get_snapshot no deadlock:PASS
+Running BTN-D24: urgent delivered exactly once no duplicate...
+I (108454) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:1073:BTN-D24: urgent delivered exactly once no duplicate:PASS
+Running BTN-D32: urgent sink failing keeps pending beyond old limit...
+I (110644) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:1113:BTN-D32: urgent sink failing keeps pending beyond old limit:PASS
+Running BTN-D33: BTN1+BTN2+BTN3 routing and sequence...
+I (111004) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:1155:BTN-D33: BTN1+BTN2+BTN3 routing and sequence:PASS
+Running BTN-D36: abort isolation global cleanup owns MCP...
+I (111074) btn_svc: stopped (disable=0x0 flush=0x0)
+I (111124) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:1225:BTN-D36: abort isolation global cleanup owns MCP:PASS
+Running BTN-D37: stale urgent result rejected by attempt token...
+I (111914) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:1279:BTN-D37: stale urgent result rejected by attempt token:PASS
+Running BTN-D38: sequential stop exactly one join commit...
+I (111984) btn_svc: stopped (disable=0x0 flush=0x0)
+./main/group_d_tests.c:1351:BTN-D38: sequential stop exactly one join commit:PASS
+=== ALL TESTS COMPLETE ===
+I (111994) main_task: Returned from app_main()

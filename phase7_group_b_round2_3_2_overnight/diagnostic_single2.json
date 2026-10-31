@@ -1,0 +1,15 @@
+{
+  "begin_count": 1,
+  "complete_count": 1,
+  "pass": 669,
+  "fail": 3,
+  "failures": [
+    "./main/wash_executor_round2_integration_tests.c:716:R2: cancel ACK matches correctly:FAIL: Expected 1 Was 3. Function [r2][terminal]I (122610) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:942:R2: UV skip waits for SKIPPED terminal:FAIL: Expected 0 Was 3. Function [r2][uv]I (131270) bl50_svc: task exiting (stop_err=0x0)",
+    "./main/wash_executor_round2_integration_tests.c:963:R2: dispatch failure enters FAULT:FAIL:Function [r2][fault].  Expected TRUE Was FALSEI (136920) bl50_svc: task exiting (stop_err=0x0)"
+  ],
+  "ignore": 15,
+  "total": 687,
+  "valid": true,
+  "elapsed_seconds": 144.7
+}

@@ -1,0 +1,49 @@
+{
+  "timestamp": "2026-08-04T01:00:00",
+  "round": "2.6.2",
+  "tasks_completed": [32, 33, 34],
+  "tasks_pending": [35, 36, 37],
+  "build_status": "success",
+  "bin_sha256": "032FB7A074A886BF8D5288D0F24D0BBCAF39E8DD4DB4F93A465CCD3AC505EC35",
+  "elf_sha256": "5809A875617C52CAF710F4F4F1883DDEBED88F36B65C78D843B1EFAEB15AED1B",
+  "bin_sha256_length": 64,
+  "elf_sha256_length": 64,
+  "changes_made": [
+    "Task 1: Verified SHA256 hashes are 64 hex characters",
+    "Task 2: Added wake strategy config (threshold, margin, consecutive_hits)",
+    "Task 2: Added noise_score and unknown_score to ei_classifier_result_t",
+    "Task 2: Implemented margin-based filtering with consecutive hit tracking",
+    "Task 3: Added I2S read interval tracking to audio_controller"
+  ],
+  "wake_strategy_candidate": {
+    "threshold": 0.80,
+    "margin": 0.15,
+    "consecutive_hits": 2,
+    "cooldown_ms": 2000,
+    "status": "PENDING_USER_TEST"
+  },
+  "classifier_frequency_analysis": {
+    "observed_interval_ms": 674,
+    "declared_stride_ms": 500,
+    "gap_cause": "Classifier runs synchronously in capture task, blocking I2S reads for ~138ms",
+    "dma_buffer_ms": 30,
+    "recommendation": "Current synchronous implementation acceptable if no DMA overruns detected"
+  },
+  "gate_status": {
+    "BIN_SHA256_VALID": "PASS (64 hex)",
+    "ELF_SHA256_VALID": "PASS (64 hex)",
+    "PCM_LAYERING_SAFE": "PASS",
+    "SIGNED_SHIFT_UB": "PASS",
+    "RECORDER_10S_RUNTIME": "PASS",
+    "DIAG_TASK_JOIN_SAFE": "PASS",
+    "FALSE_WAKE_DURATION": "PASS (602s)",
+    "WIFI_GOT_IP": "PASS",
+    "RESET_WDT": "PASS"
+  },
+  "pending_gates": [
+    "AUTO_CYCLES>=20",
+    "TRUE_LIVE_TRIALS>=10",
+    "FINAL_WAKE_POLICY_SELECTED",
+    "SOAK_CONTINUOUS>=4h"
+  ]
+}

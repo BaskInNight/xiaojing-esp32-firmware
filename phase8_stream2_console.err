@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\tools\run_test_subset.py", line 81, in <module>
+    success = main()
+  File "D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\tools\run_test_subset.py", line 56, in main
+    output, found = read_until_pattern(
+  File "D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\tools\run_test_subset.py", line 23, in read_until_pattern
+    print(data, end="", flush=True)
+UnicodeEncodeError: 'gbk' codec can't encode character '\ufffd' in position 12: illegal multibyte sequence

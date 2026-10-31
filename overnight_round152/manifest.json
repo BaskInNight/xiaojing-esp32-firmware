@@ -1,0 +1,21 @@
+{
+  "phase": "7", "group": "B", "round": "1.5.2",
+  "board_port": "COM7", "usb_serial_chip": "CP210x", "usb_vid_pid": "10C4:EA60",
+  "auto_reset_method": "RTS_AUTO",
+  "binary_sha256": "f51309013f10b321428cd04e17de4083c53a11ce97b26487559fec3c5a6d0d94",
+  "elf_sha256": "b7f703f054e6e0b46d409757dfb6f3a10ee0554e7f97e50b269391a2ad17bf5f",
+  "registered_test_case": 661,
+  "old_soak_preserved": "overnight/soak/ (111 logs, 4.0h, R1.5.1)",
+  "diagnostic": {"pass":646,"fail":0,"ignore":15,"total":661},
+  "formal_run1": {"pass":646,"fail":0,"ignore":15,"total":661},
+  "formal_run2": {"pass":646,"fail":0,"ignore":15,"total":661},
+  "formal_run3": {"pass":646,"fail":0,"ignore":15,"total":661},
+  "soak_duration": "1h", "soak_rounds": 28, "soak_valid": 28, "soak_fail": 0,
+  "final_run1": {"pass":646,"fail":0,"ignore":15,"total":661},
+  "final_run2": {"pass":646,"fail":0,"ignore":15,"total":661},
+  "final_run3": {"pass":646,"fail":0,"ignore":15,"total":661},
+  "host_c": "201/201 PASS", "python_host": "23/23 PASS", "runner_offline": "16/16 OK",
+  "unrecovered_stop_timeout": 0, "unrecovered_destroy_running": 0,
+  "orphan_task": 0, "isolation_poison": 0,
+  "exit_gate": "PASS", "ready_for_round2": "YES", "ready_for_phase8": "NO"
+}

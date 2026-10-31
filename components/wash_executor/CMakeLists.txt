@@ -1,0 +1,31 @@
+idf_component_register(
+    SRCS
+        "wash_executor.c"
+        "wash_executor_core.c"
+        "wash_executor_fake_adapter.c"
+        "wash_executor_real_adapter.c"
+        "wash_executor_bootstrap.c"
+    INCLUDE_DIRS
+        "include"
+    PRIV_INCLUDE_DIRS
+        "private_include"
+    REQUIRES
+        machine_types
+        machine_config
+        machine_status_store
+        safety_contract
+        hal_contract
+        board_config
+        position_service
+        bl50_service
+        water_service
+        dry_service
+        drain_service
+        detergent_service
+        uv_service
+        safety_manager
+)
+
+if(CONFIG_WASH_EXEC_TEST_HOOKS)
+    target_compile_definitions(${COMPONENT_LIB} PUBLIC WASH_EXEC_TEST_HOOKS)
+endif()

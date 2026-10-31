@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-08-03T16:00:00",
+  "stage_completed": 4,
+  "tasks_completed": [13, 14, 15, 16],
+  "tasks_pending": [17, 18, 19, 20, 21, 22, 23],
+  "build_status": "success",
+  "firmware_size_bytes": 4116768,
+  "changes_made": [
+    "Stage 1: Fixed recorder buffer capacity from 128KB to 321KB for 10s recording",
+    "Stage 1: Added PSRAM verification to voice_recorder init",
+    "Stage 1: Added end_reason_str() helper for readable logging",
+    "Stage 2: Added stop_diagnostic_task() with bounded wait",
+    "Stage 2: Called stop_diagnostic_task() in fail: rollback path",
+    "Stage 3: Found 8x amplitude mismatch (old: >>11, current: >>14)",
+    "Stage 3: Fixed audio_driver.c to use (sample >> 14) << 3",
+    "Stage 4: Implemented sliding window with 500ms stride",
+    "Stage 4: Added classifier timing statistics"
+  ],
+  "key_findings": {
+    "amplitude_mismatch": "Old project uses (>>14)<<3 = >>11 (8x gain), current uses >>14 (1x gain)",
+    "threshold_difference": "Old project uses 0.8, current model threshold is 0.6",
+    "window_strategy": "Old project uses sliding window with WINDOW_SIZE/4 stride"
+  },
+  "next_steps": [
+    "Stage 5: Find old project test audio for PCM injection",
+    "Stage 6: Implement VAD automatic testing",
+    "Stage 7: Implement WAKE→DIALOG→WAKE closed loop tests",
+    "Stage 8: Code review and leak scan",
+    "Stage 9: Flash and board diagnostics"
+  ]
+}

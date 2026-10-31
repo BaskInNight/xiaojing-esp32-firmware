@@ -1,0 +1,58 @@
+Add-Content : 流不可读。
+所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake_monitor.ps1:15 字符: 5
++     Add-Content -Path $logFile -Value "[$([int]$elapsed.TotalSeconds) ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (D:\UserData\ESP...se_wake_log.txt:String) [Add-Content]，ArgumentExcept
+    ion
+    + FullyQualifiedErrorId : GetContentWriterArgumentError,Microsoft.PowerShell.Commands.AddContentCommand
+ 
+Add-Content : 流不可读。
+所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake_monitor.ps1:15 字符: 5
++     Add-Content -Path $logFile -Value "[$([int]$elapsed.TotalSeconds) ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (D:\UserData\ESP...se_wake_log.txt:String) [Add-Content]，ArgumentExcept
+    ion
+    + FullyQualifiedErrorId : GetContentWriterArgumentError,Microsoft.PowerShell.Commands.AddContentCommand
+ 
+Add-Content : 流不可读。
+所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake_monitor.ps1:15 字符: 5
++     Add-Content -Path $logFile -Value "[$([int]$elapsed.TotalSeconds) ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (D:\UserData\ESP...se_wake_log.txt:String) [Add-Content]，ArgumentExcept
+    ion
+    + FullyQualifiedErrorId : GetContentWriterArgumentError,Microsoft.PowerShell.Commands.AddContentCommand
+ 
+Add-Content : 流不可读。
+所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake_monitor.ps1:15 字符: 5
++     Add-Content -Path $logFile -Value "[$([int]$elapsed.TotalSeconds) ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (D:\UserData\ESP...se_wake_log.txt:String) [Add-Content]，ArgumentExcept
+    ion
+    + FullyQualifiedErrorId : GetContentWriterArgumentError,Microsoft.PowerShell.Commands.AddContentCommand
+ 
+Add-Content : 流不可读。
+所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake_monitor.ps1:15 字符: 5
++     Add-Content -Path $logFile -Value "[$([int]$elapsed.TotalSeconds) ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (D:\UserData\ESP...se_wake_log.txt:String) [Add-Content]，ArgumentExcept
+    ion
+    + FullyQualifiedErrorId : GetContentWriterArgumentError,Microsoft.PowerShell.Commands.AddContentCommand
+ 
+Add-Content : 流不可读。
+所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake_monitor.ps1:15 字符: 5
++     Add-Content -Path $logFile -Value "[$([int]$elapsed.TotalSeconds) ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidArgument: (D:\UserData\ESP...se_wake_log.txt:String) [Add-Content]，ArgumentExcept
+    ion
+    + FullyQualifiedErrorId : GetContentWriterArgumentError,Microsoft.PowerShell.Commands.AddContentCommand
+ 
+程序“python.exe”无法运行: 系统错误。所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake
+_monitor.ps1:10 字符: 1
++ python -m esp_idf_monitor -p COM8 --print_filter '*:I' 2>&1 | ForEach ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~。
+所在位置 D:\UserData\ESP32Project\IDF\ESP32-IDF-Test\phase9_round2_6\soak\false_wake_monitor.ps1:10 字符: 1
++ python -m esp_idf_monitor -p COM8 --print_filter '*:I' 2>&1 | ForEach ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ResourceUnavailable: (:) [], ApplicationFailedException
+    + FullyQualifiedErrorId : NativeCommandFailed
+ 

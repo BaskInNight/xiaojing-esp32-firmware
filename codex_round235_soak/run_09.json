@@ -1,0 +1,11 @@
+{
+  "begin_count": 1,
+  "complete_count": 1,
+  "pass": 674,
+  "fail": 0,
+  "failures": [],
+  "ignore": 15,
+  "total": 689,
+  "valid": true,
+  "elapsed_seconds": 140.7
+}

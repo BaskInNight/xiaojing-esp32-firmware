@@ -1,0 +1,37 @@
+build/
+build_*/
+build*/
+sdkconfig.old
+managed_components/
+dependencies.lock
+sdkconfig.ci
+main/include/voice_secrets.h
+**/Config.h
+.env
+.env.*
+!.env.example
+__pycache__/
+*.py[cod]
+*.bak
+tmp/
+# Historical compiled firmware contains device-local credentials.
+phase9_current_stable_20260805/*.bin
+phase9_current_stable_20260805/*.elf
+phase9_ui_dashboard_20260805/*.bin
+phase9_ui_dashboard_20260805/*.elf
+# Raw logic-analyzer captures are local evidence, not source artifacts.
+diagnostics/saleae_i2s/*.csv
+
+# 板测/调试产物（一次性脚本、串口日志、捕获）
+*.log
+*.err.log
+.capture_switch.py
+.live_switch_monitor.py
+.switch_*.py
+.thinking_live_monitor.py
+.boot_capture.py
+
+# Phase 5/6 机毁性磁盘 dump（不纳入版本管理）
+phase5_*/
+phase6_*/
+INVALID_ORPHAN_TASK*.log

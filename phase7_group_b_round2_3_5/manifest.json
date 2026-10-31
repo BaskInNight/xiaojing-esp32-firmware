@@ -1,0 +1,33 @@
+{
+  "phase": "Phase 7 Group B Round 2.3.5",
+  "date": "2026-07-28",
+  "port": "COM7",
+  "gate": "PASS",
+  "ready_for_phase8": true,
+  "per_cycle": {
+    "pass": 674,
+    "fail": 0,
+    "ignore": 15,
+    "total": 689,
+    "begin": 1,
+    "complete": 1
+  },
+  "diagnostic_cycles": 1,
+  "formal_cycles": 3,
+  "soak": {
+    "cycles": 13,
+    "valid_cycles": 13,
+    "failed_cycles": 0,
+    "elapsed_seconds": 1833.8
+  },
+  "hashes": {
+    "main_bin_sha256": "6BF70A53349BF9CD89BDD6DA4B1C42FA3625A544B7349544748D6D3054F870B9",
+    "main_elf_sha256": "556BA332AED98E651562CD380C5C1C330DF8FBFA6E95FAA14EB07B368E7BB603",
+    "unit_bin_sha256": "8B6E4E4E34FD2A0D8FA2A55F2977E7ED2E089F72A0A36FF54635BA5EC09A1ACB",
+    "unit_elf_sha256": "2E58C983920254CC86F463008C4B5F3784F7D20499008AD14D5A5BA2A2049A05"
+  },
+  "crash_signature_count": 0,
+  "non_hw_ignore": 0,
+  "p0_remaining": 0,
+  "p1_remaining": 0
+}

@@ -1,0 +1,58 @@
+CONFIG_IDF_TARGET="esp32s3"
+
+# Flash: 16MB
+CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+
+# Use default partition table (includes NVS for config tests)
+# The default ESP-IDF partition table has nvs + factory app
+
+# PSRAM
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_SPEED_80M=y
+
+# Disable BLE for test app
+CONFIG_BT_ENABLED=n
+CONFIG_BLE_TRANSPORT_TEST_HOOKS=y
+
+# Unity test runner
+CONFIG_UNITY_ENABLE_IDF_TEST_RUNNER=y
+CONFIG_UNITY_ENABLE_64BIT=y
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+
+# FreeRTOS
+CONFIG_FREERTOS_HZ=100
+
+# Testing mode: enables machine_status_store_reset() and other test-only APIs
+# Use compile definition instead of Kconfig (no Kconfig entry needed for test app)
+
+# Position service: enable test hooks for deterministic concurrency tests
+CONFIG_POS_SERVICE_TEST_HOOKS=y
+
+# Safety manager: enable test hooks for unit tests
+CONFIG_SAFETY_MGR_TEST_HOOKS=y
+
+# Water service: enable test hooks for unit tests
+CONFIG_WATER_SERVICE_TEST_HOOKS=y
+
+# Dry service: enable test hooks for unit tests
+CONFIG_DRY_SERVICE_TEST_HOOKS=y
+
+# BL50 service: enable test hooks for unit tests
+CONFIG_BL50_SERVICE_TEST_HOOKS=y
+
+# Group C services: enable test hooks for unit tests
+CONFIG_DRAIN_SERVICE_TEST_HOOKS=y
+CONFIG_DETERGENT_SERVICE_TEST_HOOKS=y
+CONFIG_UV_SERVICE_TEST_HOOKS=y
+
+# Disable watchdog for test runner
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU0=n
+CONFIG_ESP_TASK_WDT_CHECK_IDLE_TASK_CPU1=n
+CONFIG_ESP_INT_WDT=n
+CONFIG_BOOTLOADER_WDT_ENABLE=n
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_unit_4mb.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions_unit_4mb.csv"

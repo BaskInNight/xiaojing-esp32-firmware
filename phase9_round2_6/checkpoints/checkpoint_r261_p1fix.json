@@ -1,0 +1,33 @@
+{
+  "timestamp": "2026-08-03T17:00:00",
+  "round": "2.6.1",
+  "corrections_applied": [
+    "P1-1: Audio layering - reverted audio_driver to neutral >>14, Edge applies 8x with int64 safe multiply",
+    "P1-3: Diagnostic task lifecycle - semaphore-based TASK_DONE, lifecycle lock, atomic stop_requested"
+  ],
+  "build_status": "success",
+  "bin_sha256": "032FB7A074A886BF8D5288D0F24D0BBCAF39E8DD4DB4F93A465CCD3AC505EC35",
+  "elf_sha256": "5809A875617C52CAF710F4F4F1883DDEBED88F36B65C78D843B1EFAEB15AED1B",
+  "gate_status": {
+    "PCM_LAYERING_SAFE": "PASS (audio_driver=1x, edge=8x, dialog=1x)",
+    "SIGNED_SHIFT_UB": "PASS (int64 multiply, no left shift)",
+    "EDGE_GAIN_ONLY": "PASS (8x in voice_wake_edge only)",
+    "DIALOG_GAIN_1X": "PASS (voice_recorder gets neutral PCM)",
+    "DIAG_TASK_JOIN_SAFE": "PASS (semaphore-based, lifecycle lock)",
+    "RECORDER_CAPACITY": "328704 bytes (10s at 16kHz)"
+  },
+  "pending_gates": [
+    "RECORDER_8S_RUNTIME",
+    "RECORDER_10S_RUNTIME",
+    "FALSE_WAKE_DURATION>=600",
+    "AUTO_CYCLES>=20",
+    "WIFI_GOT_IP",
+    "SOAK_VALID_CONTINUOUS_DURATION>=4h"
+  ],
+  "next_steps": [
+    "Flash firmware and run 10-minute false wake test",
+    "Run 20-round state machine test",
+    "Fix WiFi ASSOC_EXPIRE",
+    "Run 4-hour soak test"
+  ]
+}

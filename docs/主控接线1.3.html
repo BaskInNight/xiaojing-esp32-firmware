@@ -1,0 +1,1202 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>小净自制主板接线与接口设计参考</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0e1c2f;
+      --panel-2: #13243a;
+      --line: #29415e;
+      --text: #ecf5ff;
+      --muted: #8fa8c2;
+      --cyan: #31d7e8;
+      --green: #40d18f;
+      --orange: #ffad4d;
+      --purple: #b68cff;
+      --red: #ff6474;
+      --yellow: #ffd166;
+    }
+
+    * { box-sizing: border-box; }
+    html { background: var(--bg); }
+    body {
+      margin: 0;
+      min-width: 1100px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(49, 215, 232, .13), transparent 34%),
+        radial-gradient(circle at 90% 10%, rgba(182, 140, 255, .12), transparent 30%),
+        var(--bg);
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    }
+
+    .page { width: min(1580px, calc(100vw - 36px)); margin: 18px auto 32px; }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 18px 22px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(14, 28, 47, .94);
+      box-shadow: 0 18px 46px rgba(0, 0, 0, .3);
+    }
+    h1 { margin: 0; font-size: 28px; letter-spacing: .03em; }
+    .subtitle { margin-top: 7px; color: var(--muted); font-size: 13px; }
+    .badges { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+    .badge, .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 9px;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .badge strong { color: var(--cyan); }
+    .ok { color: var(--green); background: rgba(64, 209, 143, .09); border-color: rgba(64, 209, 143, .35); }
+    .free { color: #7ff7bd; background: rgba(64, 209, 143, .15); border-color: rgba(64, 209, 143, .62); }
+    .warn { color: var(--orange); background: rgba(255, 173, 77, .09); border-color: rgba(255, 173, 77, .4); }
+    .danger { color: var(--red); background: rgba(255, 100, 116, .1); border-color: rgba(255, 100, 116, .45); }
+    .reserve { color: var(--muted); background: rgba(143, 168, 194, .08); }
+
+    .notice-grid { display: grid; grid-template-columns: 1.15fr 1.1fr 1.25fr .85fr; gap: 12px; margin: 14px 0; }
+    .notice {
+      padding: 12px 14px;
+      border-radius: 13px;
+      border: 1px solid var(--line);
+      background: rgba(14, 28, 47, .88);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+    .notice b { display: block; margin-bottom: 3px; color: var(--yellow); font-size: 13px; }
+    .notice.critical { border-color: rgba(255,100,116,.55); background: rgba(92,25,39,.38); }
+    .notice.critical b { color: var(--red); }
+
+    .board-layout {
+      display: grid;
+      grid-template-columns: minmax(350px, 1fr) 280px minmax(350px, 1fr);
+      gap: 14px;
+      align-items: stretch;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(8, 20, 35, .82);
+    }
+    .pin-list { display: grid; grid-template-columns: 1fr; gap: 5px; align-content: space-between; }
+    .pin {
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      align-items: center;
+      gap: 8px;
+      min-height: 31px;
+      padding: 4px 7px;
+      border: 1px solid rgba(41,65,94,.72);
+      border-radius: 9px;
+      background: linear-gradient(90deg, rgba(19,36,58,.92), rgba(14,28,47,.78));
+    }
+    .pin.available { border-color: rgba(64,209,143,.72); background: linear-gradient(90deg, rgba(22,70,58,.72), rgba(14,36,47,.84)); box-shadow: inset 3px 0 0 rgba(64,209,143,.9); }
+    .pin.conflict { border-color: rgba(255,100,116,.7); background: linear-gradient(90deg, rgba(86,25,38,.78), rgba(25,28,47,.85)); }
+    .pin.no-use { opacity: .68; }
+    .gpio {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 22px;
+      border-radius: 6px;
+      color: #07111f;
+      background: var(--yellow);
+      font: 800 11px ui-monospace, Consolas, monospace;
+    }
+    .pin-main { min-width: 0; }
+    .pin-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; font-weight: 800; }
+    .pin-meta { margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: 10px; }
+    .label-kind {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 5px;
+      padding: 1px 5px;
+      border: 1px solid rgba(143,168,194,.32);
+      border-radius: 999px;
+      font: 800 8px ui-monospace, Consolas, monospace;
+      vertical-align: 1px;
+      white-space: nowrap;
+    }
+    .label-power { color: var(--red); border-color: rgba(255,100,116,.42); background: rgba(255,100,116,.08); }
+    .label-in { color: var(--orange); border-color: rgba(255,173,77,.42); background: rgba(255,173,77,.08); }
+    .label-out { color: var(--green); border-color: rgba(64,209,143,.42); background: rgba(64,209,143,.08); }
+    .label-bidir { color: var(--cyan); border-color: rgba(49,215,232,.42); background: rgba(49,215,232,.08); }
+    .label-nc { color: var(--red); border-color: rgba(255,100,116,.42); background: rgba(255,100,116,.08); }
+    .label-none { color: var(--muted); background: rgba(143,168,194,.06); }
+    .label-special { color: var(--purple); border-color: rgba(182,140,255,.42); background: rgba(182,140,255,.08); }
+    .pin .status { padding: 3px 6px; font-size: 9px; }
+    .pin.clickable, .mcp-card.clickable {
+      cursor: pointer;
+      position: relative;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+    .pin.clickable:hover, .pin.clickable:focus-visible,
+    .mcp-card.clickable:hover, .mcp-card.clickable:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--cyan);
+      box-shadow: 0 8px 22px rgba(49, 215, 232, .15);
+      outline: none;
+    }
+    .pin.clickable::after, .mcp-card.clickable::after {
+      content: "↗";
+      position: absolute;
+      right: 7px;
+      top: 4px;
+      color: var(--cyan);
+      font-size: 9px;
+      opacity: .72;
+    }
+    .pin.clickable .status { margin-right: 12px; }
+
+    .module {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 770px;
+      padding: 28px 18px 22px;
+      overflow: hidden;
+      border: 1px solid #49617e;
+      border-radius: 18px;
+      background: linear-gradient(160deg, #23364d 0%, #101b2b 58%, #0a1421 100%);
+      box-shadow: inset 0 0 55px rgba(0,0,0,.38), 0 20px 42px rgba(0,0,0,.34);
+    }
+    .module::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px dashed rgba(143,168,194,.26);
+      border-radius: 13px;
+    }
+    .antenna { width: 112px; height: 48px; border: 5px solid #d7b16b; border-bottom: 0; border-radius: 8px 8px 0 0; opacity: .9; }
+    .chip {
+      position: relative;
+      z-index: 1;
+      width: 210px;
+      padding: 30px 12px;
+      border: 1px solid #9aa7b5;
+      border-radius: 13px;
+      color: #1b2733;
+      background: linear-gradient(145deg, #e7edf1, #aab7c1);
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0,0,0,.45);
+    }
+    .chip .maker { font-size: 20px; font-weight: 900; letter-spacing: .09em; }
+    .chip .model { margin-top: 9px; font: 800 13px ui-monospace, Consolas, monospace; }
+    .chip .variant { display: inline-block; margin-top: 13px; padding: 5px 9px; border-radius: 7px; color: #fff; background: #b73248; font: 900 13px ui-monospace, Consolas, monospace; }
+    .module-note { position: relative; z-index: 1; width: 100%; display: grid; gap: 8px; }
+    .module-note div { padding: 9px; border: 1px solid var(--line); border-radius: 9px; background: rgba(7,17,31,.72); font-size: 10px; line-height: 1.45; color: var(--muted); }
+    .module-note b { color: var(--cyan); }
+
+    .section-title { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 18px 2px 10px; }
+    .section-title h2 { margin: 0; font-size: 18px; }
+    .section-title span { color: var(--muted); font-size: 11px; }
+    .mcp-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
+    .mcp-card {
+      min-height: 116px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-top: 3px solid var(--purple);
+      border-radius: 11px;
+      background: rgba(14,28,47,.94);
+    }
+    .mcp-card.out { border-top-color: var(--green); }
+    .mcp-card.in { border-top-color: var(--orange); }
+    .mcp-card .port { color: var(--purple); font: 900 12px ui-monospace, Consolas, monospace; }
+    .mcp-card .func { margin-top: 7px; min-height: 29px; font-size: 11px; font-weight: 800; }
+    .mcp-card .net { color: var(--muted); font: 10px ui-monospace, Consolas, monospace; }
+    .mcp-card .label-kind { margin: 7px 4px 0 0; }
+    .mcp-card .status { margin-top: 8px; }
+
+    .audit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .audit-card {
+      min-height: 128px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--cyan);
+      border-radius: 11px;
+      background: rgba(14,28,47,.9);
+      font-size: 11px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+    .audit-card.good { border-left-color: var(--green); }
+    .audit-card.warn { border-left-color: var(--orange); }
+    .audit-card.bad { border-left-color: var(--red); }
+    .audit-card b { display: block; margin-bottom: 5px; color: var(--text); font-size: 12px; }
+
+    .footer {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+    .footer > div { padding: 11px 13px; border: 1px solid var(--line); border-radius: 11px; background: rgba(14,28,47,.7); }
+    code { color: var(--cyan); font-family: ui-monospace, Consolas, monospace; }
+
+    [hidden] { display: none !important; }
+    .detail-view { min-height: calc(100vh - 36px); }
+    .detail-toolbar {
+      position: sticky;
+      top: 10px;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: rgba(7, 17, 31, .94);
+      backdrop-filter: blur(12px);
+    }
+    .back-btn {
+      border: 1px solid rgba(49,215,232,.48);
+      border-radius: 9px;
+      padding: 8px 13px;
+      color: var(--cyan);
+      background: rgba(49,215,232,.08);
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .back-btn:hover, .back-btn:focus-visible { background: rgba(49,215,232,.16); outline: none; }
+    .detail-toolbar .hint { color: var(--muted); font-size: 11px; }
+    .detail-hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: start;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(19,36,58,.96), rgba(9,24,38,.94));
+      box-shadow: 0 18px 46px rgba(0,0,0,.28);
+    }
+    .detail-kicker { color: var(--cyan); font: 800 11px ui-monospace, Consolas, monospace; letter-spacing: .12em; }
+    .detail-hero h2 { margin: 6px 0 7px; font-size: 28px; }
+    .detail-summary { max-width: 950px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .pin-chips { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: 420px; }
+    .pin-chip { padding: 5px 8px; border: 1px solid rgba(182,140,255,.42); border-radius: 999px; color: #d9c7ff; background: rgba(182,140,255,.1); font: 800 10px ui-monospace, Consolas, monospace; }
+    .detail-grid { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(340px, .8fr); gap: 12px; margin-top: 12px; }
+    .detail-panel { padding: 16px; border: 1px solid var(--line); border-radius: 14px; background: rgba(14,28,47,.92); }
+    .detail-panel h3 { margin: 0 0 12px; color: var(--yellow); font-size: 15px; }
+    .schematic { display: grid; gap: 10px; }
+    .circuit-row { padding: 11px; border: 1px solid rgba(41,65,94,.72); border-radius: 11px; background: rgba(7,17,31,.64); }
+    .circuit-label { margin-bottom: 8px; color: var(--muted); font: 800 10px ui-monospace, Consolas, monospace; }
+    .circuit-flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+    .circuit-node { min-width: 78px; max-width: 220px; padding: 8px 10px; border: 1px solid #3c5877; border-radius: 8px; color: var(--text); background: #13243a; text-align: center; font-size: 11px; line-height: 1.35; }
+    .circuit-node.ctrl { border-color: rgba(49,215,232,.6); color: #bff8ff; }
+    .circuit-node.passive { border-color: rgba(255,209,102,.55); color: #ffe9ad; }
+    .circuit-node.active { border-color: rgba(182,140,255,.6); color: #ddccff; }
+    .circuit-node.power { border-color: rgba(255,100,116,.55); color: #ffbdc5; }
+    .circuit-node.connector { border-color: rgba(64,209,143,.58); color: #b7f7d8; }
+    .circuit-node.warn { border-color: rgba(255,173,77,.72); color: #ffd09a; background: rgba(87,53,21,.38); }
+    .circuit-arrow { color: var(--muted); font-weight: 900; }
+    .detail-side { display: grid; gap: 12px; align-content: start; }
+    .connector-block + .connector-block { margin-top: 13px; padding-top: 13px; border-top: 1px dashed var(--line); }
+    .connector-name { margin-bottom: 7px; color: var(--cyan); font-weight: 800; font-size: 12px; }
+    .connector-part { color: var(--muted); font-weight: 500; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 10px; }
+    .data-table th, .data-table td { padding: 7px 8px; border: 1px solid rgba(41,65,94,.72); text-align: left; vertical-align: top; }
+    .data-table th { color: var(--cyan); background: rgba(49,215,232,.06); }
+    .data-table td { color: var(--muted); }
+    .data-table td strong { color: var(--text); }
+    .bom-table td:first-child { color: var(--purple); font-family: ui-monospace, Consolas, monospace; white-space: nowrap; }
+    .note-list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+    .note-list li { padding: 9px 10px; border-left: 3px solid var(--orange); border-radius: 5px; color: var(--muted); background: rgba(255,173,77,.06); font-size: 11px; line-height: 1.55; }
+    .note-list li.critical { border-left-color: var(--red); color: #ffc0c7; background: rgba(255,100,116,.08); }
+    .source-line { margin-top: 12px; color: var(--muted); font-size: 10px; }
+
+    @media (max-width: 1250px) {
+      .page { width: 1200px; }
+      .mcp-grid { grid-template-columns: repeat(4, 1fr); }
+      .audit-grid { grid-template-columns: repeat(2, 1fr); }
+      .detail-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      @page { size: A3 landscape; margin: 8mm; }
+      body { min-width: 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .page { width: 100%; margin: 0; }
+      .module { min-height: 720px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <div id="overviewView">
+    <header class="header">
+      <div>
+        <h1>小净 · 自制主板接线与接口设计参考</h1>
+        <div class="subtitle">点击已分配引脚进入接口详情：连接器针脚、电路链路、元件型号、推荐封装与布线安全要求</div>
+      </div>
+      <div class="badges">
+        <span class="badge"><strong>主控</strong> ESP32-S3-WROOM-1 N16R8 自制板</span>
+        <span class="badge"><strong>I²C</strong> GPIO6 / GPIO7 · 100kHz</span>
+        <span class="badge"><strong>IO 扩展</strong> MCP23017 · 0x20 · 16/16</span>
+        <span class="badge"><strong>调试</strong> USB-C → CH340C → UART0</span>
+        <span class="badge danger"><strong>新原理图</strong> DRC 未通过 · 电源项待修</span>
+        <span class="badge warn">点击已用引脚查看接口设计</span>
+      </div>
+    </header>
+
+    <section class="notice-grid">
+      <div class="notice">
+        <b>原生高速与确定性控制</b>
+        ZS-X11B 搅动电机仅保留 GPIO21 PWM 与 GPIO1 DIR，两路均经 2N7002 开漏下拉；PWM 在主板侧用 4.7k 上拉到主板 5V。GPIO2、GPIO39 已释放并标记 NC。IBT-2 双路 PWM、风扇 PWM、流量 PCNT、SPI 与 I²S 继续保留在 ESP32。
+      </div>
+      <div class="notice">
+        <b>MCP23017 映射与实测状态</b>
+        6 路霍尔、3 个按钮与手势中断统一聚合；三路水阀、UV、耦合热风继电器与蠕动泵由 MCP 控制。<code>INTB → GPIO13</code>，功放 DIN/AMP_SD 分别为 GPIO14/GPIO47；GPA7/GPB7 按手册仅作输出。MCP 地址 0x20、I²C 通信与上电安全基线已在实机验证。
+      </div>
+      <div class="notice">
+        <b>嘉立创标签规则（从本板视角）</b>
+        普通单页统一放 <code>[N] 网络标签</code>；<span class="label-kind label-in">[N] 输入</span> 表示信号进入芯片，<span class="label-kind label-out">[N] 输出</span> 表示控制离开芯片，<span class="label-kind label-bidir">[N] 双向</span> 用于 I²C。电源用网络标识，禁用脚放 NC，空闲 GPIO 暂不放标签。
+      </div>
+      <div class="notice">
+        <b>图例</b>
+        <span class="status ok">保留直连</span>
+        <span class="status warn">规划迁移 / 待实现</span>
+        <span class="status free">可用 GPIO</span>
+        <span class="status danger">冲突</span>
+        <span class="status reserve">未使用 / 预留</span>
+      </div>
+    </section>
+
+    <section class="board-layout" aria-label="ESP32-S3 主控引脚图">
+      <div id="leftPins" class="pin-list"></div>
+
+      <div class="module">
+        <div class="antenna" aria-hidden="true"></div>
+        <div class="chip">
+          <div class="maker">ESPRESSIF</div>
+          <div class="model">ESP32-S3-WROOM-1</div>
+          <div class="variant">N16R8 · 自制板规划</div>
+        </div>
+        <div class="module-note">
+          <div><b>电源：</b>现图为 VIN → 开关 → VM → SS24 → RY8411 → 5V → RT9013-33GB → 3V3；VM 同时引到两个 XT30。功率回流不得穿过主控/ADC 地回路。</div>
+          <div><b>存储限制：</b>N16R8 使用 Octal PSRAM；GPIO33～37 禁止复用，GPIO26～32 为 Flash/PSRAM 总线，同样禁止占用。</div>
+          <div><b>调试策略：</b>USB-C 只连接 CH340C，不占用 ESP32 原生 USB GPIO19/20；CH340C 经 UART0 GPIO43/44 下载和输出日志，并由 DTR/RTS 自动控制 EN/BOOT。</div>
+          <div><b>条件复用：</b>GPIO40～41 释放 JTAG 后已由固件用于 IBT-2 PWM；GPIO39 已从搅动电机 PWM 释放并标记 NC，GPIO42 保持受限备用。GPIO19/20 保持备用并标注 USB 复用与上电毛刺。GPIO8 可作为新增风扇电源继电器控制脚，但仍需原理图和固件同步落地。</div>
+        </div>
+      </div>
+
+      <div id="rightPins" class="pin-list"></div>
+    </section>
+
+    <div class="section-title">
+      <h2>MCP23017 扩展端口状态</h2>
+      <span>IODIRA=0x70 · IODIRB=0x7F · GPINTENA=0x70 · GPINTENB=0x7F · IOCON=0x44</span>
+    </div>
+    <section id="mcpGrid" class="mcp-grid" aria-label="MCP23017 引脚矩阵"></section>
+
+    <div class="section-title">
+      <h2>数据手册审计与硬件约束</h2>
+      <span>依据新板 JLCEDA 原生网表、esp32-s3_datasheet_cn.pdf、MCP23017T-ESS.pdf 与板子零件购买清单</span>
+    </div>
+    <section class="audit-grid" aria-label="引脚审计结论">
+      <article class="audit-card good"><b>ESP32 分配无禁止脚冲突</b>GPIO5 是 ADC1_CH4；GPIO18 支持 PCNT；GPIO38、47、48 属于普通可分配 GPIO。N16R8 对应 3.3V 的 ESP32-S3R8，不属于 GPIO47/48 为 1.8V 的 R8V/R16V 变型。</article>
+      <article class="audit-card warn"><b>复用脚有条件可用</b>GPIO40～41 默认为 JTAG，量产固件必须重新配置为 GPIO；GPIO39 本版标记 NC，GPIO42 仅作受限备用。GPIO19/20 默认 USB_D-/D+ 且有高电平毛刺，不接执行器；GPIO43/44 专用于 UART0。</article>
+      <article class="audit-card bad"><b>禁止占用</b>GPIO26～32 连接 Flash/PSRAM；N16R8 的 GPIO33～37 参与 Octal PSRAM；GPIO0、3、45、46 是 Strapping 管脚，只保留启动/下载用途或高阻状态。</article>
+      <article class="audit-card good"><b>ZS-X11B 接口结论</b>主板仅引出 PWM/GND/DIR 三线。GPIO21 通过 2N7002 对 ZS_PWM_IN 做 5V 开漏 PWM，主板 5V 经 4.7k 上拉；GPIO1 通过另一颗 2N7002 下拉方向接口中间脚。GPIO2、GPIO39 均为 NC。</article>
+      <article class="audit-card warn"><b>MCP23017 中断规则</b>INTB 改接普通 P2 管脚 GPIO13，并使用 4.7k～10k 上拉至 3V3；MIRROR=1、ODR=1。任务中必须读取 A、B 两组 GPIO/INTCAP 才能清除全部中断，ISR 内只置标志，禁止执行 I²C。</article>
+      <article class="audit-card warn"><b>MCP、长线与24V负载</b>A0/A1/A2 接地得到 0x20，RESET 需外部上拉；GPA7/GPB7 仅输出。长线输入外置 10k 上拉。24V 阀门使用至少40V、优选60V的3.3V逻辑 NMOS，Gate 独立10k下拉。</article>
+      <article class="audit-card bad"><b>新原理图：5V 电源冲突</b>USB-C VBUS 与 RY8411 的 5V 输出当前直接同网；外部 VIN 与 USB 同时接入会互相反灌。必须增加电源路径隔离（推荐 USB VBUS 经肖特基/理想二极管后再入 5V），或用跳帽实现互斥供电。</article>
+      <article class="audit-card good"><b>CH340C / MCP 链路已实机验证</b>CH340C 已通过 COM8 完成下载与日志通信；MCP23017 地址 0x20、GPIO6/7 I²C、GPIO13 INTB 及上电安全基线均已在 REAL 固件启动日志中验证。原理图仍需保留测试点和故障复核记录。</article>
+      <article class="audit-card warn"><b>3.3V 稳压器裕量仍需复核</b>RT9013-33GB 额定 500mA；当前固件能稳定运行不等于峰值电流、压降和热裕量已经满足量产。投板前仍应按 ESP32 Wi-Fi/BLE 峰值、MCP、音频和传感器负载复核，必要时升级到额定≥1A器件。</article>
+      <article class="audit-card warn"><b>原理图 DRC 与 5V 供电隔离仍需复核</b>此前发现 USB-C VBUS 与 RY8411 5V 输出存在直并风险；当前实机通信成功只能证明现有样机链路可工作，不能证明电源互灌和 DRC 已修复。最终投板前仍需以最新 JLCEDA 原理图/DRC 结果为准。</article>
+      <article class="audit-card good"><b>GPIO2 / GPIO39 已释放</b>GPIO2 不再承担 BRAKE，GPIO39 不再承担 PWM；两脚在本版原理图中均标记 NC，不引出、不加上下拉。</article>
+    </section>
+
+    <footer class="footer">
+      <div><b>资料来源：</b>当前打开的新板 JLCEDA 原生网表、<code>购买清单（3.板子零件）.docx</code>、<code>接口设计.txt</code>、ESP32-S3/MCP23017/MAX98357/IBT-2 本地数据手册与现有软件工程。</div>
+      <div><b>审查状态：</b>CH340C 下载链路、MCP I²C/INTB 与 REAL 模式上电 safe-OFF 已实机验证；SHT30 已恢复正常。最新 JLCEDA DRC、电源互灌和 3.3V 峰值裕量仍需用最终原理图确认，不能仅凭固件运行结果判定投板通过。</div>
+    </footer>
+    </div>
+
+    <section id="detailView" class="detail-view" hidden aria-live="polite">
+      <div class="detail-toolbar">
+        <button id="backButton" class="back-btn" type="button">← 返回引脚总览</button>
+        <span class="hint">接口参考图 · 画原理图前仍需按实购模块规格复核</span>
+      </div>
+      <div id="detailContent"></div>
+    </section>
+  </main>
+
+  <script>
+    const leftPins = [
+      ['3V3','3.3V 电源','3V3｜主控与外设逻辑电源','ok','一致','power','power'],
+      ['3V3','3.3V 电源','3V3｜主控与外设逻辑电源','ok','一致','power','power'],
+      ['EN','复位 / CHIP_PU','EN｜外部 RC、按键与自动复位驱动','warn','必须保留','debug','in'],
+      ['GPIO4','XKC 水位检测','XKC_LEVEL_IN｜5V 输出经分压','ok','规划使用','xkc','in'],
+      ['GPIO5','浊度 ADC','TURBIDITY_ADC｜ADC1_CH4','ok','规划使用','turbidity','in'],
+      ['GPIO6','I²C SDA','I2C_SDA｜MCP23017 + PAJ7620 + SHT30（已恢复正常）','ok','实测正常','i2c','bidir'],
+      ['GPIO7','I²C SCL','I2C_SCL｜MCP23017 + PAJ7620 + SHT30（已恢复正常）','ok','实测正常','i2c','bidir'],
+      ['GPIO15','I²S WS','I2S_WS｜INMP441 + MAX98357','ok','一致','audio','out'],
+      ['GPIO16','I²S SCK','I2S_BCLK｜INMP441 + MAX98357','ok','一致','audio','out'],
+      ['GPIO17','麦克风 SD','MIC_I2S_SD｜I²S 输入','ok','一致','audio','in'],
+      ['GPIO18','流量计 PCNT','FLOW_PCNT｜脉冲输入；固件已接入 PCNT','ok','已实现','flow','in'],
+      ['GPIO8','24V 风扇电源继电器（建议）','FAN_PWR_EN｜Omron G8G-1SV DC24 + DMN61D8LQ-7；建议新增，尚未同步固件/原理图','warn','建议新增','fan','out'],
+      ['GPIO3','JTAG Strapping','保持高阻，不连接外设','reserve','勿占用',null,'nc'],
+      ['GPIO46','Boot / ROM Strapping','默认下拉，UART 下载需保持 LOW','reserve','勿占用',null,'nc'],
+      ['GPIO9','LCD DC','LCD_DC｜SPI 控制','ok','一致','lcd','out'],
+      ['GPIO10','LCD CS','LCD_CS｜SPI 片选','ok','一致','lcd','out'],
+      ['GPIO11','LCD MOSI','LCD_MOSI｜SPI 数据','ok','一致','lcd','out'],
+      ['GPIO12','LCD SCK','LCD_SCK｜SPI 时钟','ok','一致','lcd','out'],
+      ['GPIO13','MCP INTB','MCP_INTB_N｜开漏中断输入','ok','规划使用','mcp-int','in'],
+      ['GPIO14','功放 DIN','I2S_AMP_DIN｜MAX98357 数据输入','ok','规划使用','audio','out'],
+      ['5V','板载 +5V','5V｜外设电源与3V3前级','ok','电源输入','power','power'],
+      ['GND','公共地','GND｜当前不另建 AGND 网络','ok','一致','power','power']
+    ];
+
+    const rightPins = [
+      ['GND','公共地','GND｜当前不另建 AGND 网络','ok','一致','power','power'],
+      ['GPIO43','UART0 TX','U0_TXD｜固件下载与日志输出','ok','专用调试','debug','out'],
+      ['GPIO44','UART0 RX','U0_RXD｜CH340C 串口输入','ok','专用调试','debug','in'],
+      ['GPIO1','ZS-X11B DIR','PULSATOR_DIR_CTRL｜驱动 Q_DIR 2N7002 Gate','ok','已实机接线','bl50','out'],
+      ['GPIO2','NC','搅动电机 BRAKE 已取消｜不引出、不加上下拉','reserve','已释放',null,'nc'],
+      ['GPIO42','备用 GPIO','JTAG MTMS 复用｜不再承载 MCP 中断','free','受限可用',null,'none'],
+      ['GPIO41','IBT-2 PWM_B','IBT2_LPWM｜20kHz｜外置47k下拉','warn','JTAG 复用','ibt2','out'],
+      ['GPIO40','IBT-2 PWM_A','IBT2_RPWM｜20kHz｜外置47k下拉','warn','JTAG 复用','ibt2','out'],
+      ['GPIO39','NC','原 BL50 PWM 已取消｜不引出、不加上下拉','reserve','已释放',null,'nc'],
+      ['GPIO38','双风扇 PWM','FAN_PWM｜两台风扇同步开集电极；PWM=0 不代表断电','warn','调速已实现','fan','out'],
+      ['GPIO37','OPI PSRAM','N16R8 内部占用','reserve','禁用',null,'nc'],
+      ['GPIO36','OPI PSRAM','N16R8 内部占用','reserve','禁用',null,'nc'],
+      ['GPIO35','OPI PSRAM','N16R8 内部占用','reserve','禁用',null,'nc'],
+      ['GPIO0','BOOT 下载键','BOOT_N｜Strapping / 自动下载输入','reserve','勿作外设','debug','special'],
+      ['GPIO45','VDD_SPI Strapping','默认下拉决定3.3V｜保持高阻','reserve','勿占用',null,'nc'],
+      ['GPIO48','IBT-2 MOTOR_EN','IBT2_EN｜R_EN/L_EN并联','ok','规划使用','ibt2','out'],
+      ['GPIO47','功放使能','AMP_SD｜外置10k下拉，上电静音','ok','规划使用','audio','out'],
+      ['GPIO21','ZS-X11B PWM','PULSATOR_PWM_CTRL｜5kHz｜2N7002开漏｜4.7k上拉到主板5V','ok','已实机验证','bl50','out'],
+      ['GPIO20','备用 GPIO','默认USB_D+｜两次高毛刺，避免接执行器','free','受限可用',null,'none'],
+      ['GPIO19','备用 GPIO','默认USB_D-｜两次高毛刺，避免接执行器','free','受限可用',null,'none'],
+      ['GND','公共地','GND｜当前不另建 AGND 网络','ok','一致','power','power'],
+      ['GND','公共地','GND｜当前不另建 AGND 网络','ok','一致','power','power']
+    ];
+
+    const mcpPins = [
+      ['GPA0','水龙头进水阀','TAP_INLET_VALVE_CTRL｜DC24V','out','规划输出','valves'],
+      ['GPA1','水箱 → 洗涤桶阀','TANK_TO_DRUM_VALVE_CTRL','out','规划输出','valves'],
+      ['GPA2','UV 杀菌灯','GPIO_UV_EN','out','规划输出','uv'],
+      ['GPA3','洗涤桶排水阀','DRUM_DRAIN_VALVE_CTRL','out','规划输出','valves'],
+      ['GPA4','按钮 BTN1','BTN1_N｜10k 上拉','in','规划输入','buttons'],
+      ['GPA5','按钮 BTN2','BTN2_N｜10k 上拉','in','规划输入','buttons'],
+      ['GPA6','按钮 BTN3','BTN3_N｜10k 上拉','in','规划输入','buttons'],
+      ['GPA7','耦合热风继电器','HOT_AIR_RELAY_EN｜原 PTC 独立命名；IO7 仅输出','out','软件已落地','heater'],
+      ['GPB0','霍尔 0°','HALL_0_N｜INTB bit0','in','规划输入','hall'],
+      ['GPB1','霍尔 45°','HALL_45_N｜INTB bit1','in','规划输入','hall'],
+      ['GPB2','霍尔 90°','HALL_90_N｜INTB bit2','in','规划输入','hall'],
+      ['GPB3','霍尔 180°','HALL_180_N｜INTB bit3','in','规划输入','hall'],
+      ['GPB4','霍尔 270°','HALL_270_N｜INTB bit4','in','规划输入','hall'],
+      ['GPB5','BLDC 寻零霍尔','HALL_BLDC_N｜INTB bit5','in','规划输入','hall'],
+      ['GPB6','手势中断','GESTURE_INT_N｜INTB bit6','in','规划输入','gesture'],
+      ['GPB7','洗衣液蠕动泵','PUMP_CTRL｜IO7 仅输出','out','规划输出','pump']
+    ];
+
+    const interfaceDesigns = {
+      power: {
+        title: '新板实接电源树：VIN / VM / 5V / 3V3',
+        summary: '按当前 JLCEDA 原生网表还原：DC005-2.5 输入 VIN，经 SS12D10 总开关得到 VM；VM 经 SS24 串联反接保护后进入 RY8411 降压为 5V，再由 RT9013-33GB 生成 3.3V。VM 还直连两个 XT30PW-M。USB-C VBUS 当前与 5V 输出直并，必须修复供电互灌。',
+        pins: ['VIN', 'VM', '5V', '3.3V', 'GND'],
+        sources: '当前打开的新板 JLCEDA 原生结构化网表；购买清单（3.板子零件）.docx；ESP32-S3 数据手册。JLCEDA 本次检查结果：DRC 未通过。',
+        connectors: [
+          {name:'SOURCE', part:'DC005-2.5 · DC-IN-TH_DC005-2.5MM · LCSC C7507454', pins:[['4','VIN','DC 插座中心正极输入'],['2 / 3','GND','外壳/开关地；现图并接 GND']]},
+          {name:'CN1 / CN2', part:'XT30PW-M30.G.Y · 卧式弯脚 · LCSC C431092', pins:[['2','VM','大电流正极'],['1 / 3 / 4','GND','负极与机械焊脚按当前封装连接']]},
+          {name:'USB1', part:'TYC-302-16 · USB-C-SMD · LCSC C381477', pins:[['A4/A9/B4/B9','USB_5V','当前原理图直接标为 5V；修订时应与 RY8411 输出隔离'],['A5 / B5','CC1 / CC2','各接 5.1k 下拉到 GND'],['A6/B6 · A7/B7','D+ / D-','仅接 CH340C，不接 ESP32 原生 USB','bidir'],['A1/B1/A12/B12 + Shield','GND','外壳接地策略需 PCB 阶段复核']]}
+        ],
+        rows: [
+          {label:'主输入（现图）', nodes:[['SOURCE DC005-2.5 / VIN','connector'],['S1 SS12D10 总开关','passive'],['VM','power']]},
+          {label:'VM 配电（现图）', nodes:[['VM','power'],['C26 330µF/50V','passive'],['CN1 + CN2 XT30PW-M','connector']]},
+          {label:'VM → 5V（现图）', nodes:[['VM','power'],['D2 SS24 串联反接保护','passive'],['U3 RY8411 / IN+EN','active'],['SW → L4 4.7µH','passive'],['5V','power']]},
+          {label:'反馈与滤波（现图）', nodes:[['5V','power'],['R10 51k / R11 10k → FB','passive'],['C21 220µF + C4 10µF + C25/C28 100nF','passive'],['GND','power']]},
+          {label:'5V → 3.3V（现图）', nodes:[['5V','power'],['U2 RT9013-33GB / EN=5V','active'],['C5 1µF + C6 100nF','passive'],['3.3V / 500mA上限','power']]},
+          {label:'USB 供电（待修）', nodes:[['USB-C VBUS','connector'],['建议：肖特基/理想二极管或电源 MUX','active'],['5V','power'],['禁止与 RY8411 裸并联','passive']]}
+        ],
+        bom: [
+          ['SOURCE','DC 输入座','DC005-2.5 / C7507454','DC-IN-TH_DC005-2.5MM','库参数仅 12V/0.5A；若 VIN=24V 必须更换'],
+          ['S1','拨动电源开关','SS12D10','SS12D10 THT','额定电压、电流必须覆盖整板实际输入'],
+          ['D2','2A / 40V 肖特基','SS24 / C13444','SMA (DO-214AC)','串联反接保护/压降隔离：防输入反接损坏降压芯片，但会发热并产生压降'],
+          ['U3','降压 DC/DC','RY8411 / C9900000347','SOT-23-6','购买清单同型号；需按实际 VIN 与 5V 负载复核温升'],
+          ['L4','4.7µH，额定2A/饱和3A','HA42-4R7MT / C2936653','0420 · 4.9×4.4mm','降压储能电感：靠近RY8411 SW脚/肖特基/输出电容，构成5V Buck，饱和电流必须留裕量'],
+          ['R10 / R11','51k / 10k','1% 厚膜电阻','0805','反馈设压：靠近RY8411 FB脚，决定输出电压；反馈线远离SW开关节点'],
+          ['C26','330µF / 50V','NJCON 3310501013R00 / C5455536','插件 D10×L13 · P5.00','VM输入储能：靠近电源入口/功率分配点，承受24V侧负载突变，降低电机/阀门动作时母线塌陷'],
+          ['C21','220µF / 6.3V','OCV221M0JTR-0607 / C250010','SMD 6.3×6.6mm','5V输出滤波/储能：靠近RY8411输出和5V负载分配点，降低Buck纹波并提供瞬态电流；建议耐压≥10V或16V更稳妥'],
+          ['U2','3.3V / 500mA LDO','RT9013-33GB / C47773','SOT-23-5','3.3V稳压；输入/输出电容用于LDO稳定和瞬态响应，但整板无电流裕量，建议换≥1A器件'],
+          ['USB1','USB Type-C 16P','TYC-302-16 / C381477','USB-C-SMD_TYC-302-16','只承载5V与CH340C USB2.0数据'],
+          ['CN1 / CN2','15A XT30板端公头','XT30PW-M30.G.Y / C431092','CONN-TH_XT30PW-M','卧式弯脚，购买清单有公/母两种，PCB端按现图为公头']
+        ],
+        notes: [
+          {text:'必须先修复 5V 裸并联：USB-C VBUS 与 RY8411 输出不可直接互顶。推荐建立 USB_5V 独立网络，经肖特基/理想二极管后汇入 5V_SYS；或用明确的二选一跳帽。',critical:true},
+          {text:'SOURCE 的 DC005-2.5 元件库额定值是 12V/0.5A。若整机 VIN 仍为 24V，这个接口选型不合格，应改用购买清单中的 XT30PW 或额定≥30V、满足电流的锁紧式输入连接器。',critical:true},
+          '当前网表没有输入保险丝、TVS 或浪涌抑制器；24V 长线和感性负载环境建议在入口补充保险与合适耐压的 TVS，并与功率地回流一起布局。',
+          {text:'ESP32-S3 数据手册第61页要求单电源输出能力达到500mA及以上；RT9013 的500mA额定值已经被主控最低电源能力要求用满，无法再给 MCP23017 等负载留裕量。建议换额定≥1A的3.3V稳压器。',critical:true},
+          'ESP32-S3 模组附近建议补 10µF～22µF + 100nF；当前3V3网表仅见 1µF 与 100nF。DC/DC 开关回路、肖特基、L4 和输出电容必须紧凑布置。'
+        ]
+      },
+      debug: {
+        title: 'USB-C / CH340C / UART0 自动下载接口',
+        summary: '新原理图使用 USB-C 连接 CH340C，再通过 UART0 GPIO43/44 下载与输出日志；DTR/RTS 经两颗 S8050 自动控制 EN 和 GPIO0。这里的 USB 是 USB-UART 桥，不占用 ESP32 原生 USB GPIO19/20。',
+        pins: ['GPIO43 TX0', 'GPIO44 RX0', 'EN', 'GPIO0 BOOT', 'USB D+ / D-'],
+        sources: '当前打开的新板 JLCEDA 原生网表；购买清单（3.板子零件）.docx；ESP32-S3 数据手册。',
+        connectors: [
+          {name:'USB1', part:'TYC-302-16 · LCSC C381477', pins:[['VBUS','USB_5V','需先做供电隔离再接系统5V'],['D+ / D-','CH340C D+ / D-','仅连接 USB-UART 芯片','bidir'],['CC1 / CC2','5.1k → GND','Type-C 设备端下拉'],['GND / Shield','GND','外壳接地按ESD/EMC布局']]},
+          {name:'TP_PROG（建议保留）', part:'测试点或 1×6 下载焊盘', pins:[['1','3V3_REF','夹具电平参考'],['2','GND','公共地'],['3','U0_TXD / GPIO43','ESP32 UART0 输出','out'],['4','U0_RXD / GPIO44','ESP32 UART0 输入','in'],['5','EN','复位输入测试点','in'],['6','GPIO0','BOOT 启动输入测试点','special']]}
+        ],
+        rows: [
+          {label:'USB 数据', nodes:[['USB-C D+ / D-','connector'],['U4 CH340C','active'],['TXD → GPIO44 / U0_RXD','ctrl'],['RXD ← GPIO43 / U0_TXD','ctrl']]},
+          {label:'自动复位', nodes:[['CH340C RTS#','ctrl'],['Q1 S8050','active'],['EN','ctrl'],['10k 上拉 + 按键到 GND','passive']]},
+          {label:'自动下载', nodes:[['CH340C DTR#','ctrl'],['Q2 S8050','active'],['GPIO0','ctrl'],['10k 上拉 + BOOT键到 GND','passive']]},
+          {label:'CH340 供电（待修）', nodes:[['USB_5V 隔离后','power'],['U4 VCC pin16','active'],['C1 去耦到 GND','passive']]},
+          {label:'CH340 V3', nodes:[['U4 V3 pin4','active'],['C3 去耦到 GND','passive'],['禁止当外部3V3电源','power']]}
+        ],
+        bom: [
+          ['U4','USB-UART','CH340C / C84681','SOP-16_L10.0-W3.9-P1.27-LS6.0-BL','购买清单为 CH340C SOP-16'],
+          ['Q1 / Q2','NPN 自动下载开关','S8050 / C2688231','SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR','DTR/RTS 控制 EN/IO0'],
+          ['USB1','Type-C 16P','TYC-302-16 / C381477','USB-C-SMD_TYC-302-16','购买清单为 Type-C 3.1母座16P'],
+          ['EN / BOOT','轻触按键','TSA343G00D-250J2 / C354947','SW-SMD_L4.0-W2.9-P4.15-EH','分别接 EN/GPIO0 到 GND'],
+          ['R_CC1 / R_CC2','5.1k','1% 厚膜','0603','Type-C Rd 下拉：靠近USB-C CC脚，让充电器/电脑识别本机为受电设备'],
+          ['R_EN / R_BOOT','10k','1% 厚膜','0603','默认上拉：分别靠近 EN/GPIO0，把启动关键脚拉高，避免悬空误触发']
+        ],
+        notes: [
+          {text:'U4 VCC(16) 在当前网表中没有接 5V，只与 C1 相连；这是明确断网，必须修复后再投板。',critical:true},
+          '保留 EN、GPIO0、GPIO43、GPIO44、GND 与 3V3 测试点，即使 CH340C 或自动下载电路异常仍可用夹具烧录。',
+          'GPIO0 是 Strapping 管脚，不连接其他业务外设；GPIO43/44 固定给 UART0。GPIO19/20 仍为空闲受限GPIO，不接此 USB-C。'
+        ]
+      },
+      xkc: {
+        title: 'XKC-Y25-V 非接触水位传感器',
+        summary: '传感器固定 5V 供电，OUT 高电平接近 5V，必须经过 10k/20k 分压后进入 GPIO4。MODE 默认悬空，用 0Ω DNP 预留接地反相。',
+        pins: ['GPIO4 / XKC_LEVEL_IN'],
+        sources: '接口设计.txt：XKC-Y25-V 水位传感器接口。',
+        connectors: [{name:'J_XKC', part:'PH2.0-4P 锁扣座', pins:[['1','+5V','棕线 BROWN'],['2','XKC_OUT','黄线 YELLOW；进入 GPIO4','in'],['3','XKC_MODE','黑线 BLACK，非地线；主板配置输出/跳线','out'],['4','GND','蓝线 BLUE；末脚接地']] }],
+        rows: [
+          {label:'信号分压', nodes:[['XKC_OUT 0/5V','connector'],['R1 10k','passive'],['XKC_LEVEL_IN','ctrl'],['GPIO4','ctrl']]},
+          {label:'分压下臂/滤波', nodes:[['XKC_LEVEL_IN','ctrl'],['R2 20k ∥ C1 10nF DNP','passive'],['GND','power']]},
+          {label:'模式选择', nodes:[['XKC_MODE','connector'],['R3 0Ω DNP','passive'],['GND（贴装后反相）','power']]},
+          {label:'接口去耦', nodes:[['+5V','power'],['100nF + 4.7µF～10µF','passive'],['GND','power']]}
+        ],
+        bom: [['R1/R2','10k / 20k 1%','通用厚膜','0603/0805','分压保护：靠近ESP32 GPIO4，把 XKC 5V 输出降到约3.33V再进 ESP32'],['C1','10nF DNP','X7R','0603','可选低通：与分压下臂同靠近 GPIO4；长线/水泵干扰导致抖动时再贴，默认不贴避免响应变慢'],['R3','0Ω DNP','跳线电阻','0603','配置跳线：靠近XKC接口或配置区，需要反相模式时把 MODE 拉到 GND'],['J_XKC','PH2.0-4P','JST-PH 兼容','THT/卧贴','丝印标明四色线序']],
+        notes: [{text:'XKC_OUT 禁止直接连接 ESP32 3.3V GPIO；MODE 黑线也不是 GND。',critical:true}, '传感器响应约 500ms，软件再做 50～200ms 去抖即可。']
+      },
+      turbidity: {
+        title: '浊度传感器模拟输入',
+        summary: '模块 5V 供电，模拟输出最高约 4.5V。10k/20k 分压后最高约 3.0V，再由 100nF 做低通滤波进入 GPIO5 ADC1_CH4。',
+        pins: ['GPIO5 / ADC1_CH4'],
+        sources: '接口设计.txt：浊度传感器模块。',
+        connectors: [{name:'J_TURBIDITY', part:'PH2.0-3P', pins:[['1','+5V','传感器供电'],['2','TURB_OUT','0～约4.5V 模拟输出；进入 ADC','in'],['3','GND','末脚接地']]}],
+        rows: [
+          {label:'ADC 信号链', nodes:[['TURB_OUT 0～4.5V','connector'],['R1 10k','passive'],['TURBIDITY_ADC','ctrl'],['GPIO5 ADC1_CH4','ctrl']]},
+          {label:'分压/滤波', nodes:[['TURBIDITY_ADC','ctrl'],['R2 20k ∥ C1 100nF','passive'],['AGND','power']]},
+          {label:'供电去耦', nodes:[['+5V','power'],['100nF + 10µF','passive'],['GND','power']]}
+        ],
+        bom: [['R1/R2','10k / 20k 1%','低温漂厚膜','0603/0805','分压保护：靠近ESP32 GPIO5，把最高约4.5V模拟量压到约3.0V，留出 ADC 安全余量'],['C1','100nF X7R','≥10V','0603','ADC 低通：靠近 GPIO5，滤掉水泵/PWM噪声，让采样更稳'],['C_PWR','100nF + 10µF','X7R','0603 + 0805/1206','接口去耦：靠近浊度接口，100nF吸高频尖峰，10µF承担模块电流波动'],['J_TURBIDITY','PH2.0-3P','JST-PH 兼容','THT/卧贴','防呆锁扣']],
+        notes: ['软件换算 V_SENSOR = V_ADC × 1.5，并使用校准液标定；不要硬编码卖家 NTU 曲线。', '模拟网络远离 PWM、继电器和 MOS Drain，分压/滤波靠近 MCU ADC。']
+      },
+      i2c: {
+        title: 'I²C 主总线：MCP23017 / PAJ7620 / SHT30',
+        summary: 'GPIO6/7 以 100kHz 共享三类 I²C 设备：板载 MCP23017（0x20）、外接 PAJ7620U2 手势模块（常见0x73）、外接 SHT30 温湿度探头（默认0x44，可选0x45）。总线上只保留一对有效 4.7k 上拉到3.3V；外接模块支路串 33Ω 抑制排线振铃。',
+        pins: ['GPIO6 SDA', 'GPIO7 SCL', 'MCP23017 @0x20', 'PAJ7620 @0x73', 'SHT30 @0x44/0x45'],
+        sources: '接口设计.txt、MCP23017T-ESS.pdf、SHT30/SHTC3 防水探头资料、PAJ7620U2模块资料。',
+        connectors: [
+          {name:'TP_I2C', part:'SDA/SCL/GND 测试点', pins:[['1','I2C_SDA','GPIO6；整条I²C主数据线','bidir'],['2','I2C_SCL','GPIO7；整条I²C主时钟线','bidir'],['3','GND','逻辑地']]},
+          {name:'U_MCP', part:'板载 MCP23017T-E/SS', pins:[['VDD','3V3','MCP电源'],['VSS','GND','MCP地'],['SDA','I2C_SDA','直接接主I²C SDA','bidir'],['SCL','I2C_SCL','直接接主I²C SCL','bidir'],['A0/A1/A2','GND','地址固定0x20'],['RESET#','MCP_RESET_N','10k上拉到3V3']]},
+          {name:'J_GESTURE_I2C', part:'PH2.0-5P（详见手势页）', pins:[['1','3V3','PAJ7620供电'],['2','I2C_SCL_GEST','主SCL经33Ω支路','bidir'],['3','I2C_SDA_GEST','主SDA经33Ω支路','bidir'],['4','GESTURE_INT_RAW','手势中断到MCP GPB6','in'],['5','GND','模块地']]},
+          {name:'J_SHT30', part:'PH2.0-4P / 防水温湿度探头接口', pins:[['1','3V3','SHT30/SHTC3 VCC；本板按3.3V供电'],['2','I2C_SCL_SHT','主SCL经33Ω支路；黄线SCL','bidir'],['3','I2C_SDA_SHT','主SDA经33Ω支路；白线SDA','bidir'],['4','GND','黑线GND；末脚接地']]}
+        ],
+        rows: [
+          {label:'主总线', nodes:[['GPIO6 SDA / GPIO7 SCL','ctrl'],['I2C_SDA / I2C_SCL','ctrl'],['U_MCP 板载直连','active'],['J_GESTURE 经33Ω支路','connector'],['J_SHT30 经33Ω支路','connector']]},
+          {label:'总线上拉', nodes:[['3V3','power'],['4.7k ×2（仅一组贴装）','passive'],['SDA / SCL','ctrl']]},
+          {label:'PAJ7620 支路', nodes:[['I2C_SCL/SDA 主线','ctrl'],['R_GEST_SCL/R_GEST_SDA 33Ω','passive'],['J_GESTURE Pin2/3','connector'],['PAJ7620 地址常见0x73','active']]},
+          {label:'SHT30 支路', nodes:[['I2C_SCL/SDA 主线','ctrl'],['R_SHT_SCL/R_SHT_SDA 33Ω','passive'],['J_SHT30 Pin2/3','connector'],['SHT30 默认0x44','active']]},
+          {label:'SHT30 供电去耦', nodes:[['J_SHT30 Pin1 3V3','connector'],['C_SHT_BYP 100nF 最靠近座子','passive'],['C_SHT_BULK 4.7µF 稍靠后','passive'],['J_SHT30 Pin4 GND','power']]},
+          {label:'MCP 地址', nodes:[['A0/A1/A2','active'],['全部接 GND','passive'],['地址 0x20','active']]},
+          {label:'MCP RESET 上拉', nodes:[['3V3','power'],['R_RST 10k 靠近MCP','passive'],['MCP_RESET_N 节点','ctrl'],['U_MCP RESET# 引脚','active'],['TP_RST 可选测试点','connector']]},
+          {label:'可选手动复位', nodes:[['MCP_RESET_N 节点','ctrl'],['短接/按键到GND（可选DNP）','warn'],['低电平=复位MCP','active']]},
+          {label:'MCP 去耦', nodes:[['3V3','power'],['100nF + 4.7µF','passive'],['MCP VDD','active']]}
+        ],
+        bom: [['U_MCP','16位 I/O 扩展','MCP23017T-E/SS','SSOP-28','GPA7/GPB7 仅输出；A0/A1/A2接GND固定地址0x20'],['J_SHT30','温湿度探头接口','PH2.0-4P','THT/卧贴','Pin1=3V3，Pin2=SCL，Pin3=SDA，Pin4=GND；若买到带3.5mm耳机头的探头，转接线按红VCC/黄SCL/白SDA/黑GND核对'],['R_PU','4.7k ×2','通用厚膜','0603','I²C 总线上拉：靠近主控/MCP总线中心，给开漏 SDA/SCL 提供高电平；整条总线只保留一组有效上拉到3.3V'],['R_BRANCH','33Ω ×4','通用厚膜','0603','外接I²C支路阻尼：PAJ7620的SCL/SDA各一颗，SHT30的SCL/SDA各一颗；靠近主板连接器/分支源端'],['R_RST','10k','通用厚膜','0603','RESET 上拉：3V3→10k→MCP_RESET_N/RESET#；电阻靠近MCP RESET脚，上电默认释放 MCP，不让复位脚悬空'],['TP_RST','测试点/复位焊盘','1.0mm焊盘或DNP按键','SMD/THT','可选：接在MCP_RESET_N节点，调试时短接到GND可复位MCP'],['C_MCP','100nF + 4.7µF','X7R','0603 + 0805','芯片去耦：贴近MCP VDD/GND，100nF吸高频，4.7µF缓冲端口翻转电流'],['C_SHT_BYP','100nF X7R','≥10V','0603','SHT30接口高频旁路：从J_SHT30 Pin1(3V3)到Pin4(GND)，最靠近座子/探头供电脚，吸收线缆和传感器数字噪声'],['C_SHT_BULK','4.7µF X7R','≥10V','0805','SHT30接口低频储能：与100nF并联，靠近J_SHT30但可稍靠后，补偿长线探头采样时电流波动']],
+        notes: ['I²C 电压域统一为 3.3V：SDA/SCL 只上拉到3.3V；外接SHT30/PAJ模块即使标称支持5V，本板也按3.3V供电和3.3V逻辑接入，避免I²C线上出现5V。', 'J_SHT30 需要本地去耦：C_SHT_BYP 100nF 与 C_SHT_BULK 4.7µF 都从 Pin1(3V3) 接到 Pin4(GND)，100nF 最靠近座子，4.7µF 稍靠后；两颗电容与接口之间走线要短。', '总线只保留一组4.7k上拉。若PAJ或SHT30小板自带上拉，主板备用上拉可DNP；装配后断电测量SDA/SCL到3.3V的等效电阻，避免多组上拉导致阻值过小。', 'MCP23017 的 RESET# 为低有效：正常运行时必须为高电平，所以用 R_RST=10k 拉到3V3；不要直接悬空。', '详细接线：3V3 → R_RST 10k → MCP_RESET_N 节点 → U_MCP RESET# 引脚；同一节点可引出 TP_RST 测试点，短接到GND时复位 MCP。', 'SHT30 默认地址通常为0x44，ADDR脚拉高时为0x45；若买到SHTC3探头，地址可能不同，软件扫描确认。', 'PAJ7620U2 常见地址0x73；手势结果仍由PAJ I²C读取，中断线只负责通知。', 'I²C 与高电流开关节点分开走线，外部连接器必须带 GND 回流；SHT30长线建议SDA/GND、SCL/GND成对靠近或绞合。']
+      },
+      'mcp-int': {
+        title: 'MCP23017 聚合中断到 GPIO13',
+        summary: 'MCP23017 配置 MIRROR=1、ODR=1，将 A/B 两组输入事件聚合到开漏低有效 INTB；GPIO13 只接收中断，不在 ISR 内进行 I²C。',
+        pins: ['GPIO13', 'MCP23017 INTB'],
+        sources: 'MCP23017T-ESS.pdf 与当前寄存器规划。',
+        connectors: [{name:'TP_MCP_INT', part:'测试点（板内网络）', pins:[['1','MCP_INTB_N','MCP 开漏中断进入 GPIO13','in'],['2','GND','示波器参考地']]}],
+        rows: [
+          {label:'中断线', nodes:[['MCP23017 INTB','active'],['MCP_INTB_N','ctrl'],['100Ω DNP（预留隔离/阻尼）','passive'],['GPIO13','ctrl']]},
+          {label:'开漏上拉', nodes:[['3V3','power'],['4.7k～10k','passive'],['MCP_INTB_N','ctrl']]},
+          {label:'固件清中断', nodes:[['GPIO13 ISR 置标志','ctrl'],['主任务 I²C','active'],['读取 GPIO/INTCAP A+B','active']]}
+        ],
+        bom: [['R_INT','4.7k～10k','通用厚膜','0603','开漏上拉：INTB 只能拉低，靠它恢复高电平；靠近 GPIO13/MCP_INTB_N 节点'],['R_SER','100Ω DNP','通用厚膜','0603','预留串阻：靠近ESP32 GPIO13，调试/EMI/ESD隔离用；正常板内短线可不贴或用0Ω'],['TP_INT','测试点','1.0mm 焊盘','SMD','靠近GPIO13/MCP_INTB_N节点，便于逻辑分析仪']],
+        notes: ['GPINTENA=0x70、GPINTENB=0x7F；IOCON=0x44。', '必须读取 A、B 两组 GPIO/INTCAP，避免某端口中断一直保持。']
+      },
+      audio: {
+        title: 'INMP441 麦克风与 MAX98357A 功放',
+        summary: 'GPIO15/16 是 ESP32 输出的 I²S WS/BCLK，同时送到外接 INMP441 与板载 MAX98357A；GPIO17 只接 INMP441 的 SD 数据输入；GPIO14 只给 MAX98357A DIN；GPIO47 控制功放 SD_MODE。MAX98357A 集成在主板上，不再设置 J_AMP 外接座，只保留扬声器 J_SPK。',
+        pins: ['GPIO14 DIN', 'GPIO15 LRCLK/WS', 'GPIO16 BCLK', 'GPIO17 MIC_SD', 'GPIO47 AMP_SD'],
+        sources: '接口设计.txt：INMP441；MAX98357A/MAX98357B 数据手册第15、33页。',
+        connectors: [
+          {name:'J_MIC', part:'PH2.0-5P', pins:[['1','3V3','INMP441 VCC；只用3.3V供电'],['2','I2S_BCLK_MIC','GPIO16 经33Ω支路；ESP32输出时钟','out'],['3','I2S_WS_MIC','GPIO15 经33Ω支路；ESP32输出左右声道帧同步','out'],['4','MIC_I2S_SD','INMP441 SD 输出到 GPIO17；ESP32输入','in'],['5','GND','末脚接地/麦克风回流']]},
+          {name:'U_AMP', part:'板载 MAX98357A 功放电路', pins:[['VIN','+5V','功放芯片/模块电源；旁路100nF+10µF'],['BCLK','I2S_BCLK_AMP','GPIO16 经独立33Ω支路；ESP32输出时钟','out'],['LRC','I2S_WS_AMP','GPIO15 经独立33Ω支路；ESP32输出LRCLK','out'],['DIN','I2S_AMP_DIN','GPIO14 经33Ω到 MAX98357 DIN','out'],['SD_MODE','AMP_SD','GPIO47；10k下拉默认静音，拉高启用','out'],['GAIN','GAIN_CFG','按数据手册/模块默认配置电阻或跳线；不作为外接接口'],['GND','GND','功放逻辑地/散热焊盘地']]},
+          {name:'J_SPK', part:'PH2.0-2P', pins:[['1','SPK+','MAX98357 OUTP','out'],['2','SPK-','MAX98357 OUTN；不可接地','out']]}
+        ],
+        rows: [
+          {label:'BCLK 时钟分支', nodes:[['GPIO16 I2S_BCLK','ctrl'],['R_BCLK_MIC 33Ω 靠近GPIO','passive'],['J_MIC Pin2 / INMP441 SCK','connector'],['R_BCLK_AMP 33Ω 靠近GPIO','passive'],['U_AMP BCLK','active']]},
+          {label:'WS/LRCLK 分支', nodes:[['GPIO15 I2S_WS','ctrl'],['R_WS_MIC 33Ω 靠近GPIO','passive'],['J_MIC Pin3 / INMP441 WS','connector'],['R_WS_AMP 33Ω 靠近GPIO','passive'],['U_AMP LRC','active']]},
+          {label:'麦克风数据输入', nodes:[['J_MIC Pin4 / INMP441 SD','connector'],['MIC_I2S_SD 节点','ctrl'],['R_MIC_SD 100k → GND','passive'],['GPIO17 输入','ctrl']]},
+          {label:'功放数据与静音', nodes:[['GPIO14 I2S_AMP_DIN','ctrl'],['R_DIN 33Ω 靠近GPIO14','passive'],['U_AMP DIN','active'],['GPIO47 AMP_SD','ctrl'],['R_SD_PD 10k → GND','passive'],['U_AMP SD_MODE','active']]},
+          {label:'扬声器 BTL 输出', nodes:[['MAX98357 OUTP','active'],['J_SPK Pin1 SPK+','connector'],['4Ω/8Ω 扬声器','connector'],['J_SPK Pin2 SPK-','connector'],['MAX98357 OUTN：禁止接GND','active']]}
+        ],
+        bom: [['MOD_MIC','数字麦克风模块','INMP441 模块','模块/PH2.0','VCC只接3.3V；SCK/WS为输入，SD为麦克风输出到ESP32'],['U_AMP','板载 I²S Class-D 功放','MAX98357A / MAX98357B','TQFN-16 3×3 或按所选模块封装','集成到主板：VIN接5V，DIN/BCLK/LRC/SD接主控，OUTP/OUTN只到扬声器接口'],['R_BCLK_MIC/R_BCLK_AMP','33Ω ×2','通用厚膜','0603','BCLK分支串阻：GPIO16出来后分两路，每路各一颗，靠近ESP32源端，降低分支线过冲/振铃'],['R_WS_MIC/R_WS_AMP','33Ω ×2','通用厚膜','0603','WS/LRCLK分支串阻：GPIO15出来后分两路，每路各一颗，靠近ESP32源端'],['R_DIN','33Ω','通用厚膜','0603','功放DIN串阻：靠近ESP32 GPIO14源端，抑制I²S数据线边沿振铃'],['R_MIC_SD','100k','通用厚膜','0603','麦克风数据弱下拉：靠近ESP32 GPIO17，麦克风未初始化/断开时数据脚不悬空；不影响正常I²S输出'],['R_AMP_SD','10k','通用厚膜','0603','默认静音：靠近GPIO47/功放SD_MODE线，GPIO47复位高阻时把MAX98357关断，上电无爆音'],['C_MIC','100nF + 4.7µF','X7R','0603 + 0805','麦克风供电去耦：靠近J_MIC/INMP441 VCC，降低I²S与电源噪声耦合'],['C_AMP','100nF + 10µF','X7R','0603 + 0805/1206','功放供电去耦：靠近U_AMP VIN/GND，100nF处理开关尖峰，10µF供瞬态电流'],['J_SPK','2P 扬声器座','PH2.0-2P','THT/卧贴','BTL 两线均为输出，不能接地']],
+        notes: [{text:'MAX98357A 的 OUTP/OUTN 是 BTL 输出，扬声器任一端都禁止接 GND，也不能把 SPK- 当地线用。',critical:true}, 'I²S方向：GPIO16 BCLK 与 GPIO15 WS 是 ESP32 输出，同时送麦克风和板载U_AMP；GPIO17 MIC_SD 是输入；GPIO14 AMP_DIN 是输出。', 'BCLK/WS 不要直接在远端一分二；建议在ESP32附近分两支，每支各串33Ω后分别去 J_MIC 与板载 U_AMP。', 'INMP441 VCC 接3.3V，GND接主板地；不要给INMP441供5V，除非模块资料明确带稳压/电平转换。', 'SD_MODE 低电平进入 shutdown；外部 10k 下拉确保上电静音，I²S 初始化完成后再由 GPIO47 拉高。', 'Class-D 扬声器线 SPK+/SPK- 成对走线，远离麦克风、ADC和I²S输入；U_AMP 若用TQFN-16 3×3mm EP，裸露焊盘必须大面积接地散热。']
+      },
+      flow: {
+        title: 'NPN 流量计脉冲输入',
+        summary: '流量计黄线是 NPN 开集电极输出，由主板上拉到 3.3V，串 1k 后进入 GPIO18 PCNT；禁止上拉到 5V。',
+        pins: ['GPIO18 / FLOW_PCNT'],
+        sources: '接口设计.txt：NPN 脉冲输出流量计。',
+        connectors: [{name:'J_FLOW_SENSOR', part:'PH2.0-3P', pins:[['1','+5V','红线'],['2','FLOW_PULSE_RAW','黄线 NPN 输出；进入 GPIO18 PCNT','in'],['3','GND','黑线；末脚接地']]}],
+        rows: [
+          {label:'脉冲输入', nodes:[['FLOW_PULSE_RAW','connector'],['10k 上拉到3V3','passive'],['FLOW_PULSE','ctrl'],['1k 串联','passive'],['GPIO18 PCNT','ctrl']]},
+          {label:'供电', nodes:[['+5V','power'],['100nF + 4.7µF','passive'],['流量计','connector']]}
+        ],
+        bom: [['R_PU','10k','通用厚膜','0603','NPN开集电极上拉：靠近主板输入端/接口侧，传感器只负责拉低，电阻负责产生3.3V高电平'],['R_SER','1k','通用厚膜','0603','GPIO保护/隔离：靠近ESP32 GPIO18，限制误接和尖峰灌入 GPIO18 的电流'],['C_PWR','100nF + 4.7µF','X7R','0603 + 0805','接口去耦：靠近流量计接口，缓冲长线传感器电源扰动'],['J_FLOW','3P 锁扣座','PH2.0-3P','THT/卧贴','线序印在丝印']],
+        notes: ['软件优先使用 PCNT，初始化后清零计数器并做合理的脉宽/频率异常过滤。', {text:'FLOW_PULSE 禁止上拉到 5V，也不要迁到 MCP23017。',critical:true}]
+      },
+      lcd: {
+        title: '2.4寸 ILI9341 SPI LCD（240×320）',
+        summary: '按已购 ILI9341 2.4寸 SPI 模块资料核对：模块 VCC 可接 5V 或3.3V，本板用 5V 供模块电源；本地 sch模块原理图显示 VCC 经 CE6209 生成内部 3V，LED 背光网络经 R6=3.9Ω 接内部 3V，因此 LED 背光脚只接 3.3V 常亮，不要接 5V。业务只占 4 个 IO：CS/DC/MOSI/SCK；RST 接机器 EN 复位网络。',
+        pins: ['GPIO9 DC', 'GPIO10 CS', 'GPIO11 MOSI', 'GPIO12 SCK'],
+        sources: '接口设计.txt；已购 2.4寸串口TFT模块说明：ILI9341，240×320，输入电压支持5V/3.3V；本地 sch模块原理图.pdf：CE6209 生成内部3V，LED经R6=3.9Ω接内部3V。',
+        connectors: [{name:'J_LCD', part:'PH2.0-8P 锁扣座 / JST-PH兼容', pins:[['1','LCD_5V','模块 VCC；资料支持5V或3.3V，本板用5V供电'],['2','LCD_CS','片选输出','out'],['3','LCD_DC','命令/数据选择输出','out'],['4','LCD_MOSI','SPI 数据输出','out'],['5','LCD_SCK','SPI 时钟输出','out'],['6','LCD_LED_3V3','模块 LED 背光脚；接3.3V常亮，不占GPIO；禁止接5V'],['7','LCD_RST','接机器 EN/RESET 网络','out'],['8','GND','末脚接地/信号回流地']] }],
+        rows: [
+          {label:'SPI', nodes:[['GPIO12 SCK / GPIO11 MOSI','ctrl'],['22Ω ×2','passive'],['LCD SCK / MOSI','connector']]},
+          {label:'控制', nodes:[['GPIO10 CS / GPIO9 DC','ctrl'],['33Ω ×2','passive'],['LCD CS / DC','connector']]},
+          {label:'RESET', nodes:[['机器 EN/RESET 链路','ctrl'],['LCD_RST','connector'],['随整机复位，不占独立 GPIO','warn']]},
+          {label:'LCD 电源', nodes:[['5V_SYS','power'],['FB 600Ω@100MHz','passive'],['LCD_5V + 47µF/4.7µF/100nF','power'],['模块VCC','connector']]},
+          {label:'背光常亮', nodes:[['3V3','power'],['LCD_LED_3V3','connector'],['模块LED脚 高电平点亮','passive'],['原理图: LED经R6=3.9Ω到内部3V；不接5V','warn']]}
+        ],
+        bom: [['R_SPI','22Ω ×2','通用厚膜','0603','SPI串联阻尼：靠近ESP32 GPIO11/12 源端，降低 SCK/MOSI 边沿过冲和排线振铃'],['R_CTRL','33Ω ×2','通用厚膜','0603','控制线阻尼：靠近ESP32 GPIO9/10 源端，CS/DC 边沿较快，串阻减小干扰串扰'],['FB1','600Ω@100MHz 磁珠','≥1A','0603/0805','LCD电源隔离：放在5V进入LCD VCC支路处，阻断屏幕噪声回灌主5V'],['C_LCD','47µF + 4.7µF + 100nF','低ESR/X7R','1206/0805/0603','LCD局部储能/去耦：靠近J_LCD/LCD模块VCC供电脚，大电容抗电源波动，小电容吸高频'],['J_LCD','PH2.0-8P 锁扣座','JST-PH兼容 2.0mm','1脚5V，2～5脚为CS/DC/MOSI/SCK，6脚LED只接3.3V常亮，7脚RST，8脚GND']],
+        notes: ['已查本地 sch模块原理图.pdf：模块 VCC 经过 CE6209 稳压生成内部 3V；LED 网络通过 R6=3.9Ω 接内部 3V。结论：LCD_VCC 可以用5V，但 LED/背光脚不要接5V。', 'LED 背光脚按3.3V高电平常亮处理；如果实物14P排针没有单独引出LED脚，则只接VCC/GND/SPI/RST，按模块内部背光默认处理。', 'ESP32 的 CS/DC/MOSI/SCK 仍是3.3V逻辑，不向信号脚输出5V。', 'LCD_RST 接机器 EN/RESET 网络，整机复位时屏幕同步硬复位；它不占独立 GPIO，软件初始化仍发送 ILI9341 Software Reset。', 'LCD_MISO、触摸、SD卡与背光PWM全部不引出；CS 保留独立 GPIO，不能永久接地。', '若 LCD 模块直接插主板排母，必须按模块真实 pinout；这里是自定义PH2.0-8P转接线推荐线序。']
+      },
+      bl50: {
+        title: 'ZS-X11B 有霍尔搅动电机 3Pin 控制接口',
+        summary: 'ZS-X11B 无独立 STOP/BRAKE，主板只输出 PWM、GND、DIR。GPIO21 通过 2N7002 开漏生成 5V/5kHz PWM，4.7k 上拉电阻固定放在主板侧；GPIO1 通过第二颗 2N7002 控制方向中间脚。GPIO2、GPIO39 已释放为 NC。',
+        pins: ['GPIO21 PWM', 'GPIO1 DIR', 'GPIO2 NC', 'GPIO39 NC'],
+        sources: 'ZS-X11B 模块说明；2026-08-16 实机测量与 BAC 相序启动验证；PWM IN 无可用内部上拉，主板侧使用 4.7k 上拉到主板 5V。',
+        connectors: [{name:'J_PULSATOR_CTRL', part:'PH2.0-3P 锁扣座', pins:[['1','ZS_PWM_IN','5V/5kHz 开漏 PWM；接 ZS-X11B PWM IN','out'],['2','ZS_DIR_N','接 ZS-X11B 正反转 3Pin 接口中间脚','out'],['3','GND','控制地/信号回流；接 ZS-X11B PWM GND']]}],
+        rows: [
+          {label:'PWM 5V 主板上拉', nodes:[['主板 +5V','power'],['R_PU_PWM 4.7k','passive'],['ZS_PWM_IN 节点','ctrl'],['J_PULSATOR_CTRL Pin1','connector']]},
+          {label:'PWM 开漏下拉', nodes:[['GPIO21 / PULSATOR_PWM_CTRL','ctrl'],['R_G_PWM 100Ω','passive'],['Q_PWM Gate','active'],['R_SAFE_PWM 10k → 3V3','passive'],['Q_PWM Source → GND','power'],['Q_PWM Drain → ZS_PWM_IN','connector']]},
+          {label:'DIR 开漏下拉', nodes:[['GPIO1 / PULSATOR_DIR_CTRL','ctrl'],['R_G_DIR 100Ω','passive'],['Q_DIR Gate','active'],['R_PD_DIR 100k → GND','passive'],['Q_DIR Source → GND','power'],['Q_DIR Drain → ZS_DIR_N','connector']]},
+          {label:'ZS-X11B 外部接线', nodes:[['Pin1 PWM → PWM IN','connector'],['Pin2 DIR → 方向中间脚','connector'],['Pin3 GND → PWM GND','power'],['CCW/CW 外侧脚悬空','warn'],['SC/VR 不接','warn']]}
+        ],
+        bom: [
+          ['Q_PWM / Q_DIR','N-MOS ×2','2N7002','SOT-23','两颗都作低边开漏下拉：Source 接 GND，Drain 分别接 ZS_PWM_IN / ZS_DIR_N。靠近 J_PULSATOR_CTRL 放置，缩短 5V 外接节点在板内的走线'],
+          ['R_PU_PWM','4.7k','通用厚膜','0603','主板 +5V 到 ZS_PWM_IN 的上拉；紧靠 J_PULSATOR_CTRL Pin1 / Q_PWM Drain 放置，不要再在线束上飞线。输出低电平时电流约 1.06mA'],
+          ['R_G_PWM / R_G_DIR','100Ω ×2','通用厚膜','0603','GPIO 到 MOS Gate 的串联阻尼；每颗紧靠对应 MOS Gate 放置，不要放在 ESP32 一端后再拉长 Gate 线'],
+          ['R_SAFE_PWM','10k','通用厚膜','0603','Q_PWM Gate 上拉到 3V3；紧靠 Q_PWM Gate/Source 放置，MCU 复位或 GPIO 高阻时使 Q_PWM 导通、ZS_PWM_IN 默认拉低停车'],
+          ['R_PD_DIR','100k','通用厚膜','0603','Q_DIR Gate 下拉到 GND；紧靠 Q_DIR Gate/Source 放置，避免复位时方向节点误拉低'],
+          ['J_PULSATOR_CTRL','3P 锁扣座','PH2.0-3P','THT/卧贴','Pin1=PWM、Pin2=DIR、Pin3=GND；PCB 丝印与线束两端必须同时标明 1:PWM / 2:DIR / 3:GND。靠近板边放置，与 24V/电机相线/继电器高 di/dt 走线保持距离'],
+          ['TP_PWM / TP_DIR','测试点 ×2','环形或焊盘','按工艺选择','分别接 ZS_PWM_IN 与 ZS_DIR_N；靠近 3P 接口且保证示波器探头可触及，旁边预留 GND 测试点']
+        ],
+        notes: [
+          {text:'主板 +5V 只通过 R_PU_PWM=4.7k 连到 ZS_PWM_IN，不得与 ZS-X11B 自带 +5V 电源脚并联。ESP32 GPIO 不耐 5V，ZS_PWM_IN / ZS_DIR_N 只能连到 2N7002 Drain，不得直连 GPIO。',critical:true},
+          '布局顺序：板边 J_PULSATOR_CTRL → R_PU_PWM/Q_PWM/Q_DIR → Gate 偏置和串阻 → GPIO1/GPIO21。PWM/GND/DIR 三根线束远离 U/V/W 相线和继电器触点走线，控制 GND 给独立低阻回流路径。',
+          'Q_PWM/Q_DIR 方向统一：Source 接主板 GND，Drain 接外部 5V 逻辑节点，Gate 经 100Ω 接 ESP32。原理图和 PCB 丝印均标出 S/G/D，避免 SOT-23 引脚装反。',
+          'PWM 逻辑：GPIO21 高/高阻 → Q_PWM 导通 → ZS_PWM_IN=LOW 停机；GPIO21 低 → Q_PWM 关断 → 4.7k 拉到 5V。固件 LEDC 使用输出反相，业务 N% 仍对应 ZS_PWM_IN 实际 N% 高电平占空比。',
+          'DIR 接 ZS-X11B 正反转 3Pin 接口的中间脚；原跳线帽拔掉，CCW/CW 两个外侧脚悬空。GPIO1 高时 Q_DIR 拉低中间脚，GPIO1 低/复位时释放。',
+          'ZS-X11B 没有 STOP/BRAKE；停机、急停和换向前停车均依赖 PWM=0 滑行。换向必须 PWM 递减至0 → 等待转子停稳 → 切 DIR → PWM 缓升，不得带速反切。',
+          'GPIO2、GPIO39 标记 NC：不连接连接器、MOS、LED、测试点或上下拉；若后续重新使用，必须同步原理图、引脚表和固件。',
+          '因为 PWM 上拉改用主板 5V，当主板已上电而 ZS-X11B 未上电时，可能有最大约 1.06mA 通过输入保护结构注入驱动板；推荐两板共同上下电，并在样机上实测 ZS 断电时 PWM IN 电流。'
+        ]
+      },
+      ibt2: {
+        title: 'IBT-2 圆周换位直流减速电机',
+        summary: 'IBT-2 输入端为高电平有效逻辑输入：RPWM/LPWM 输入 PWM 或高电平决定方向，R_EN/L_EN 高电平使能、低电平关闭。该接口与 ZS-X11B 搅动电机的 5V 开漏控制不同；IBT-2 不需要 2N7002，ESP32 通过串阻直驱，R_EN 与 L_EN 在主板侧并联。',
+        pins: ['GPIO40 RPWM', 'GPIO41 LPWM', 'GPIO48 R_EN/L_EN'],
+        sources: '接口设计.txt、IBT-2说明书.pdf、IBT-2原理图.pdf；本轮用户提供 IBT-2 输入端口图。',
+        connectors: [
+          {name:'J_IBT2_CTRL', part:'PH2.0-5P 锁扣座 / JST-PH兼容', pins:[['1','+5V','模块逻辑 VCC'],['2','RPWM','GPIO40 正转 PWM 输出','out'],['3','LPWM','GPIO41 反转 PWM 输出','out'],['4','MOTOR_EN','GPIO48；主板侧并到 R_EN + L_EN','out'],['5','GND','控制地/信号回流；末脚接地']]},
+          {name:'J_IBT2_PWR', part:'XT30PW-M / 大电流2P端子，按电机电流选型', pins:[['1','VM_MOTOR','IBT-2 B+ 电机功率正；来自24V/VM功率母线'],['2','PGND_MOTOR','IBT-2 B- 电机功率负；走功率地回流']]}
+        ],
+        rows: [
+          {label:'A方向 PWM', nodes:[['GPIO40','ctrl'],['1k 串联 + 47k下拉','passive'],['IBT-2 RPWM','connector']]},
+          {label:'B方向 PWM', nodes:[['GPIO41','ctrl'],['1k 串联 + 47k下拉','passive'],['IBT-2 LPWM','connector']]},
+          {label:'使能接法', nodes:[['GPIO48','ctrl'],['R_EN_SER 1k 串联','passive'],['MOTOR_EN 节点','ctrl'],['R_EN_PD 47k → GND','passive'],['J_IBT2_CTRL Pin4','connector'],['模块 R_EN 与 L_EN 并在一起','connector']]},
+          {label:'功率侧', nodes:[['J_IBT2_PWR VM_MOTOR/PGND_MOTOR','power'],['IBT-2 B+/B-','active'],['IBT-2 M+/M-','connector'],['圆周换位减速电机','connector']]}
+        ],
+        bom: [['R_PWM','1k ×2','通用厚膜','0603','输入限流/隔离：靠近ESP32 GPIO40/41，保护GPIO并降低模块排线毛刺回灌'],['R_EN_SER','1k','通用厚膜','0603','使能线串阻：靠近ESP32 GPIO48，GPIO48→1k→MOTOR_EN，限制异常电流并隔离外接IBT-2模块输入'],['R_PD','47k ×3','通用厚膜','0603','默认关闭下拉：RPWM、LPWM、MOTOR_EN各一颗到GND，靠近ESP32/信号源端，复位/下载阶段都保持低电平'],['J_IBT2_CTRL','PH2.0-5P 锁扣座','JST-PH兼容 2.0mm','THT/卧贴','1脚5V，2～4控制，5脚GND；Pin4 MOTOR_EN 接模块R_EN与L_EN并联点；不引出R_IS/L_IS'],['J_IBT2_PWR','大电流2P功率座','XT30PW-M 或 ≥10A螺丝端子','THT','给IBT-2 B+/B- 供电；不要和PH2.0控制座混用']],
+        notes: [{text:'IBT-2 不需要 2N7002：RPWM/LPWM/R_EN/L_EN 是高电平有效逻辑输入，不是“默认5V、接GND动作”的开漏型输入。',critical:true}, 'MOTOR_EN 是主板自己定义的一个网络：GPIO48 经过1k后形成 MOTOR_EN；这个节点一边用47k下拉到GND，一边接到模块 R_EN 和 L_EN 两个输入。', '如果你的IBT-2模块端子上 R_EN 和 L_EN 是两个独立孔，可以在转接线/主板接口侧把它们短在一起后接 J_IBT2_CTRL Pin4；也可以在模块端用短线把 R_EN/L_EN 并联。', 'GPIO48=高：R_EN/L_EN 同时高电平，左右半桥使能；GPIO48=低或复位：47k下拉让二者关闭。', 'ESP32 3.3V 直驱 IBT-2 逻辑输入通常可用，但首次样机需实测模块在3.3V下是否可靠识别高电平；若不可靠，再加74HCT/三极管电平转换。', '严禁 RPWM 与 LPWM 同时输出有效 PWM；换向前先将当前 PWM 降到 0。', 'IBT-2 VCC 是5V逻辑电源，B+是电机功率电源，两者禁止混淆。', 'R_IS/L_IS 不接本板接口；需要电流检测时再单独加ADC分压/滤波。']
+      },
+      fan: {
+        title: '两台 24V 四线风扇同步 PWM + 总电源关断',
+        summary: '推荐采用“PWM 调速与电源关断分离”：GPIO38 继续通过 S8050 开集电极下拉两台风扇的 PWM 线；新增 GPIO8/FAN_PWR_EN 只控制 Omron G8G-1SV DC24 继电器的线圈，继电器常开触点串在两台风扇的 +24V 正线上。线圈用 Diodes DMN61D8LQ-7（60V、3V 逻辑级、内置有源钳位）低边驱动。这样 PWM=0 仍只代表调速命令，需要真正停机时由继电器切断24V。PH2.0 控制座不承载风扇主电流。',
+        pins: ['GPIO38 / FAN_PWM', 'GPIO8 / FAN_PWR_EN（建议新增）'],
+        sources: '接口设计.txt：24V 双风扇；Phase11 风扇实测结论：当前风扇 PWM=0 不保证停转；Omron G8G J263-E1；Diodes DMN61D8LQ 数据手册。',
+        connectors: [
+          {name:'J_FAN_PWM', part:'PH2.0-2P 控制座', pins:[['1','FAN_PWM_OUT','接两台风扇青/黄 PWM 线；由 S8050 集电极下拉','out'],['2','GND','控制地；必须与风扇黑/灰功率地共地']]},
+          {name:'J_FAN_RELAY', part:'继电器线圈/驱动接口，按线圈电流选型', pins:[['1','+24V_RELAY','24V 继电器线圈正端；建议来自受保护的24V支路','power'],['2','FAN_RELAY_LOW','继电器线圈负端；接 Q_FAN_PWR Drain','out']]},
+          {name:'J_FAN_PWR', part:'大电流端子/XT30/螺丝端子，按启动电流选型', pins:[['1','+24V_FAN_SW','继电器 NO 输出；两台风扇红/橙电源正','power'],['2','PGND_FAN','两台风扇黑/灰电源负；与控制GND单点/低阻共地','power']]}
+        ],
+        rows: [
+          {label:'S8050 三脚接法', nodes:[['GPIO38 PWM','ctrl'],['R_B 4.7k 串联','passive'],['B 基极','active'],['S8050','active'],['C 集电极→FAN_PWM_OUT','connector'],['E 发射极→GND','power']]},
+          {label:'PWM控制线', nodes:[['FAN_PWM_OUT','connector'],['两台风扇青/黄PWM线并联','connector'],['卖家确认 PWM 上拉为 5V','passive'],['R_PU_FAN 10k DNP → 5V','warn'],['S8050导通时拉到GND','active']]},
+          {label:'默认状态', nodes:[['GPIO38','ctrl'],['R_PD 100k下拉到GND','passive'],['S8050默认关断','warn'],['PWM线不被主板拉低','connector']]},
+          {label:'继电器线圈驱动（GPIO8 建议新增）', nodes:[['GPIO8 / FAN_PWR_EN','ctrl'],['R_GATE_PWR 100Ω 串联','passive'],['Q_FAN_PWR DMN61D8LQ-7','active'],['R_PD_PWR 100k → GND','passive'],['Source → GND；Drain → 线圈负端','power']]},
+          {label:'线圈浪涌保护（集成式）', nodes:[['+24V_RELAY → K_FAN 线圈正端','power'],['K_FAN G8G-1SV DC24 线圈约106.7mA','active'],['DMN61D8LQ-7 内置有源钳位','passive'],['外置 D_RELAY 默认 DNP','warn']]},
+          {label:'K_FAN 端子与触点方向', nodes:[['G8G Pin1/Pin2 线圈','active'],['G8G Pin6 NO ← 保险丝后的+24V','power'],['G8G Pin4/Pin5 COM → +24V_FAN_SW','connector'],['G8G Pin3 NC 悬空并绝缘','warn']]},
+          {label:'风扇主供电（继电器高边）', nodes:[['+24V_IN','power'],['F_FAN Littelfuse 0297005.WXOCRV 5A/32V','passive'],['K_FAN NO（Pin6）','active'],['K_FAN COM（Pin4/5）→ +24V_FAN_SW','connector'],['两台风扇红/橙线','connector'],['两台风扇黑/灰线→PGND_FAN','power']]},
+          {label:'继电器额定边界（投板前必测）', nodes:[['G8G-1SV DC24 线圈 24V/106.7mA','active'],['28V 电机锁定参考：断开12A','warn'],['两台风扇启动/堵转总电流','connector'],['总电流≤12A且持续≤5A：可用首选','power'],['超过边界：升级30A级直流继电器/接触器','warn']]},
+          {label:'停机动作时序', nodes:[['需要停机：FAN_PWM=0','ctrl'],['等待 PWM 安全裕量','passive'],['GPIO8=OFF，继电器释放','active'],['+24V_FAN_SW 断电','power'],['需要启动：GPIO8=ON → 延时100~300ms → PWM','warn']]}
+        ],
+        bom: [['Q_FAN','NPN','S8050','SOT-23 / SOT-23-3_L2.9-W1.3-P1.90-LS2.4-BR','开集电极下拉：靠近风扇PWM接口或控制区；C接FAN_PWM_OUT，E接GND，B经4.7k接GPIO38'],['R_B','4.7k','通用厚膜','0603','基极限流：靠近S8050基极，GPIO38→R_B→B，限制GPIO输出电流'],['R_PD','100k','通用厚膜','0603','默认低：靠近GPIO38/S8050基极节点，复位时B被拉低，S8050关断，不主动拉低PWM线'],['R_PU_FAN','10k DNP → 5V','通用厚膜','0603','PWM备用上拉推荐值：10k到5V，弱上拉电流约0.5mA；若实测线缆干扰大可改4.7k，若风扇内部已有5V上拉则DNP；靠近J_FAN_PWM/FAN_PWM_OUT节点'],['Q_FAN_PWR','N-MOSFET，60V继电器线圈驱动器','Diodes DMN61D8LQ-7','SOT-23','60V、470mA；Rds(on)最大约2.4Ω@VGS=3V；专用于继电器/电感负载，内置有源钳位，GPIO8可直接驱动；外置续流二极管默认DNP'],['R_GATE_PWR','100Ω','通用厚膜','0603','GPIO8→DMN61D8LQ-7 Gate 串联阻尼；靠近MOS Gate'],['R_PD_PWR','100k','通用厚膜','0603','Gate→GND 下拉；即使替换成普通MOS，也保证复位/掉电时继电器释放'],['D_RELAY','DNP；普通MOS替代时改贴 M7/1N4007','Diodes M7（SMA，1N4007等效）','SMA','DMN61D8LQ-7 已集成有源钳位；若不用该专用驱动器，必须在+24V_RELAY与Drain之间并联续流二极管，阴极接+24V_RELAY'],['K_FAN','24V DC线圈、SPDT、NO接电源、COM接风扇','Omron G8G-1SV DC24','THT，约15×8×18mm','线圈225Ω/106.7mA/2.56W；24V允许范围18.2~32V；Pin6=NO接保险丝后+24V，Pin4/5=COM接风扇，Pin3=NC悬空；28V电机锁定参考断开12A、100,000次'],['F_FAN','5A MINI刀片保险丝，32VDC','Littelfuse 0297005.WXOCRV','外置保险座/线束','当前≥5A风扇支路的起始值；若两台风扇实测启动浪涌导致误熔断，按实测改7.5A/10A，但不得超过继电器、线束和端子额定值'],['TVS_24V','33V单向TVS，600W级','SMBJ33A','DO-214AA / SMB','并在+24V_IN与PGND_FAN之间；先核对24V电源最高稳态电压，抑制线缆/风扇开关尖峰'],['C_FAN_BULK','470µF/50V低ESR + 100nF/50V','通用铝电解 + X7R','径向/0603','靠近J_FAN_PWR或+24V_FAN_SW；缓冲风扇线缆瞬态，电解耐压不要使用35V以下'],['J_FAN_PWM','PH2.0-2P 控制座','JST-PH兼容','THT/卧贴','只承载PWM控制线与地，不走24V主电流'],['J_FAN_RELAY','继电器线圈接口','PH2.0-2P或端子','THT','承载+24V_RELAY与FAN_RELAY_LOW，不把24V直接接到GPIO8'],['J_FAN_PWR','大电流供电端子','XT30或螺丝端子，建议≥10A','THT/线束','承载两台风扇经继电器后的24V主电流；按启动电流留端子、铜箔和线径余量']],
+        notes: ['实际接线：+24V_IN 先经过 F_FAN（首选 Littelfuse 0297005.WXOCRV，5A/32V MINI 保险丝）到 K_FAN NO（G8G Pin6），K_FAN COM（G8G Pin4/5）输出 +24V_FAN_SW，再接两台风扇红/橙线；G8G Pin3 NC 悬空并绝缘；黑/灰线接 PGND_FAN。继电器触点只切正极，不能把风扇负极串入控制地。', '推荐具体组合：K_FAN=Omron G8G-1SV DC24，Q_FAN_PWR=Diodes DMN61D8LQ-7，R_GATE_PWR=100Ω，R_PD_PWR=100k。G8G-1SV 线圈约106.7mA/2.56W，GPIO8只驱动DMN61D8LQ-7 Gate；GPIO8绝不能直接带线圈。', 'Omron 对该系列的汽车电源接法建议把 N.O. 端接+BATT；因此本页按“保险丝→NO Pin6→COM Pin4/5→风扇”落图，NC Pin3 不接。', 'DMN61D8LQ-7 是60V继电器/电感负载驱动器，在3V逻辑电平下有明确导通规格并带内部有源钳位，因此 D_RELAY 默认DNP。若采购不到它而改用普通DMN6075S/2N7002等MOS，必须重新核对3.3V下的Rds(on)，并补贴 M7/1N4007 续流二极管：阴极接+24V_RELAY，阳极接线圈负端/Drain。', 'TVS_24V=SMBJ33A，C_FAN_BULK=470µF/50V低ESR并100nF/50V，均靠近24V功率入口/继电器输出；SMBJ33A的VRWM、钳位电压要结合实际24V电源最高电压复核，不能盲目套用到超过33V稳态的电源。', 'Omron G8G-1SV DC24 的资料给出28V电机锁定参考：断开12A、0.25s动作、100,000次；同时其DC24型号在85°C连续载流额定为5A。两台风扇总稳态电流应控制在5A以内，启动/堵转峰值必须实测并低于12A参考边界；否则升级到30A级、明确支持24VDC电机负载的继电器/接触器，并同步增大保险丝、端子和线径。', '保险丝不是按“风扇额定电流”机械取整：用电流探头或示波器记录两台风扇同时启动、正常运行、堵转/重启电流；5A是当前≥5A支路的起始BOM值，不是未经实测的最终定值。若5A误熔断，可在确认线束和继电器边界后改7.5A或10A，禁止仅为不熔断而无限加大。', '24V风扇PWM线仍按5V开集电极接口处理：禁止把24V接到FAN_PWM_OUT或GPIO38；风扇功率地与控制地按单点/低阻方式连接。GPIO38继续只负责PWM调速，继电器不能用来做快速PWM。', '推荐启动顺序：GPIO38 PWM先保持0%→GPIO8=ON吸合继电器→等待100~300ms→输出目标PWM。推荐停机顺序：PWM置0%→等待至少100ms→GPIO8=OFF释放继电器。复位、掉电、看门狗、故障和SHT30无效时，GPIO8必须保持OFF，风扇电源默认断开。', '当前固件尚未实现 FAN_PWR_EN；后续需要同步 board_config.h、GPIO8 初始化、safe-off 状态机、风扇服务接口和原理图。没有继电器辅助触点或电流检测时，固件只能确认发出OFF命令，不能证明触点已实际断开。']
+      },
+      valves: {
+        title: '三路水路电磁阀低边驱动',
+        summary: '三路 DC24V 电磁阀分别由 MCP GPA0（水龙头进水）、GPA1（水箱→洗涤桶）、GPA3（洗涤桶排水）控制。每路阀都是两线负载：正线接 +24V，负线接 NMOS 低边开关的 Drain。MCP 输出高电平时 MOS 导通，阀负线被拉到 GND 形成 24V 回路，阀门打开；MCP 输出低电平时 MOS 关断，阀门关闭。电磁阀是感性负载（内部有线圈），关断时线圈会产生高压反向尖峰，因此在阀负线和 +24V 之间反向并联续流二极管（M7/1N4007）吸收尖峰，保护 MOS 不被击穿。三路结构完全相同，只是 MCP 引脚不同。',
+        pins: ['GPA0 进水阀', 'GPA1 水箱→桶', 'GPA3 桶排水'],
+        sources: '接口设计.txt：三路水路电磁阀；最终 MCP 分配。',
+        connectors: [
+          {name:'J_VALVES（三路水阀共用座，PH2.0-4P）', part:'PH2.0-4P 锁扣座', pins:[
+            ['1','+24V_VALVE','三路阀门公共正线；三只阀的一端都并到此脚','power'],
+            ['2','TAP_INLET_VALVE_NEG','水龙头进水阀负线；接 Q1（DMN6075S）Drain','out'],
+            ['3','TANK_TO_DRUM_VALVE_NEG','水箱→洗涤桶阀负线；接 Q2 Drain','out'],
+            ['4','DRUM_DRAIN_VALVE_NEG','洗涤桶排水阀负线；接 Q3 Drain','out']
+          ]}
+        ],
+        rows: [
+          {label:'进水阀控制信号（GPA0 → Q1 Gate）', nodes:[['MCP GPA0 输出高/低','ctrl'],['R_G1 100Ω 串联到 Gate','passive'],['Q1 DMN6075S Gate 脚','active']]},
+          {label:'进水阀 Gate 默认下拉', nodes:[['Q1 Gate','active'],['R_PD1 10k → GND','passive'],['上电/复位时 MOS 关断，阀门关闭','power']]},
+          {label:'进水阀功率回路（阀门打开时）', nodes:[['+24V 母线经保险丝','power'],['+24V_VALVE 节点','power'],['J_VALVES Pin1 公共正','connector'],['进水阀线圈','connector'],['J_VALVES Pin2 进水阀负线','connector'],['TAP_INLET_VALVE_NEG 节点','ctrl'],['Q1 Drain → Source','active'],['功率 GND','power']]},
+          {label:'进水阀续流二极管（MOS 关断时吸收尖峰）', nodes:[['TAP_INLET_VALVE_NEG / Drain','connector'],['D1 M7/1N4007 阳极（无横线端）','passive'],['D1 阴极（有横线端）→ +24V_VALVE','power'],['关断瞬间线圈电流经 D1 续流','passive']]},
+          {label:'水箱→桶阀控制信号（GPA1 → Q2 Gate）', nodes:[['MCP GPA1 输出高/低','ctrl'],['R_G2 100Ω 串联到 Gate','passive'],['Q2 DMN6075S Gate 脚','active']]},
+          {label:'水箱→桶阀 Gate 默认下拉', nodes:[['Q2 Gate','active'],['R_PD2 10k → GND','passive']]},
+          {label:'水箱→桶阀功率/续流', nodes:[['J_VALVES Pin1 公共正','connector'],['水箱→桶阀线圈','connector'],['J_VALVES Pin3 阀负线','connector'],['TANK_TO_DRUM_VALVE_NEG / Drain','connector'],['D2 阳极；阴极→+24V_VALVE','passive']]},
+          {label:'排水阀控制信号（GPA3 → Q3 Gate）', nodes:[['MCP GPA3 输出高/低','ctrl'],['R_G3 100Ω 串联到 Gate','passive'],['Q3 DMN6075S Gate 脚','active']]},
+          {label:'排水阀 Gate 默认下拉', nodes:[['Q3 Gate','active'],['R_PD3 10k → GND','passive']]},
+          {label:'排水阀功率/续流', nodes:[['J_VALVES Pin1 公共正','connector'],['排水阀线圈','connector'],['J_VALVES Pin4 阀负线','connector'],['DRUM_DRAIN_VALVE_NEG / Drain','connector'],['D3 阳极；阴极→+24V_VALVE','passive']]},
+          {label:'阀电源去耦（在连接器附近）', nodes:[['+24V_VALVE','power'],['C_BULK 100µF/35V','passive'],['C_HF 100nF','passive'],['功率 GND','power']]}
+        ],
+        bom: [
+          ['Q1/Q2/Q3','60V/3.8A N-MOS 逻辑电平','DMN6075S-7 或等效','SOT-23','低边开关：3.3V 栅压下 Rds(on) ≈ 75mΩ，满足 DC24V 小电流阀需求；耐压 60V 留足 24V 裕量（30V 的 AO3400A 耐压不够，禁止使用）'],
+          ['R_G×3','100Ω','通用厚膜','0603','Gate 串联阻尼：串在 MCP GPAx 与 MOS Gate 之间，靠近 Gate 脚；抑制门极振铃，限制 MCP 瞬态驱动电流'],
+          ['R_PD×3','10k','通用厚膜','0603','Gate 到 GND 下拉：靠近 MOS Gate 脚；上电/MCU 复位期间 MCP 高阻，10k 把 Gate 拉到 GND 确保 MOS 关断、阀门不会意外打开'],
+          ['D1/D2/D3','1A/1000V 整流续流','M7（贴片版 1N4007，优先）','SMA / DO-214AC','感性续流：阳极接阀负线/Drain，阴极接 +24V_VALVE；关断瞬间电磁阀线圈反向电流经此二极管回流，钳位 Drain 电压保护 MOS；靠近阀接口与 Drain 布局。原理图/PCB优先放 SMA(DO-214AC) 封装的 M7，不建议默认用 DO-41 插件 1N4007，除非你明确想手焊插件大二极管'],
+          ['C_BULK','100µF/35V 电解','按尺寸选型','THT D8×L12','大容量储能：靠近阀门连接器/功率分配点；三路阀同时开关时电流突变，电容缓冲母线波动，防止 24V 塌陷影响霍尔等 24V 负载'],
+          ['C_HF','100nF X7R','≥50V','0603','高频旁路：与 C_BULK 并联，吸收 MOS 开关时的高频尖峰'],
+          ['J_VALVES','PH2.0-4P 锁扣座','JST-PH兼容','THT/卧贴','三路阀共用一个4P座：Pin1=+24V公共正，Pin2=进水阀负，Pin3=水箱→桶阀负，Pin4=桶排水阀负；按阀电流（8W≈0.33A / 另一款0.23A）选型 PH2.0 足够']
+        ],
+        notes: [
+          {text:'AO3400A 耐压只有 30V，用于 24V 电磁阀裕量不足（24V 电源波动可达 28V+），必须使用 ≥60V 的 DMN6075S-7 或等效器件；同时核对 3.3V 栅压下的导通电阻。',critical:true},
+          '三路阀结构完全相同，只是 MCP 引脚不同（GPA0/GPA1/GPA3），每路都是：MCP → 100Ω → Gate，Gate 10k 下拉，Drain 接阀负线，Source 接 GND，阀正线接 +24V，续流二极管并联在阀负线和 +24V 之间。外接座合并为一个 PH2.0-4P：Pin1公共+24V，Pin2/3/4分别是三路负线。',
+          '续流二极管方向：阳极（无横线/无标记端）接阀负线/Drain，阴极（有横线/有银色环标记端）接 +24V_VALVE。接反会把 +24V 短路到 GND。',
+          'MCP 初始化顺序：先写 OLAT 对应位 = 0（确保输出低），再把 IODIR 对应位配为输出（写 0）；上电时 R_PD=10k 已经把 Gate 拉到 GND，阀门默认关闭。',
+          'MCP GPA7/GPB7 按手册只能作输出，但 GPA0/GPA1/GPA3 没有这个限制，既可作输入也可作输出。',
+          '阀门 ON/OFF：GPAx=HIGH → Gate 3.3V → MOS 导通 → 阀门通电打开；GPAx=LOW → R_PD 拉 Gate 到 GND → MOS 关断 → 阀门断电关闭（靠弹簧复位，常闭型）。',
+          '三路阀的电流回流都走功率 GND，不经过 3V3 或 ADC 的地平面，PCB 上功率 GND 与信号 GND 在电源入口处单点汇合。',
+          'DC24V 小电流阀（8W≈0.33A / 另一款 0.23A），PH2.0-4P 端子足够；三路同时打开时 Pin1 公共正线电流约 1A 量级，PCB 上 +24V_VALVE 到 Pin1 的走线要按总电流加宽。若后续换 ≥0.5A/路的阀，应升级到 VH/螺丝端子并复核走线宽度。',
+          {text:'24V 阀电源建议每路或每组加独立自恢复保险丝，防止单路阀短路拖垮整个 24V 母线。',critical:false}
+        ]
+      },
+      hall: {
+        title: '六路 NJK-5001C 霍尔位置反馈',
+        summary: '0°/45°/90°/180°/270°与BLDC寻零均使用24V三线NPN常开霍尔。NJK-5001C 有三根线：棕线接 +24V 供电，蓝线接 GND，黑线是 NPN 开集电极输出——检测到磁铁时黑线拉低到 GND，无磁铁时黑线悬空（高阻）。主板在 3.3V 侧用 10k 上拉把悬空状态拉到高电平，再经 1k 串联保护和 100nF 滤波后进入 MCP GPB0～GPB5。',
+        pins: ['GPB0 0°', 'GPB1 45°', 'GPB2 90°', 'GPB3 180°', 'GPB4 270°', 'GPB5 BLDC'],
+        sources: '接口设计.txt：NJK-5001C；最终六路霍尔规划。',
+        connectors: [
+          {name:'J_HALL（单座 8Pin，六路合一）', part:'PH2.0-8P 锁扣座', pins:[
+            ['1','+24V_HALL','面板侧：6 根棕线并接为 1 根引线接到此脚；主板侧：连到 24V 功率母线','power'],
+            ['2','HALL_0_N','面板侧：0°传感器黑线单独接到此脚（不与其他黑线并接）；主板侧：经 1k → MCP GPB0','in'],
+            ['3','HALL_45_N','面板侧：45°传感器黑线单独接到此脚；主板侧：经 1k → MCP GPB1','in'],
+            ['4','HALL_90_N','面板侧：90°传感器黑线单独接到此脚；主板侧：经 1k → MCP GPB2','in'],
+            ['5','HALL_180_N','面板侧：180°传感器黑线单独接到此脚；主板侧：经 1k → MCP GPB3','in'],
+            ['6','HALL_270_N','面板侧：270°传感器黑线单独接到此脚；主板侧：经 1k → MCP GPB4','in'],
+            ['7','HALL_BLDC_N','面板侧：BLDC寻零传感器黑线单独接到此脚；主板侧：经 1k → MCP GPB5','in'],
+            ['8','GND_HALL','面板侧：6 根蓝线并接为 1 根引线接到此脚；主板侧：连到主板 GND','power']
+          ]}
+        ],
+        rows: [
+          {label:'HALL_0° 信号链路（Pin2 → GPB0）', nodes:[['J_HALL Pin2 黑线','connector'],['R_SER0 1k','passive'],['HALL_0_N 节点','ctrl'],['MCP GPB0','active']]},
+          {label:'HALL_0° 上拉与滤波（在 HALL_0_N 节点上）', nodes:[['3V3','power'],['R_PU0 10k','passive'],['HALL_0_N 节点','ctrl'],['C_F0 100nF → GND','passive']]},
+          {label:'HALL_45° 信号链路（Pin3 → GPB1）', nodes:[['J_HALL Pin3 黑线','connector'],['R_SER1 1k','passive'],['HALL_45_N 节点','ctrl'],['MCP GPB1','active']]},
+          {label:'HALL_45° 上拉与滤波（在 HALL_45_N 节点上）', nodes:[['3V3','power'],['R_PU1 10k','passive'],['HALL_45_N 节点','ctrl'],['C_F1 100nF → GND','passive']]},
+          {label:'HALL_90° 信号链路（Pin4 → GPB2）', nodes:[['J_HALL Pin4 黑线','connector'],['R_SER2 1k','passive'],['HALL_90_N 节点','ctrl'],['MCP GPB2','active']]},
+          {label:'HALL_90° 上拉与滤波（在 HALL_90_N 节点上）', nodes:[['3V3','power'],['R_PU2 10k','passive'],['HALL_90_N 节点','ctrl'],['C_F2 100nF → GND','passive']]},
+          {label:'HALL_180° 信号链路（Pin5 → GPB3）', nodes:[['J_HALL Pin5 黑线','connector'],['R_SER3 1k','passive'],['HALL_180_N 节点','ctrl'],['MCP GPB3','active']]},
+          {label:'HALL_180° 上拉与滤波（在 HALL_180_N 节点上）', nodes:[['3V3','power'],['R_PU3 10k','passive'],['HALL_180_N 节点','ctrl'],['C_F3 100nF → GND','passive']]},
+          {label:'HALL_270° 信号链路（Pin6 → GPB4）', nodes:[['J_HALL Pin6 黑线','connector'],['R_SER4 1k','passive'],['HALL_270_N 节点','ctrl'],['MCP GPB4','active']]},
+          {label:'HALL_270° 上拉与滤波（在 HALL_270_N 节点上）', nodes:[['3V3','power'],['R_PU4 10k','passive'],['HALL_270_N 节点','ctrl'],['C_F4 100nF → GND','passive']]},
+          {label:'HALL_BLDC 信号链路（Pin7 → GPB5）', nodes:[['J_HALL Pin7 黑线','connector'],['R_SER5 1k','passive'],['HALL_BLDC_N 节点','ctrl'],['MCP GPB5','active']]},
+          {label:'HALL_BLDC 上拉与滤波（在 HALL_BLDC_N 节点上）', nodes:[['3V3','power'],['R_PU5 10k','passive'],['HALL_BLDC_N 节点','ctrl'],['C_F5 100nF → GND','passive']]},
+          {label:'传感器公共供电（Pin1 + Pin8）', nodes:[['24V 母线','power'],['J_HALL Pin1 棕线×6 并接','connector'],['6个 NJK 传感器内部','connector'],['蓝线×6 并接 → Pin8','connector'],['GND','power']]},
+          {label:'聚合中断（所有 6 路共用）', nodes:[['MCP GPB0～5 边沿触发','active'],['MCP INTB 开漏低有效','active'],['10k 上拉到 3V3','passive'],['GPIO13','ctrl']]}
+        ],
+        bom: [
+          ['R_SER×6','1k','通用厚膜','0603','输入限流/隔离：串在黑线与HALL_x_N节点之间，靠近主板连接器内侧；NJK黑线是长线，1k防止接线错误或电机干扰尖峰直接冲击MCP输入脚'],
+          ['R_PU×6','10k','通用厚膜','0603','NPN开集电极上拉：从3V3接到HALL_x_N节点，靠近MCP/连接器；NJK黑线只负责拉低，10k负责在无磁铁时把信号拉到3.3V高电平；禁止上拉到24V，会烧MCP'],
+          ['C_F×6','100nF X7R','≥10V耐压','0603','低通滤波：从HALL_x_N节点到GND，靠近MCP输入脚；滤掉长线拾取的电机PWM/继电器干扰和机械抖动；若磁铁运动太慢导致响应延迟可减小或DNP'],
+          ['J_HALL','PH2.0-8P 锁扣座','JST-PH兼容','THT/卧贴','六路合一：Pin1=+24V公共，Pin2～7=六路黑线信号，Pin8=GND公共。面板侧接线步骤：①6根棕线拧成一股压端子→Pin1；②6根蓝线拧成一股压端子→Pin8；③0°黑线→Pin2，45°→Pin3，90°→Pin4，180°→Pin5，270°→Pin6，BLDC→Pin7。每根黑线单独压针脚，不可并接']
+        ],
+        notes: [
+          {text:'HALL_x_N 信号只允许上拉到 3.3V，禁止上拉到 24V；24V 会直接烧毁 MCP23017 输入脚。',critical:true},
+          'NJK-5001C 是 NPN 常开型：无磁铁时内部三极管截止，黑线悬空（高阻）；磁铁靠近时内部三极管导通，黑线被拉到 GND（蓝线电位）。因此必须外加 10k 上拉才能得到确定的高电平。',
+          '六路霍尔的接线结构完全相同，只是分配到不同的 MCP 引脚（GPB0～GPB5）和不同的物理位置（0°/45°/90°/180°/270°/BLDC寻零）。',
+          '六路霍尔共用一个 PH2.0-8Pin 连接器（J_HALL）：Pin1=+24V 公共供电，Pin2～Pin7=六路黑线信号（0°/45°/90°/180°/270°/BLDC），Pin8=GND 公共地。面板侧把六根棕线并接后走一根粗线到 Pin1，六根蓝线并接后走一根到 Pin8，黑线各自独立对应 Pin2～Pin7。',
+          '实际接线分三步：① 把 6 个传感器的棕线全部拧在一起，压一个端子或焊一根粗引线，接到 J_HALL Pin1（+24V）；② 把 6 个传感器的蓝线全部拧在一起，同样压端子或焊引线，接到 J_HALL Pin8（GND）；③ 6 根黑线各自独立，分别接到 Pin2～Pin7，丝印或标签标清哪个位置接哪个 Pin。',
+          '接线示意：6 个 NJK 各出棕/黑/蓝 3 根线，共 18 根线。棕×6 并接成 1 根去 Pin1，蓝×6 并接成 1 根去 Pin8，黑×6 各走各的去 Pin2～7。最终进入座子的只有 8 根线（1+6+1）。',
+          '面板侧并线方式推荐：用螺钉端子排 / Wago 快接 / 焊接绞合均可；如果线长且靠近电机，绞合段套热缩管并固定，避免松散线段变成天线拾取干扰。',
+          '100nF 滤波电容靠近 MCP 引脚侧，1k 串联电阻靠近连接器内侧，10k 上拉电阻在两者之间的 HALL_x_N 节点附近。',
+          '长线输入在连接器附近可预留小型 TVS/ESD 器件焊盘，防止电机启动时感应尖峰损坏 MCP。',
+          '软件读到 LOW = 检测到磁铁（目标到位）；HIGH = 无磁铁（目标未到）。MCP 中断配置为边沿触发，INTB 聚合到 GPIO13 后由主任务读取 GPB0～GPB5 判断具体哪路触发。'
+        ]
+      },
+      gesture: {
+        title: 'PAJ7620U2 手势模块与 MCP 中断',
+        summary: 'PAJ7620U2 是 I²C 手势识别模块，能识别上/下/左/右/前/后/顺/逆共 8 种手势。它与 MCP23017 共享 GPIO6/7 的 I²C 总线，模块 INT 引脚在检测到手势时输出低电平脉冲，经 100Ω 串联保护和 10k 上拉后进入 MCP GPB6，最终由 INTB 聚合中断通知 ESP32 去读手势结果。',
+        pins: ['GPIO6 SDA（共享 I²C）', 'GPIO7 SCL（共享 I²C）', 'GPB6 GESTURE_INT_N（中断）'],
+        sources: '接口设计.txt：PAJ7620U2；当前最终分配将 INT 迁至 GPB6。',
+        connectors: [
+          {name:'J_GESTURE（主板对外，PH2.0-5P）', part:'PH2.0-5P 锁扣座', pins:[
+            ['1','3V3','模块供电 3.3V；PAJ7620U2 工作电压 2.8～3.3V，不接 5V','power'],
+            ['2','I2C_SCL','SCL 时钟线；从主板 I²C 总线经 33Ω 支路引来，与 MCP23017 共享','bidir'],
+            ['3','I2C_SDA','SDA 数据线；从主板 I²C 总线经 33Ω 支路引来，与 MCP23017 共享','bidir'],
+            ['4','GESTURE_INT_RAW','模块 INT 原始输入线；接 PAJ7620 INT 脚，进板后经100Ω到 GESTURE_INT_N','in'],
+            ['5','GND','模块供电地/信号回流，接主板 GND','power']
+          ]}
+        ],
+        rows: [
+          {label:'I²C SCL 支路（Pin2）', nodes:[['GPIO7 I2C_SCL 主总线','ctrl'],['R_SCL 33Ω 靠近接口','passive'],['J_GESTURE Pin2 SCL','connector'],['PAJ7620U2 SCL 脚','active']]},
+          {label:'I²C SDA 支路（Pin3）', nodes:[['GPIO6 I2C_SDA 主总线','ctrl'],['R_SDA 33Ω 靠近接口','passive'],['J_GESTURE Pin3 SDA','connector'],['PAJ7620U2 SDA 脚','active']]},
+          {label:'I²C 总线上拉（主板上已有一组）', nodes:[['3V3','power'],['主板 R_PU 4.7k ×2（仅一组贴装）','passive'],['I2C_SCL / I2C_SDA','ctrl'],['MCP23017 + PAJ7620 + SHT30 共享','active']]},
+          {label:'INT 原始线（连接器侧）', nodes:[['PAJ7620 INT 脚','active'],['模块排线','connector'],['J_GESTURE Pin4','connector'],['GESTURE_INT_RAW','ctrl']]},
+          {label:'INT 保护与输入节点', nodes:[['GESTURE_INT_RAW','ctrl'],['R_INT_SER 100Ω 靠近连接器/MCP','passive'],['GESTURE_INT_N 节点','ctrl'],['MCP GPB6 输入','active']]},
+          {label:'INT 上拉（低有效）', nodes:[['3V3','power'],['R_INT_PU 10k','passive'],['GESTURE_INT_N 节点','ctrl'],['无手势=HIGH / 有手势=LOW','warn']]},
+          {label:'聚合中断（GPB6 → ESP32）', nodes:[['MCP GPB6 边沿触发','active'],['MCP INTB 开漏低有效','active'],['10k 上拉到 3V3','passive'],['GPIO13','ctrl']]},
+          {label:'模块供电（Pin1 + Pin5）', nodes:[['3V3','power'],['J_GESTURE Pin1','connector'],['PAJ7620U2 内部','connector'],['J_GESTURE Pin5','connector'],['GND','power']]},
+          {label:'供电去耦（在主板连接器附近）', nodes:[['3V3','power'],['C_BYP 100nF 高频旁路','passive'],['C_BULK 4.7µF 储能','passive'],['GND','power']]}
+        ],
+        bom: [
+          ['R_SCL / R_SDA','33Ω ×2','通用厚膜','0603','I²C 支路串联阻尼：串在主板总线与 J_GESTURE Pin2/Pin3 之间，靠近主板连接器内侧；抑制模块排线/连接器带来的振铃和反射，不影响 I²C 信号电平'],
+          ['R_INT_SER','100Ω','通用厚膜','0603','中断信号串联保护：串在 GESTURE_INT_RAW 与 GESTURE_INT_N 之间，靠近 J_GESTURE 连接器内侧或MCP输入侧；保护 MCP GPB6 免受面板长线 ESD/尖峰冲击'],
+          ['R_INT_PU','10k','通用厚膜','0603','中断信号上拉：3V3→10k→GESTURE_INT_N，靠近 MCP GPB6；PAJ INT 脚是开漏/低有效输出，只负责拉低，靠这颗 10k 恢复高电平'],
+          ['R_PU_I2C','4.7k ×2 DNP','通用厚膜','0603','备用 I²C 上拉：靠近 J_GESTURE 支路；只有当模块自身无上拉且主板总线上拉不足时才贴，通常不贴'],
+          ['C_BYP','100nF X7R','≥10V','0603','高频旁路：靠近 J_GESTURE Pin1/VCC，吸掉模块内部数字电路的高频开关噪声'],
+          ['C_BULK','4.7µF X7R','≥10V','0805','低频储能：靠近 J_GESTURE Pin1/VCC，补偿模块工作时的电流波动，与 C_BYP 并联使用'],
+          ['J_GESTURE','PH2.0-5P 锁扣座','JST-PH兼容','THT/卧贴','丝印标注：Pin1=3V3，Pin2=SCL，Pin3=SDA，Pin4=INT，Pin5=GND']
+        ],
+        notes: [
+          {text:'PAJ7620U2 工作电压 2.8～3.3V，Pin1 只接 3.3V，禁止接 5V，否则烧模块。',critical:true},
+          'PAJ7620U2 模块引脚顺序（常见）：VCC / SCL / SDA / INT / GND，对应 J_GESTURE Pin1～Pin5。不同卖家可能有差异，接线前用万用表或核对模块背面丝印确认。',
+          'PAJ7620U2 的 INT 脚按低有效处理：无手势时为高电平/高阻，由主板10k上拉保持 HIGH；检测到手势时拉低到 GND，MCP GPB6 读到 LOW。',
+          'RAW 与 N 的区别：GESTURE_INT_RAW 是连接器 Pin4 刚进板的原始线；GESTURE_INT_N 是经过 100Ω 保护电阻后的主板内部低有效节点，并在这个节点用 10k 上拉到3V3后接 MCP GPB6。',
+          '中断信号完整接线：PAJ INT 脚 → 模块排线 → J_GESTURE Pin4 → GESTURE_INT_RAW → R_INT_SER 100Ω → GESTURE_INT_N；同时 3V3 → R_INT_PU 10k → GESTURE_INT_N；GESTURE_INT_N → MCP GPB6。',
+          'I²C 总线上同时挂了 MCP23017（地址 0x20）、PAJ7620U2（常见地址 0x73）和 SHT30 温湿度探头（默认 0x44 / 可选 0x45），设备通过地址区分。33Ω 串在主板到外接模块的分支上，主总线上的上拉电阻只保留靠近主控/MCP 的一组。',
+          '软件流程：GPIO13 收到下降沿 → ISR 置标志（不在 ISR 内做 I²C）→ 主任务检测到标志 → 读 MCP GPIO/INTCAP 确认 GPB6 触发 → 通过 I²C 读 PAJ7620 手势寄存器（0x43）获取手势码。',
+          'PAJ7620U2 上电后需要约 1ms 初始化，软件在 init 阶段完成 I²C 配置寄存器写入后再开启 GPB6 中断。'
+        ]
+      },
+      buttons: {
+        title: '三个无灯自复按钮',
+        summary: 'BTN1/2/3 使用 C/NO 触点，共用 GND；通过100Ω与外部10k上拉分别进入 MCP GPA4/GPA5/GPA6，低电平有效。',
+        pins: ['GPA4 BTN1', 'GPA5 BTN2', 'GPA6 BTN3'],
+        sources: '接口设计.txt：3个无灯自复按钮；当前最终分配改为GPA4～6。',
+        connectors: [{name:'J_BUTTONS', part:'PH2.0-4P', pins:[['1','BTN1_N','按钮1 NO，进入 MCP GPA4','in'],['2','BTN2_N','按钮2 NO，进入 MCP GPA5','in'],['3','BTN3_N','按钮3 NO，进入 MCP GPA6','in'],['4','GND','三个按钮 C 公共端']]}],
+        rows: [
+          {label:'BTN1 信号链路（GPA4）', nodes:[['3V3','power'],['R_PU1 10k','passive'],['BTN1_N 节点','ctrl'],['R_SER1 100Ω 串联到MCP','passive'],['MCP GPA4','active']]},
+          {label:'BTN1 按下回路', nodes:[['BTN1_N 节点','ctrl'],['按钮 NO 触点','connector'],['按钮 C 公共端','connector'],['GND','power']]},
+          {label:'BTN2 信号链路（GPA5）', nodes:[['3V3','power'],['R_PU2 10k','passive'],['BTN2_N 节点','ctrl'],['R_SER2 100Ω 串联到MCP','passive'],['MCP GPA5','active']]},
+          {label:'BTN2 按下回路', nodes:[['BTN2_N 节点','ctrl'],['按钮 NO 触点','connector'],['按钮 C 公共端','connector'],['GND','power']]},
+          {label:'BTN3 信号链路（GPA6）', nodes:[['3V3','power'],['R_PU3 10k','passive'],['BTN3_N 节点','ctrl'],['R_SER3 100Ω 串联到MCP','passive'],['MCP GPA6','active']]},
+          {label:'BTN3 按下回路', nodes:[['BTN3_N 节点','ctrl'],['按钮 NO 触点','connector'],['按钮 C 公共端','connector'],['GND','power']]},
+          {label:'软件处理', nodes:[['读到 LOW = 按下','ctrl'],['20～50ms 消抖','passive'],['短按/长按事件','active']]}
+        ],
+        bom: [
+          ['R_PU×3','10k','通用厚膜','0603','明确上拉：靠近MCP输入节点，3V3→10k→BTNx_N；按钮松开时被拉到高电平，按下时被拉到GND，MCP读到低电平'],
+          ['R_SER×3','100Ω','通用厚膜','0603','输入保护/ESD限流：串在BTNx_N节点与MCP输入脚之间，靠近MCP侧；按钮线到面板时防静电和误接冲击MCP'],
+          ['SW×3','金属自复按钮 12/16/19/22mm','无灯·自复（按通松断）','面板安装','引脚从上到下：NC、NO、C。NC 悬空不接；NO（中间脚）接 BTNx_N 信号线；C（最下脚）接 GND。按下时 NO-C 闭合信号接地，松手 NO-C 断开由 10k 上拉'],
+          ['J_BTN','PH2.0-4P','JST-PH兼容','THT/卧贴','Pin1～3 分别对应 BTN1/2/3 的 NO 信号线，Pin4 为三个按钮 C 脚的公共 GND']
+        ],
+        notes: [
+          'GPA4～6 为当前最终分配；旧文档中的 GPA0～2 已被三路阀门/UV占用。',
+          '接线顺序：3V3 → R_PU 10k（上拉）→ BTNx_N 节点 → R_SER 100Ω（串联）→ MCP GPA4/5/6；同时 BTNx_N 节点 → 按钮 NO → 按钮 C → GND。10k和100Ω的公共连接点就是 BTNx_N 节点。',
+          '物理接法举例（BTN1）：MCP GPA4 引脚经 100Ω 走到一个焊盘（BTN1_N 节点），从这个焊盘分两路：一路经 10k 上拉到 3V3，另一路接到按钮 NO 脚（中间脚）；按钮 C 脚（最下脚）接 GND；按钮 NC 脚（最上脚）悬空不接。',
+          '三个按钮的 C 脚（最下脚）可在面板侧或主板侧并联为一条 GND 回线，通过 J_BTN Pin4 统一回到主板地。',
+          '按钮引脚从上到下依次为 NC、NO、C（实物标注或万用表确认）。自复位型按下时 NO-C 导通，松手自动断开，不需要软件控制自锁。',
+          '可同时开启 MCP 内部弱上拉（~100k）作为备份冗余，但外部 10k 应作为主上拉，确保复位时引脚状态确定。',
+          '按钮线为面板长线，在连接器附近可预留小型 ESD 器件焊盘。'
+        ]
+      },
+      heater: {
+        title: '220VAC / 400W PTC 加热器继电器控制',
+        summary: '整个电路分低压控制区和 220VAC 高压功率区。低压侧：MCP GPA7 输出经过 100Ω Gate 电阻控制 AO3400A，10k 下拉保证上电默认关闭；AO3400A 只负责拉低 5V 继电器线圈负端，不直接接触市电。继电器吸合后，常开触点 COM-NO 闭合，把 220VAC 火线送到 PTC 加热器。高压侧完整链路：AC_L → 慢断保险丝 → K_HEAT COM → K_HEAT NO → 贴近 PTC 的温度保险丝 → PTC 加热器 → AC_N。MOV 跨接 L-N 吸收市电浪涌；RC Snubber 并联在继电器触点两端抑制触点打火（默认 DNP）。高低压必须物理隔离、开槽、留足爬电距离。',
+        pins: ['GPA7 / HEATER_EN（MCP 输出）'],
+        sources: '接口设计.txt：220VAC/400W PTC 加热器。',
+        connectors: [
+          {name:'J_AC_IN（原理图放 2P 高压接线端子，不放墙插本体）', part:'KF28C-7.62-2P / 7.62mm 高压螺钉端子', pins:[
+            ['1','AC_N','市电零线（N）；端子上方/1脚统一放零线','power'],
+            ['2','AC_L','市电火线（L）；来自墙壁插座或整机电源入口，2脚统一放火线','power']
+          ]},
+          {name:'J_HEATER（PTC 加热器输出，高压端子 2P）', part:'KF28C-7.62-2P / 7.62mm 高压螺钉端子', pins:[
+            ['1','AC_N','PTC 零线；直接从 AC_N 引出到 PTC 一端（零线不经过继电器开关），1脚统一放零线','power'],
+            ['2','HEATER_SW_L','受控火线输出；继电器 NO 后输出到线束，线束中再串温度保险丝，最后到 PTC 另一端，2脚统一放火线/受控火线','power']
+          ]},
+          {name:'K_HEAT（HF115F/005-1HS3AF 继电器脚号框图）', part:'5V 线圈，1组常开触点；JLC符号脚号：1/2线圈，5/6一端触点，7/8另一端触点', pins:[
+            ['Pin2','RELAY_COIL_5V','线圈一端，接 +5V；继电器线圈本身无极性，但为了续流二极管方向固定，规定 Pin2 为 +5V','power'],
+            ['Pin1','RELAY_COIL_NEG','线圈另一端，接 Q_HEAT Drain；Q_HEAT 导通时 Pin1 被拉到 GND，线圈吸合','output'],
+            ['Pin5 + Pin6','AC_L_FUSED / COM','常开触点公共端，同组两个脚在 PCB 上短接并并联使用；接 F_HEAT 后的火线','power'],
+            ['Pin7 + Pin8','HEATER_SW_L / NO','常开触点输出端，同组两个脚在 PCB 上短接并并联使用；继电器吸合后与 Pin5/6 接通，送火线到 PTC','power'],
+            ['NC','无常闭触点','1HS3AF 是常开型功率继电器，本项目不使用常闭触点；若库符号出现多余 NC，不接','nc']
+          ]}
+        ],
+        rows: [
+          {label:'控制线 1：MCP 到 MOS Gate', nodes:[['MCP23017 GPA7 / HEATER_EN','ctrl'],['R_G 100Ω','passive'],['Q_HEAT AO3400A Gate','active']]},
+          {label:'控制线 2：MOS 默认关闭', nodes:[['Q_HEAT Gate','active'],['R_PD 10k','passive'],['GND','power']]},
+          {label:'线圈线 1：5V 到继电器线圈正端', nodes:[['+5V','power'],['K1 HF115F Pin2','active']]},
+          {label:'线圈线 2：继电器线圈负端到 MOS', nodes:[['K1 HF115F Pin1','active'],['Q_HEAT Drain','active']]},
+          {label:'线圈线 3：MOS 到地', nodes:[['Q_HEAT Source','active'],['GND','power']]},
+          {label:'续流二极管：并在线圈两端', nodes:[['D_COIL SS34 阳极','passive'],['K1 Pin1 / Q_HEAT Drain','connector'],['D_COIL SS34 阴极','passive'],['K1 Pin2 / +5V','power']]},
+          {label:'市电输入线序：AC 入口端子', nodes:[['J_AC_IN Pin1','connector'],['AC_N 零线','power'],['J_AC_IN Pin2','connector'],['AC_L 火线','power']]},
+          {label:'火线保护：AC_L 到保险丝', nodes:[['J_AC_IN Pin2 / AC_L','connector'],['F_HEAT 保险丝一端','passive'],['F_HEAT 保险丝另一端','passive'],['AC_L_FUSED','power']]},
+          {label:'继电器输入触点：保险丝后火线到 COM', nodes:[['AC_L_FUSED','power'],['K1 Pin5 + Pin6 短接','active'],['作为 COM 输入','active']]},
+          {label:'继电器输出触点：NO 到加热器火线', nodes:[['K1 Pin7 + Pin8 短接','active'],['HEATER_SW_L','power'],['J_HEATER Pin2','connector']]},
+          {label:'加热器零线：AC_N 直通', nodes:[['J_AC_IN Pin1 / AC_N','connector'],['AC_N 网络','power'],['J_HEATER Pin1','connector']]},
+          {label:'外部加热线束：PTC 与温度保险丝', nodes:[['J_HEATER Pin2 / HEATER_SW_L','connector'],['TF1 温度保险丝（贴近PTC，线束内串联）','passive'],['PTC 加热器一端','connector'],['PTC 另一端','connector'],['J_HEATER Pin1 / AC_N','connector']]},
+          {label:'MOV 浪涌吸收：跨在 L-N', nodes:[['MOV1 一脚','passive'],['AC_L_FUSED 或 AC_L','power'],['MOV1 另一脚','passive'],['AC_N','power']]},
+          {label:'RC Snubber（默认 DNP）：串联后跨继电器触点', nodes:[['K1 Pin5/6 COM / AC_L_FUSED','active'],['R_SNUB 100Ω 0.5W DNP','passive'],['SNUB_MID 中间节点','ctrl'],['C_SNUB 100nF X2 275/310VAC DNP','passive'],['K1 Pin7/8 NO / HEATER_SW_L','active']]}
+        ],
+        bom: [
+          ['Q_HEAT','30V/5.7A N-MOS 逻辑电平','AO3400A','SOT-23','低边驱动：Gate 接 100Ω 到 GPA7，Source 接 GND，Drain 接继电器线圈负极；只驱动 5V 低压线圈，不直接碰 220VAC；靠近继电器线圈低压侧布局'],
+          ['R_G','100Ω','通用厚膜','0603','Gate 串联阻尼：串在 GPA7 与 AO3400A Gate 之间，靠近 Gate 脚；抑制振铃并保护 MCP 输出级'],
+          ['R_PD','10k','通用厚膜','0603','Gate 到 GND 下拉：靠近 AO3400A Gate 脚；上电/MCU 复位期间确保 MOS 关断、继电器不吸合、PTC 不通电'],
+          ['K_HEAT','5V 线圈功率继电器，触点 ≥16A/250VAC','HF115F/005-1HS3AF','THT；使用与 HF115F/005-1HS3AF 匹配的嘉立创封装，贴片前核对脚号','脚号按当前 JLC 符号：Pin1/2 是线圈，Pin2 接 +5V，Pin1 接 Q_HEAT Drain；Pin5+Pin6 短接作为 COM 接保险丝后的火线；Pin7+Pin8 短接作为 NO 接 HEATER_SW_L。5/6 与 7/8 是功率触点双脚，建议同组并联走宽线。'],
+          ['D_COIL','3A/40V 肖特基续流，复用蠕动泵二极管','SS34','SMA (DO-214AC)','继电器线圈续流：阳极接 K1 Pin1 / MOS Drain，阴极接 K1 Pin2 / +5V；靠近继电器线圈和 MOS Drain 放。SS34 对 5V 继电器线圈余量很大，可与蠕动泵 D_PUMP 共用同一 BOM。'],
+          ['C_RELAY','100nF X7R + 47µF/10V','通用 MLCC / 电解或钽电容','0603 + 6.3mm/0805','继电器线圈 5V 去耦：100nF 靠近 K1 Pin2/+5V，47µF 靠近继电器和 5V 支路入口；继电器吸合瞬间会拉低 5V，这两个电容减少对 ESP32/MCP/I2C 的冲击。'],
+          ['F_HEAT','慢断玻璃管保险丝 T3.15A/250VAC','保险丝：SGT520-3.15A / T3.15AL250V / SET赛尔特；座子：PTF-77 / C717030 优先','保险丝本体 D5×L20mm；座子用 PTF-77 插件 P=22.5mm','过流保护：靠近 AC_L 入口串联。SGT520 是一次性玻璃管保险丝本体，PTF-77 是 5×20mm 配套保险丝座。优先用 PTF-77 这种成套座，机械固定和防误触更好；不建议新手在 220VAC 加热支路用裸保险丝夹。400W/220VAC 额定约 1.8A，PTC 冷态浪涌可能高于额定，先按 T3.15A 慢断预留，实测若误断再复核。'],
+          ['TF1','温度保险丝 / 热熔断器','RY 系列，动作温度待 PTC 实测后确定','轴向线束件 / 耐温套管固定，不建议远离 PTC 放在 PCB 上','超温保护：必须贴近 PTC 或加热结构串联在火线中；它检测的是加热器温度，不是 PCB 温度。建议在线束里串接并用耐温套管固定到 PTC 附近。'],
+          ['MOV1','压敏电阻 14D471K','14D471K / 标称 470V','THT 圆片，常见脚距 7.5mm','市电浪涌钳位：跨接在 AC_L 与 AC_N 之间，靠近 AC 入口端子和保险丝后侧；市电尖峰超过钳位电压时 MOV 吸收能量，保护继电器触点和 PTC。'],
+          ['R_SNUB','100Ω，≥0.5W，阻燃电阻，默认 DNP','插件金属膜/阻燃电阻；淘宝搜 100欧 1/2W 阻燃电阻','THT 插件优先','RC Snubber 串联电阻：一端接 K1 Pin5/6 COM / AC_L_FUSED，另一端接 SNUB_MID；默认不贴，只预留焊盘。不要用小功率 0603 普通电阻。'],
+          ['C_SNUB','100nF / 0.1µF，X2 安规电容，275VAC 或 310VAC，默认 DNP','X2 安规电容；淘宝搜 X2安规电容104 275VAC / 0.1uF 310VAC','THT 插件，按所选 X2 电容脚距','RC Snubber 串联电容：一端接 SNUB_MID，另一端接 K1 Pin7/8 NO / HEATER_SW_L；默认不贴，只预留焊盘。必须是 X2 安规电容，不能用普通 104 陶瓷电容。'],
+          ['J_AC_IN / J_HEATER','220VAC 高压接线端子 2P','KF28C-7.62-2P','THT；7.62mm 螺钉端子','在原理图里，外壳上的 C14 电源入口模块不要画成焊在 PCB 上的插头，而是画成 J_AC_IN 两针端子。线序统一：Pin1=AC_N，Pin2=AC_L；J_HEATER 同样使用 KF28C-7.62-2P：Pin1=AC_N，Pin2=HEATER_SW_L。7.62mm 比 5.08mm 更适合 220VAC，间距更宽，爬电距离更舒服；禁止使用 PH2.0/XH2.54 承载 220VAC。']
+        ],
+        notes: [
+          {text:'220VAC 区域具有致命危险！高低压必须物理分区：低压控制区（MOS、继电器线圈、续流二极管）与高压功率区（保险丝、继电器触点、温度保险丝、PTC、MOV）之间必须有明确的 PCB 开槽/爬电距离隔离，不能用 PH2.0 低压端子承载高压。',critical:true},
+          {text:'只切火线 L，禁止只切零线。继电器触点串联在火线回路中：AC_L → 保险丝 → COM → NO → 温度保险丝 → PTC → AC_N。零线从 AC_N 直接引到 PTC 不经过任何开关。',critical:true},
+          '原理图放置建议：市电进板放 J_AC_IN 两针高压端子符号（CONN_01x02 / Screw Terminal 2P），不要放“板载墙插”符号；外壳上的 C14 插座、开关、压线扣属于机电装配，接到 J_AC_IN 即可。',
+          {text:'HF115F/005-1HS3AF 当前符号脚号：Pin1/2 是 5V 线圈；Pin5/6 是触点一端；Pin7/8 是触点另一端。Pin5 与 Pin6 要在 PCB 上同网络短接，Pin7 与 Pin8 也同网络短接，用来分担电流。',critical:true},
+          {text:'画继电器原理图时不要把“线圈”和“触点”画混：Pin1/2 属于 5V 低压线圈；Pin5/6/7/8 属于 220VAC 触点。线圈脚接 MOS 驱动，触点脚串火线。两组脚之间靠继电器内部机械隔离，不允许在 PCB 上用铜皮跨区。',critical:true},
+          'AO3400A 只驱动 5V 继电器线圈（约 0.05～0.15A），不触碰 220VAC；高压侧全部由继电器触点隔离。MOS 和继电器线圈是低压部分，继电器触点以后是高压部分。',
+          '继电器线圈驱动完整链路：GPA7=HIGH → 100Ω → AO3400A Gate → MOS 导通 → 5V 电流流过线圈 → 继电器吸合 → COM-NO 闭合 → 220VAC 接通 → PTC 加热。',
+          '继电器线圈关断续流：GPA7=LOW → R_PD=10k 拉 Gate 到 GND → MOS 关断 → 线圈电流不能突变 → Drain 产生反向尖峰 → SS34 立即导通续流 → 钳位 Drain 电压保护 MOS。',
+          '温度保险丝选型：必须根据 PTC 实际允许温度和加热结构确定动作温度，不能随意选型；如果 PTC 表面允许最高 150°C，可先评估 142°C 或 150°C 型号并留裕量，但最终要用实测温升决定。',
+          {text:'继电器触点额定必须 ≥16A/250VAC（400W/220VAC ≈ 1.8A，但冷态浪涌可达 5～10 倍，且要考虑触点寿命降额）；推荐 HF115F/005-1HS3 或同级 THT 大电流继电器。',critical:false},
+          'MOV 吸收浪涌后自身会发热老化，长期使用后漏电流增大；在 AC 入口处加保险丝 F_HEAT 也可以在 MOV 短路失效时切断电路。',
+          {text:'220VAC 加热支路不建议用自恢复保险丝 PPTC 替代 F_HEAT：PPTC 断开后仍有漏电流，动作/恢复受温度影响大，交流高压与分断能力也不如认证玻璃管熔断器明确。加热器故障属于高风险故障，应该让一次性保险丝熔断并要求人工检修。',critical:true},
+          {text:'RC Snubber 原理图画法：K1 Pin5/6 COM → R_SNUB 100Ω DNP → SNUB_MID → C_SNUB 100nF X2 DNP → K1 Pin7/8 NO。R 和 C 是串联，不是分别并联；整个串联支路再跨在继电器触点两端。',critical:false},
+          {text:'DNP 标法：R_SNUB 和 C_SNUB 原理图照常放，Value 写 100Ω DNP / 100nF X2 DNP，BOM/贴片属性设为不贴装。默认不焊，只有实测触点打火、ESP32重启、I²C异常或音频爆音时再装。',critical:false},
+          {text:'RC Snubber 中的电容必须使用 X2 级安规电容（不能用普通瓷片电容），电阻用 ≥0.5W 阻燃电阻；两颗属于 220VAC 高压区，靠近继电器触点放，远离 ESP32/MCP/低压信号。',critical:false},
+          '软件初始化：先把 OLAT GPA7 位写 0，再把 IODIR GPA7 写 0 配置为输出；上电后 R_PD=10k 确保继电器不吸合，PTC 默认断电，确认安全后再开启。'
+        ]
+      },
+      uv: {
+        title: 'UV 紫外灯带低边开关',
+        summary: 'MCP GPA2 控制紫外灯开关。灯带若为24V，使用60V逻辑NMOS；若确定为12V，才可使用AO3400A。UV为非感性负载，不需要续流二极管。',
+        pins: ['GPA2 / GPIO_UV_EN'],
+        sources: '接口设计.txt：UV紫外灯带；当前最终分配迁到GPA2。',
+        connectors: [{name:'J_UV_LED', part:'PH2.0-2P', pins:[['1','UV_VCC','按灯带额定12V/24V'],['2','UV_LED_NEG','MOS Drain 低边开关输出','out']]}],
+        rows: [
+          {label:'低边开关', nodes:[['MCP GPA2','ctrl'],['100Ω + Gate 10k下拉','passive'],['60V NMOS（24V灯带）','active'],['UV_LED_NEG','connector']]},
+          {label:'灯带回路', nodes:[['UV_VCC','power'],['UV灯带 5～6W','connector'],['MOS Drain→Source','active'],['GND','power']]},
+          {label:'接口去耦', nodes:[['UV_VCC','power'],['47～100µF +100nF','passive'],['GND','power']]}
+        ],
+        bom: [['Q_UV','60V N-MOS','DMN6075S-7 或等效','SOT-23','低边开关：靠近UV接口/功率回流区；兼容24V灯带'],['R_G/R_PD','100Ω / 10k','通用厚膜','0603','Gate阻尼+默认关闭：靠近MOS Gate，串阻抑制振铃，下拉防上电误亮'],['C_UV','100µF/35V +100nF','电解/X7R','THT + 0603','灯带支路储能/去耦：靠近UV接口，缓冲开关电流和线缆尖峰，按24V耐压'],['J_UV','2P锁扣座','PH2.0-2P','THT/卧贴','按灯带电流']],
+        notes: ['紫外灯需要机械遮光、门盖联锁和软件超时；单靠GPIO开关不构成人身安全保护。', '24V版本不要使用30V AO3400A。']
+      },
+      pump: {
+        title: '5V 洗衣液蠕动泵低边驱动',
+        summary: '蠕动泵是 5V 两线直流电机，红线接 +5V，黑线接低边开关（AO3400A MOSFET 的 Drain）。MCP GPB7 输出高电平时 MOS 导通，泵黑线被拉到 GND 形成回路，泵转动；GPB7 输出低电平时 MOS 关断，泵停止。AO3400A 是 30V/5.7A 的逻辑电平 N-MOS，3.3V 栅压下完全导通，完全满足 5V/0.3A 蠕动泵需求。电机是感性负载，关断时线圈会产生反向电压尖峰，所以 Drain 和 +5V 之间并联 SS34 肖特基续流二极管吸收尖峰，保护 MOS 不被击穿。',
+        pins: ['GPB7 / PUMP_CTRL（MCP 输出）'],
+        sources: '接口设计.txt：5V 洗衣液蠕动泵；当前最终分配为 GPB7。',
+        connectors: [
+          {name:'J_PUMP（主板对外，PH2.0-2P）', part:'PH2.0-2P 锁扣座', pins:[
+            ['1','+5V_MOTOR','泵红线接入；接主板 5V 功率母线（与主控 5V 共地但走粗线）','power'],
+            ['2','PUMP_NEG','泵黑线接入；接 AO3400A MOSFET Drain，MOS 导通时此脚拉到 GND','out']
+          ]}
+        ],
+        rows: [
+          {label:'控制信号链路（GPB7 → MOS Gate）', nodes:[['MCP GPB7 输出高/低','ctrl'],['R_G 100Ω 串联到 Gate','passive'],['AO3400A Gate 脚','active']]},
+          {label:'Gate 默认下拉（上电保护）', nodes:[['AO3400A Gate 脚','active'],['R_PD 10k','passive'],['GND','power']]},
+          {label:'电机功率回路（泵转动时）', nodes:[['+5V 母线','power'],['+5V_MOTOR 节点','power'],['J_PUMP Pin1 泵红线','connector'],['蠕动泵内部电机','connector'],['J_PUMP Pin2 泵黑线','connector'],['PUMP_NEG 节点','ctrl'],['AO3400A Drain → Source','active'],['GND','power']]},
+          {label:'续流二极管（MOS 关断时吸收尖峰）', nodes:[['PUMP_NEG / Drain','connector'],['SS34 阳极（负极侧）','passive'],['SS34 阴极 → +5V_MOTOR','power'],['关断瞬间线圈电流经 SS34 续流','passive']]},
+          {label:'电源去耦（在 J_PUMP 附近）', nodes:[['+5V_MOTOR','power'],['C_BULK 470µF/10V 低 ESR','passive'],['C_HF 100nF','passive'],['GND','power']]},
+          {label:'电刷噪声抑制（DNP，默认不贴）', nodes:[['+5V_MOTOR','power'],['C_BRUSH 100nF DNP','passive'],['PUMP_NEG / Drain','connector']]}
+        ],
+        bom: [
+          ['Q_PUMP','30V/5.7A N-MOS 逻辑电平','AO3400A','SOT-23','低边开关：Gate 接 100Ω 到 GPB7，Source 接 GND，Drain 接泵黑线。3.3V 栅压下 Rds(on) ≈ 28mΩ，导通压降可忽略；靠近 J_PUMP 功率回流区布局，Drain 走线加宽'],
+          ['R_G','100Ω','通用厚膜','0603','Gate 串联阻尼：串在 GPB7 与 AO3400A Gate 之间，靠近 Gate 脚；抑制 Gate 振铃，限制 MCU 瞬态充放电电流，保护 GPB7 输出级'],
+          ['R_PD','10k','通用厚膜','0603','Gate 到 GND 下拉：靠近 AO3400A Gate 脚；上电/MCU 复位期间 GPB7 高阻，这颗电阻把 Gate 拉到 GND，确保 MOS 关断、泵不会意外转动'],
+          ['D_PUMP','3A/40V 肖特基续流','SS34','SMA (DO-214AC)','电机续流：阳极接 Drain/PUMP_NEG，阴极接 +5V_MOTOR；靠近 J_PUMP/MOS Drain，关断瞬间电机线圈电流经此二极管回流，钳位 Drain 电压不超过 +5V+0.5V，保护 MOS'],
+          ['C_BULK','470µF/10V 低 ESR 电解','按尺寸选型','THT D8×L12 或 SMD 10×10','大容量储能：靠近 J_PUMP Pin1，泵启动瞬间电流浪涌（堵转时可达 1A+）由电容补给，防止 5V 母线瞬间塌陷影响其他设备'],
+          ['C_HF','100nF X7R','≥10V','0603','高频旁路：与 C_BULK 并联，靠近 J_PUMP Pin1，吸收电刷换向产生的高频尖峰噪声'],
+          ['C_BRUSH','100nF DNP','X7R 或薄膜','0603','电刷跨接抑制：直接并在泵两端（+5V_MOTOR 到 PUMP_NEG），若实测泵噪声大影响 ADC/I²S 再贴，默认不贴以免影响泵启动特性'],
+          ['J_PUMP','PH2.0-2P 锁扣座','JST-PH兼容','THT/卧贴','Pin1=+5V（红线），Pin2=PUMP_NEG（黑线）；按泵启动电流留端子和走线余量']
+        ],
+        notes: [
+          'AO3400A 引脚排列（SOT-23 面对丝印面，从左到右）：Pin1=Gate，Pin2=Source，Pin3=Drain。Source 必须接 GND，Drain 接泵黑线，Gate 经 100Ω 接 GPB7。',
+          {text:'AO3400A 耐压 30V，本电路只有 5V，裕量充足。但若电源误接 24V 到 +5V_MOTOR，MOS 会被击穿；PCB 丝印上明确标注「+5V ONLY」。',critical:false},
+          'MCP GPB7 按数据手册只能作输出（不能配置为输入），正适合本路泵控制，不需要读回状态。',
+          '初始化顺序：先把 OLAT GPB7 位写 0（确保低电平），再把 IODIR GPB7 位写 0（配置为输出）；上电时 R_PD=10k 已经把 Gate 拉到 GND，泵默认关闭。',
+          '泵的 ON/OFF 控制：GPB7=HIGH → Gate 被拉到 3.3V → MOS 导通 → 泵转动；GPB7=LOW → Gate 被 R_PD 拉到 GND → MOS 关断 → 泵停止。通过运行时间标定投放量。',
+          {text:'泵电流回流路径：泵黑线 → Drain → Source → GND → 5V 母线负极；这个回流不要经过 3V3 或 ADC 的地平面，避免泵电流噪声污染模拟和 I²C 信号。PCB 上功率 GND 和信号 GND 在电源入口处单点汇合。',critical:true},
+          'SS34 续流二极管方向：阳极（无横线端）接 PUMP_NEG/Drain，阴极（有横线端）接 +5V_MOTOR。接反会把 +5V 直接短路到 GND，通电即烧保险丝或二极管。',
+          '470µF 电容耐压必须 ≥ 10V（5V 工作），建议选 10V 或 16V 耐压；靠近 J_PUMP 布局，走线尽可能短粗。'
+        ]
+      }
+    };
+
+    const labelTypeMeta = {
+      power: {text:'电源标识', css:'power'},
+      in: {text:'[N] 输入', css:'in'},
+      out: {text:'[N] 输出', css:'out'},
+      bidir: {text:'[N] 双向', css:'bidir'},
+      nc: {text:'× NC', css:'nc'},
+      none: {text:'暂不放标签', css:'none'},
+      special: {text:'[N] 启动输入', css:'special'}
+    };
+
+    function labelKindMarkup(type) {
+      const item = labelTypeMeta[type] || labelTypeMeta.none;
+      return `<span class="label-kind label-${item.css}">${item.text}</span>`;
+    }
+
+    function pinMarkup(pin) {
+      const [gpio, name, meta, stateClass, state, designId, labelType = 'none'] = pin;
+      const conflict = stateClass === 'danger' ? ' conflict' : '';
+      const noUse = stateClass === 'reserve' ? ' no-use' : '';
+      const available = stateClass === 'free' ? ' available' : '';
+      const clickable = designId && interfaceDesigns[designId];
+      const action = clickable ? ` clickable" role="button" tabindex="0" data-design="${designId}" aria-label="查看 ${name} 接口设计` : '"';
+      return `<article class="pin${conflict}${noUse}${available}${action}>
+        <span class="gpio">${gpio}</span>
+        <div class="pin-main"><div class="pin-name">${name}</div><div class="pin-meta">${meta}${labelKindMarkup(labelType)}</div></div>
+        <span class="status ${stateClass}">${state}</span>
+      </article>`;
+    }
+
+    document.getElementById('leftPins').innerHTML = leftPins.map(pinMarkup).join('');
+    document.getElementById('rightPins').innerHTML = rightPins.map(pinMarkup).join('');
+    document.getElementById('mcpGrid').innerHTML = mcpPins.map(([port, func, net, kind, state, designId]) => {
+      const statusClass = kind === 'out' ? 'ok' : 'warn';
+      return `<article class="mcp-card ${kind} clickable" role="button" tabindex="0" data-design="${designId}" aria-label="查看 ${func} 接口设计"><div class="port">${port}</div><div class="func">${func}</div><div class="net">${net}</div>${labelKindMarkup(kind)}<span class="status ${statusClass}">${state}</span></article>`;
+    }).join('');
+
+    const escapeHtml = value => String(value).replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+
+    function circuitMarkup(rows) {
+      return rows.map(row => `<div class="circuit-row">
+        <div class="circuit-label">${escapeHtml(row.label)}</div>
+        <div class="circuit-flow">${row.nodes.map((node, index) => {
+          const [text, tone = ''] = node;
+          const arrow = index ? '<span class="circuit-arrow">→</span>' : '';
+          return `${arrow}<span class="circuit-node ${tone}">${escapeHtml(text)}</span>`;
+        }).join('')}</div>
+      </div>`).join('');
+    }
+
+    function connectorsMarkup(connectors) {
+      return connectors.map(connector => `<div class="connector-block">
+        <div class="connector-name">${escapeHtml(connector.name)} <span class="connector-part">· ${escapeHtml(connector.part)}</span></div>
+        <table class="data-table"><thead><tr><th>Pin</th><th>网络</th><th>说明</th></tr></thead><tbody>
+          ${connector.pins.map(pin => `<tr><td>${escapeHtml(pin[0])}</td><td><strong>${escapeHtml(pin[1])}</strong>${pin[3] ? labelKindMarkup(pin[3]) : ''}</td><td>${escapeHtml(pin[2])}</td></tr>`).join('')}
+        </tbody></table>
+      </div>`).join('');
+    }
+
+    function bomMarkup(bom) {
+      return `<table class="data-table bom-table"><thead><tr><th>位号</th><th>参数</th><th>型号</th><th>推荐封装</th><th>备注</th></tr></thead><tbody>
+        ${bom.map(row => `<tr>${row.map((cell, index) => `<td>${index === 2 ? `<strong>${escapeHtml(cell)}</strong>` : escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}
+      </tbody></table>`;
+    }
+
+    function notesMarkup(notes) {
+      return `<ul class="note-list">${notes.map(note => {
+        const item = typeof note === 'string' ? {text:note} : note;
+        return `<li class="${item.critical ? 'critical' : ''}">${escapeHtml(item.text)}</li>`;
+      }).join('')}</ul>`;
+    }
+
+    function renderDetail(designId) {
+      const design = interfaceDesigns[designId];
+      if (!design) return false;
+      document.getElementById('detailContent').innerHTML = `
+        <header class="detail-hero">
+          <div><div class="detail-kicker">INTERFACE REFERENCE / ${escapeHtml(designId.toUpperCase())}</div><h2>${escapeHtml(design.title)}</h2><div class="detail-summary">${escapeHtml(design.summary)}</div></div>
+          <div class="pin-chips">${design.pins.map(pin => `<span class="pin-chip">${escapeHtml(pin)}</span>`).join('')}</div>
+        </header>
+        <div class="detail-grid">
+          <div>
+            <section class="detail-panel"><h3>接线与电路链路</h3><div class="schematic">${circuitMarkup(design.rows)}</div></section>
+            <section class="detail-panel" style="margin-top:12px"><h3>BOM、型号与封装建议</h3>${bomMarkup(design.bom)}<div class="source-line">参考：${escapeHtml(design.sources)}</div></section>
+          </div>
+          <aside class="detail-side">
+            <section class="detail-panel"><h3>对外连接器</h3>${connectorsMarkup(design.connectors)}</section>
+            <section class="detail-panel"><h3>设计与安全注意</h3>${notesMarkup(design.notes)}</section>
+          </aside>
+        </div>`;
+      document.getElementById('overviewView').hidden = true;
+      document.getElementById('detailView').hidden = false;
+      document.title = `${design.title}｜小净接线参考`;
+      window.scrollTo(0, 0);
+      return true;
+    }
+
+    function showOverview() {
+      document.getElementById('detailView').hidden = true;
+      document.getElementById('overviewView').hidden = false;
+      document.title = '小净自制主板统一 IO 规划图（接线参考）';
+      window.scrollTo(0, Number(sessionStorage.getItem('overviewScrollY') || 0));
+    }
+
+    function navigateToDesign(designId) {
+      sessionStorage.setItem('overviewScrollY', String(window.scrollY));
+      location.hash = `interface=${encodeURIComponent(designId)}`;
+    }
+
+    function routeFromHash() {
+      const match = location.hash.match(/^#interface=([\w-]+)$/);
+      if (match && renderDetail(decodeURIComponent(match[1]))) return;
+      showOverview();
+    }
+
+    document.addEventListener('click', event => {
+      const card = event.target.closest('[data-design]');
+      if (card) navigateToDesign(card.dataset.design);
+    });
+    document.addEventListener('keydown', event => {
+      if ((event.key === 'Enter' || event.key === ' ') && event.target.matches('[data-design]')) {
+        event.preventDefault();
+        navigateToDesign(event.target.dataset.design);
+      }
+    });
+    document.getElementById('backButton').addEventListener('click', () => { location.hash = ''; });
+    window.addEventListener('hashchange', routeFromHash);
+    routeFromHash();
+  </script>
+</body>
+</html>

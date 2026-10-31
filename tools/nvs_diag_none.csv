@@ -1,0 +1,3 @@
+nvs.version=nvs.version,namespace,0x01,0
+diag,disable_ble,data,u8,0
+diag,disable_edge,data,u8,0

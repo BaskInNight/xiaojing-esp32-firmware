@@ -1,0 +1,13 @@
+{
+  "start_time": "2026-07-27T02:52:07.338433",
+  "last_update": "2026-07-27T06:53:55.122826",
+  "target_end_time": "2026-07-27T06:52:07.245732",
+  "completed_rounds": 111,
+  "valid_rounds": 111,
+  "invalid_capture_rounds": 0,
+  "test_fail_rounds": 0,
+  "reset_failures": 0,
+  "last_binary_sha256": "",
+  "last_elf_sha256": "",
+  "last_result": "PASS=646"
+}

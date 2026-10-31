@@ -1,0 +1,15 @@
+# Xiaojing ESP32-S3 N16R8: 16 MiB flash layout
+#
+# Dual 4352 KiB OTA slots leave useful headroom above the current ~4 MiB app.
+# The 4096 KiB model partition stores the generated ESP-SR WakeNet image.
+# The 2432 KiB FAT partition remains available for prompt audio and user data.
+#
+# Layout end is exactly 0x01000000 (16 MiB).
+# Name,     Type, SubType, Offset,    Size
+nvs,        data, nvs,     0x9000,    0x8000
+otadata,    data, ota,     0x11000,   0x2000
+ota_0,      app,  ota_0,   0x20000,   0x440000
+ota_1,      app,  ota_1,   0x460000,  0x440000
+coredump,   data, coredump,0x8A0000,  0x100000
+model,      data, spiffs,  0x9A0000,  0x400000
+storage,    data, fat,     0xDA0000,  0x260000

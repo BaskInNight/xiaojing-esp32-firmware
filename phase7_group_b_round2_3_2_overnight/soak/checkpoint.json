@@ -1,0 +1,14 @@
+{
+  "binary_hash": "99891557651535af3fb8ad8532d4ecd1b6ea22cc87e2ba22af217304aa3e8cef",
+  "start_time": "2026-07-27T22:51:41.966441+00:00",
+  "rounds_completed": 2,
+  "rounds_passed": 1,
+  "consecutive_pass_start": null,
+  "status": "failed",
+  "last_update": "2026-07-27T23:21:44.411958+00:00",
+  "consecutive_pass_hours": 0.0,
+  "failure_reason": [
+    "CRASH detected"
+  ],
+  "end_time": "2026-07-27T23:21:44.420204+00:00"
+}
