@@ -5,6 +5,7 @@ idf_component_register(
         "wash_executor_fake_adapter.c"
         "wash_executor_real_adapter.c"
         "wash_executor_bootstrap.c"
+        "competition_demo.c"
     INCLUDE_DIRS
         "include"
     PRIV_INCLUDE_DIRS
@@ -24,6 +25,8 @@ idf_component_register(
         detergent_service
         uv_service
         safety_manager
+        coupled_hot_air
+        esp_timer
 )
 
 if(CONFIG_WASH_EXEC_TEST_HOOKS)

@@ -37,6 +37,7 @@ typedef struct {
     bool initialized;
     uint32_t program_id;
     uint32_t last_program_id;
+    uint32_t last_up_start_ms;
 } program_control_inst_t;
 
 static program_control_inst_t s_inst;
@@ -63,8 +64,8 @@ static esp_err_t execute_action(pc_action_t action)
             ? s_inst.get_config() : NULL;
         uint32_t program_id = pc_next_program_id();
         wash_program_t program;
-        planner_report_t rep = default_demo_build_program(
-            cfg, program_id, DEFAULT_DEMO_START_POSITION, &program);
+        if (!cfg || !cfg->position.direction_calibrated) return ESP_ERR_INVALID_STATE;
+        planner_report_t rep = competition_demo_build_program(program_id, &program);
         if (rep.result != PLAN_RESULT_OK) {
             ESP_LOGE(TAG, "demo build rejected: %d", (int)rep.reject_reason);
             return ESP_ERR_INVALID_ARG;
@@ -207,11 +208,21 @@ esp_err_t program_control_gesture(hal_gesture_t gesture,
      * esp_timer（毫秒）。 */
     uint32_t now_ms = (uint32_t)(esp_timer_get_time() / 1000);
     lock();
+    if (gesture == HAL_GESTURE_DOWN &&
+        (s_inst.arbiter.program_active || s_inst.arbiter.state == PC_STATE_STARTING ||
+         s_inst.arbiter.state == PC_STATE_RUNNING) && now_ms - s_inst.last_up_start_ms >= 250U) {
+        pc_action_t action = pc_arbitrate(&s_inst.arbiter, PC_REQ_STOP);
+        esp_err_t err = execute_action(action);
+        if (out_action) *out_action = PC_GESTURE_ACTION_STOP;
+        unlock();
+        return err;
+    }
     pc_gesture_action_t ga = pc_gesture_step(
         &s_inst.gesture, gesture, now_ms, s_inst.gesture_cooldown_ms);
     if (ga == PC_GESTURE_ACTION_START) {
         pc_action_t action = pc_arbitrate(&s_inst.arbiter, PC_REQ_START_DEMO);
         if (action == PC_ACTION_START_DEMO) {
+            s_inst.last_up_start_ms = now_ms;
             esp_err_t err = execute_action(action);
             if (out_action) *out_action = ga;
             unlock();

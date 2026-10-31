@@ -687,6 +687,77 @@ esp_err_t safety_manager_update_time(int64_t now_ms)
     return ESP_OK;
 }
 
+esp_err_t safety_manager_demo_begin(uint32_t program_id, uint32_t generation)
+{
+    if (!program_id || !generation) return ESP_ERR_INVALID_ARG;
+    esp_err_t err = api_lock_running();
+    if (err != ESP_OK) return err;
+    if (s_rt.inputs.demo_program_id || has_active_fault() || s_rt.emergency_active ||
+        !safety_all_mcp_known_off(&s_rt.inputs.mcp_outputs, s_rt.inputs.mcp_known_mask) ||
+        !s_rt.inputs.bl50_state_known || s_rt.inputs.bl50_running ||
+        s_rt.inputs.position_motor_moving) {
+        api_unlock();
+        return ESP_ERR_INVALID_STATE;
+    }
+    s_rt.inputs.demo_program_id = program_id;
+    s_rt.inputs.demo_generation = generation;
+    s_rt.inputs.demo_deadline_ms = s_rt.hal->now_ms() + 180000;
+    s_rt.inputs.demo_dry_phase = false;
+    api_unlock();
+    return ESP_OK;
+}
+
+esp_err_t safety_manager_demo_dry(uint32_t program_id, uint32_t generation, bool enabled)
+{
+    esp_err_t err = api_lock_running();
+    if (err != ESP_OK) return err;
+    if (s_rt.inputs.demo_program_id != program_id || s_rt.inputs.demo_generation != generation ||
+        (enabled && (s_rt.hal->now_ms() >= s_rt.inputs.demo_deadline_ms ||
+                     has_active_fault() || s_rt.emergency_active))) {
+        api_unlock();
+        return ESP_ERR_INVALID_STATE;
+    }
+    s_rt.inputs.demo_dry_phase = enabled;
+    api_unlock();
+    return ESP_OK;
+}
+
+esp_err_t safety_manager_demo_end(uint32_t program_id, uint32_t generation)
+{
+    esp_err_t err = api_lock();
+    if (err != ESP_OK) return err;
+    if (s_rt.inputs.demo_program_id != program_id || s_rt.inputs.demo_generation != generation) {
+        api_unlock();
+        return ESP_ERR_INVALID_STATE;
+    }
+    s_rt.inputs.demo_program_id = 0;
+    s_rt.inputs.demo_generation = 0;
+    s_rt.inputs.demo_deadline_ms = 0;
+    s_rt.inputs.demo_dry_phase = false;
+    api_unlock();
+    return ESP_OK;
+}
+
+bool safety_manager_demo_dry_allowed(void)
+{
+    if (api_lock_running() != ESP_OK) return false;
+    bool allowed = s_rt.inputs.demo_program_id && s_rt.inputs.demo_generation &&
+        s_rt.inputs.demo_dry_phase && s_rt.hal->now_ms() < s_rt.inputs.demo_deadline_ms &&
+        !has_active_fault() && !s_rt.emergency_active;
+    api_unlock();
+    return allowed;
+}
+
+bool safety_manager_demo_active(void)
+{
+    if (api_lock_running() != ESP_OK) return false;
+    bool allowed = s_rt.inputs.demo_program_id && s_rt.inputs.demo_generation &&
+        s_rt.hal->now_ms() < s_rt.inputs.demo_deadline_ms &&
+        !has_active_fault() && !s_rt.emergency_active;
+    api_unlock();
+    return allowed;
+}
+
 /* ================================================================
  * Check (query only, no side effects)
  * ================================================================ */

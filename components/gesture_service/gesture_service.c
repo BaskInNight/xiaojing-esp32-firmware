@@ -56,6 +56,7 @@ static void gesture_task(void *context)
     (void)context;
     TickType_t last_event = 0;
     bool have_event = false;
+    hal_gesture_t last_gesture = HAL_GESTURE_NONE;
     xSemaphoreGive(s_ready);
     while (!atomic_load_explicit(&s_stop_requested, memory_order_acquire)) {
         hal_gesture_t gesture = HAL_GESTURE_NONE;
@@ -63,12 +64,15 @@ static void gesture_task(void *context)
         if (err == ESP_OK && gesture != HAL_GESTURE_NONE) {
             TickType_t now = xTaskGetTickCount();
             TickType_t cooldown = pdMS_TO_TICKS(s_cfg.cooldown_ms);
-            if (!have_event || (now - last_event) >= cooldown) {
+            bool stop_gesture = gesture == HAL_GESTURE_DOWN &&
+                (last_gesture != HAL_GESTURE_UP || now - last_event >= pdMS_TO_TICKS(250));
+            if (!have_event || (now - last_event) >= cooldown || stop_gesture) {
                 ESP_LOGI(TAG, "gesture=%s", gesture_name(gesture));
                 esp_err_t sink_err = s_cfg.sink(gesture, s_cfg.sink_context);
                 if (sink_err != ESP_OK)
                     ESP_LOGW(TAG, "gesture sink failed: 0x%x", sink_err);
                 last_event = now;
+                last_gesture = gesture;
                 have_event = true;
             }
         } else if (err == ESP_OK) {

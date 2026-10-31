@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 project(xiaojing_host_tests C)
 
-set(CMAKE_C_STANDARD 17)
+if(NOT DEFINED CMAKE_C_STANDARD)
+    set(CMAKE_C_STANDARD 17)
+endif()
 
 # Shims directory FIRST — provides esp_err.h for host compilation
 set(SHIMS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/shims)
@@ -257,3 +259,17 @@ if(MSVC)
     target_compile_options(test_program_control PRIVATE /utf-8)
 endif()
 add_test(NAME program_control_core_tests COMMAND test_program_control)
+
+add_executable(test_competition_demo
+    test_competition_demo.c
+    ../components/program_control/program_control_core.c
+    ../components/wash_executor/wash_executor_core.c
+    ../components/safety_manager/safety_interlocks.c
+    ../components/button_service/button_debounce.c
+    ../components/bl50_service/bl50_fsm.c
+    ../components/uv_service/uv_fsm.c
+)
+target_include_directories(test_competition_demo PRIVATE ${SHIMS_DIR} ${COMPONENT_INCLUDES}
+    ../components/program_control/include
+    ../components/bl50_service/include ../components/bl50_service/private_include)
+add_test(NAME competition_demo_tests COMMAND test_competition_demo)

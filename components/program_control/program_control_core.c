@@ -111,6 +111,22 @@ const default_demo_phase_t *default_demo_phase_table(void)
     return s_default_demo_phases;
 }
 
+planner_report_t competition_demo_build_program(uint32_t program_id, wash_program_t *out)
+{
+    planner_report_t report = {0};
+    if (!out || !program_id) { report.result = PLAN_RESULT_REJECTED; return report; }
+    memset(out, 0, sizeof(*out));
+    out->program_id = program_id;
+    out->kind = WASH_PROGRAM_DEMO;
+    out->estimated_total_ms = 166000;
+    out->step_count = 1;
+    out->steps[0] = (wash_step_t){ .type = STEP_COMPETITION_DEMO,
+        .required_position = DRUM_POS_UNKNOWN, .timeout_ms = 190000,
+        .flags = WASH_STEP_FLAG_REQUIRED };
+    report.result = PLAN_RESULT_OK;
+    return report;
+}
+
 /* ---- 步骤是否受桶位门禁约束（与 wash_planner action_required_position 同源） ---- */
 
 static bool step_is_position_gated(wash_step_type_t type)
@@ -357,6 +373,8 @@ pc_action_t pc_arbitrate(pc_arbiter_t *a, pc_request_t req)
 
     case PC_REQ_BACKEND_SWITCH:
         if (a->emergency_latched || a->fault_active) return PC_ACTION_NONE;
+        if (a->program_active || a->state == PC_STATE_STARTING ||
+            a->state == PC_STATE_RUNNING || a->state == PC_STATE_STOPPING) return PC_ACTION_NONE;
         return PC_ACTION_BACKEND_SWITCH;
     }
     return PC_ACTION_NONE;

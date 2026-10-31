@@ -29,6 +29,7 @@ typedef enum {
     BL50_ACTION_PULSATOR,
     BL50_ACTION_DRUM,
     BL50_ACTION_SPIN,
+    BL50_ACTION_TUMBLE, /* Competition dry-stage intermittent motion at 270 degrees. */
 } bl50_action_t;
 
 /* ---- 生产契约：动作→所需桶位 ----

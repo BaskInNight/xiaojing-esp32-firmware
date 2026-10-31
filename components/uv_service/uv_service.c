@@ -99,6 +99,7 @@ static void uv_service_auto_init(void) { uv_service_global_init(); }
 
 static esp_err_t apply_lamp_on(void)
 {
+    if (s_rt.fsm.competition_demo && !safety_manager_demo_active()) return ESP_ERR_INVALID_STATE;
     safety_request_t req = { .operation = SAFETY_OP_UV, .enable = true,
         .request_id = s_rt.fsm.request_id, .required_position = DRUM_POS_0, .source = APP_SOURCE_SYSTEM };
     return safety_manager_apply(&req);
@@ -274,7 +275,8 @@ static void uv_task(void *arg)
         uint32_t now_ms = (uint32_t)(xTaskGetTickCount() * portTICK_PERIOD_MS);
         if (s_rt.fsm.state == UV_FSM_RUNNING) {
             bool aa = false; safety_reject_reason_t ar = SAFETY_REJECT_NONE;
-            if (safety_manager_validate_active(SAFETY_OP_UV, DRUM_POS_0, &aa, &ar) != ESP_OK || !aa) {
+            if ((s_rt.fsm.competition_demo && !safety_manager_demo_active()) ||
+                safety_manager_validate_active(SAFETY_OP_UV, DRUM_POS_0, &aa, &ar) != ESP_OK || !aa) {
                 uv_fsm_event_t em = { .type = UV_EVT_EMERGENCY, .now_ms = now_ms };
                 uv_fsm_output_t eo; uv_fsm_tick(&s_rt.fsm, &em, &eo); process_fsm_output(&eo, now_ms);
                 vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(TICK_INTERVAL_MS)); continue;
@@ -282,7 +284,8 @@ static void uv_task(void *arg)
         }
         if (!s_rt.pending_term.valid) {
             uv_fsm_event_t te = { .type = UV_EVT_TICK, .now_ms = now_ms,
-                .position = pos, .position_valid = pv, .position_stable = ps, .position_fresh = pf, .position_motor_moving = mm };
+                .position = pos, .position_valid = pv, .position_stable = ps, .position_fresh = pf,
+                .position_motor_moving = mm, .demo_indicator_allowed = safety_manager_demo_active() };
             uv_fsm_output_t o; uv_fsm_tick(&s_rt.fsm, &te, &o); process_fsm_output(&o, now_ms);
         }
         vTaskDelayUntil(&last_wake, pdMS_TO_TICKS(TICK_INTERVAL_MS));
@@ -440,6 +443,7 @@ esp_err_t uv_service_stop(void)
 esp_err_t uv_service_run_async(const uv_request_t *request)
 {
     if (!request) return ESP_ERR_INVALID_ARG;
+    if (request->competition_demo && !safety_manager_demo_active()) return ESP_ERR_INVALID_STATE;
     xSemaphoreTake(s_lc_mtx, portMAX_DELAY);
     if (s_rt.lifecycle != LC_RUNNING || !s_rt.cmd_queue) { xSemaphoreGive(s_lc_mtx); return ESP_ERR_INVALID_STATE; }
     xSemaphoreGive(s_lc_mtx);

@@ -16,6 +16,7 @@ drum_position_t bl50_action_to_position(bl50_action_t action)
     case BL50_ACTION_PULSATOR:  return DRUM_POS_0;
     case BL50_ACTION_DRUM:      return DRUM_POS_90;
     case BL50_ACTION_SPIN:      return DRUM_POS_180;
+    case BL50_ACTION_TUMBLE:    return DRUM_POS_270;
     default:                    return DRUM_POS_UNKNOWN;
     }
 }
@@ -55,13 +56,18 @@ esp_err_t bl50_fsm_begin_request(bl50_fsm_ctx_t *ctx,
     if (request->request_id == MACHINE_REQUEST_ID_INVALID) {
         return ESP_ERR_INVALID_ARG;
     }
-    if ((int)request->action < 0 || request->action > BL50_ACTION_SPIN) {
+    if ((int)request->action < 0 || request->action > BL50_ACTION_TUMBLE) {
         return ESP_ERR_INVALID_ARG;
     }
     if (request->duration_ms == 0 && request->action != BL50_ACTION_HOME) {
         return ESP_ERR_INVALID_ARG;
     }
     if (request->target_pwm_percent > 100) {
+        return ESP_ERR_INVALID_ARG;
+    }
+    if (request->action == BL50_ACTION_TUMBLE &&
+        (request->target_pwm_percent == 0 || request->target_pwm_percent > 40 ||
+         request->duration_ms > 2000)) {
         return ESP_ERR_INVALID_ARG;
     }
     if (request->duration_ms > max_action_duration_ms) {
@@ -183,6 +189,7 @@ static void handle_validating(bl50_fsm_ctx_t *ctx,
     case BL50_ACTION_PULSATOR:
     case BL50_ACTION_DRUM:
     case BL50_ACTION_SPIN:
+    case BL50_ACTION_TUMBLE:
         transition(ctx, BL50_SVC_STATE_RAMPING_UP, now_ms);
         ctx->ramp_step = 0;
         break;
@@ -275,7 +282,8 @@ static void handle_running_cw(bl50_fsm_ctx_t *ctx,
     }
 
     /* SPIN: 单方向，不需要反转 */
-    if ((bl50_action_t)ctx->action == BL50_ACTION_SPIN) {
+    if ((bl50_action_t)ctx->action == BL50_ACTION_SPIN ||
+        (bl50_action_t)ctx->action == BL50_ACTION_TUMBLE) {
         return; /* 保持 CW 运行 */
     }
 

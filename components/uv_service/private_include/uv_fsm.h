@@ -58,6 +58,7 @@ typedef struct {
     bool position_motor_moving;
     bool fault_active;
     bool emergency_active;
+    bool demo_indicator_allowed;
 
     /* ACTION_RESULT */
     uv_fsm_action_t action_result_action;
@@ -94,6 +95,7 @@ typedef struct {
     uv_fsm_state_t state;
     machine_request_id_t request_id;
     uint32_t duration_ms;
+    bool competition_demo;
 
     uv_output_state_t output_state;
     uint32_t state_enter_ms;

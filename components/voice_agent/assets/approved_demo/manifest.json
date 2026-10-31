@@ -1,0 +1,14 @@
+{
+  "conversion": "Same 24-tap Q15 FIR as audio_pcm_resample.c; no speed/pitch change",
+  "assets": [
+    {
+      "id": "demo_complete",
+      "source": "honey_demo/demo_complete.wav",
+      "source_sha256": "d69b5f9c52c44497d94ea8eb821c52db238d8a950a48c1a51bcf4fe288fd317f",
+      "file": "demo_complete.wav",
+      "sample_rate": 16000,
+      "duration_ms": 1440,
+      "sha256": "3201bf7a0959d0601126e082cc113373034088ff7d2b0b9de03e211b5954de93"
+    }
+  ]
+}

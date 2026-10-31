@@ -19,6 +19,7 @@ static const voice_prompt_asset_t CATALOG[] = {
     {VOICE_PROMPT_WASH_STARTED,      "voice/wash_started.wav",        2560, 80},
     {VOICE_PROMPT_WASH_COMPLETE,     "voice/wash_complete.wav",       3040, 80},
     {VOICE_PROMPT_DEVICE_FAULT,      "voice/device_fault.wav",        4480, 80},
+    {VOICE_PROMPT_DEMO_COMPLETE,     "voice/demo_complete.wav",       1440, 80},
 };
 
 const voice_prompt_asset_t *voice_prompt_catalog_get(

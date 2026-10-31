@@ -77,6 +77,13 @@ esp_err_t safety_manager_stop(void);
 /* 获取当前生命周期状态 */
 safety_mgr_state_t safety_manager_get_state(void);
 
+/* Built-in Demo owner only. Lease is bounded to 180s and cleared on terminal. */
+esp_err_t safety_manager_demo_begin(uint32_t program_id, uint32_t generation);
+esp_err_t safety_manager_demo_dry(uint32_t program_id, uint32_t generation, bool enabled);
+esp_err_t safety_manager_demo_end(uint32_t program_id, uint32_t generation);
+bool safety_manager_demo_dry_allowed(void);
+bool safety_manager_demo_active(void);
+
 /* ---- Stop Hook ---- */
 
 /* 注册非阻塞停机回调。RUNNING 之前或期间均可。

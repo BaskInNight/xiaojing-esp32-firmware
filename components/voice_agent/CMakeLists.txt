@@ -45,6 +45,7 @@ idf_component_register(
         "assets/approved_honey/wash_started.wav"
         "assets/approved_honey/wash_complete.wav"
         "assets/approved_honey/device_fault.wav"
+        "assets/approved_demo/demo_complete.wav"
 )
 
 if(VOICE_CLOUD_DIAGNOSTIC)

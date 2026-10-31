@@ -18,6 +18,9 @@
 #else
 /* MSVC: use Interlocked for count fields + SRWLOCK for record/config consistency */
 #include <stdint.h>
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT 0x0600
+#endif
 #include <windows.h>
 typedef volatile LONG fake_atomic_uint_t;
 #define FAKE_ATOMIC_UINT fake_atomic_uint_t
@@ -25,9 +28,8 @@ typedef volatile LONG fake_atomic_uint_t;
 static inline void fake_atomic_store_release(fake_atomic_uint_t *p, LONG v) {
     InterlockedExchange(p, v);
 }
-static inline LONG fake_atomic_load_acquire(fake_atomic_uint_t *p) {
-    LONG v = InterlockedCompareExchange(p, 0, 0);
-    _ReadBarrier();
+static inline LONG fake_atomic_load_acquire(const fake_atomic_uint_t *p) {
+    LONG v = InterlockedCompareExchange((fake_atomic_uint_t *)p, 0, 0);
     return v;
 }
 #define FAKE_ATOMIC_STORE(p, v) fake_atomic_store_release((p), (v))
@@ -331,7 +333,7 @@ bool fake_adapter_wait_dispatch(const void *ctx, uint32_t min_count, uint32_t ti
     const fake_ctx_internal_t *f = to_const_internal(ctx);
     uint32_t elapsed = 0;
     while (FAKE_ATOMIC_LOAD(&f->dispatch_count) < min_count && elapsed < timeout_ms) {
-#ifdef _WIN32
+#ifndef ESP_PLATFORM
         Sleep(1);
 #else
         vTaskDelay(pdMS_TO_TICKS(1));
@@ -346,7 +348,7 @@ bool fake_adapter_wait_cancel(const void *ctx, uint32_t min_count, uint32_t time
     const fake_ctx_internal_t *f = to_const_internal(ctx);
     uint32_t elapsed = 0;
     while (FAKE_ATOMIC_LOAD(&f->cancel_count) < min_count && elapsed < timeout_ms) {
-#ifdef _WIN32
+#ifndef ESP_PLATFORM
         Sleep(1);
 #else
         vTaskDelay(pdMS_TO_TICKS(1));
@@ -361,7 +363,7 @@ bool fake_adapter_wait_reset(const void *ctx, uint32_t min_count, uint32_t timeo
     const fake_ctx_internal_t *f = to_const_internal(ctx);
     uint32_t elapsed = 0;
     while (FAKE_ATOMIC_LOAD(&f->reset_count) < min_count && elapsed < timeout_ms) {
-#ifdef _WIN32
+#ifndef ESP_PLATFORM
         Sleep(1);
 #else
         vTaskDelay(pdMS_TO_TICKS(1));

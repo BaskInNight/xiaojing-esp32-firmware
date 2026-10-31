@@ -7,6 +7,7 @@
  */
 
 #include "wash_executor.h"
+#include "competition_demo.h"
 #include "wash_executor_core.h"
 #include "wash_executor_adapter.h"
 #include "machine_status_store.h"
@@ -296,6 +297,19 @@ static void publish_snapshot(wash_executor_t *exec)
             ? total - status.elapsed_ms : 0;
     }
     status.target_position = step ? step->required_position : DRUM_POS_UNKNOWN;
+    if (step && step->type == STEP_COMPETITION_DEMO && exec->core.program_active) {
+        competition_demo_snapshot_t demo;
+        if (competition_demo_get_snapshot(&demo) && demo.program_id == status.program_id) {
+            status.phase = demo.phase;
+            status.current_step = demo.stage;
+            status.total_steps = demo.total_stages;
+            status.progress_percent = demo.total_stages ?
+                (uint8_t)(demo.stage * 100U / (demo.total_stages + 1U)) : 0;
+            status.elapsed_ms = demo.elapsed_ms;
+            status.remaining_ms = demo.elapsed_ms < 166000 ? 166000 - demo.elapsed_ms : 0;
+            status.target_position = demo.target;
+        }
+    }
     /*
      * Real service terminals carry machine_fault_code_t in core.fault_code.
      * Preserve that identity instead of reporting the misleading

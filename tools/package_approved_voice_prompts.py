@@ -21,6 +21,7 @@ SELECTION = {
     "wash_complete": "honey_v1/wash_complete.wav",
     "device_fault": "honey_v1/device_fault.wav",
     "error": "honey_v1/error.wav",
+    "demo_complete": "honey_demo/demo_complete.wav",
 }
 
 

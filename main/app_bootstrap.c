@@ -43,6 +43,7 @@
 #include "voice_capture_idf.h"
 #include "voice_provider.h"
 #include "voice_prompt_audio.h"
+#include "competition_demo.h"
 #include "voice_credentials.h"
 #include "voice_frontend.h"
 #include "voice_wake_edge.h"
@@ -140,6 +141,7 @@ static bool s_wifi_active = false;
 static bool s_voice_capture_active = false;
 static bool s_voice_cloud_active = false;
 static bool s_voice_service_active = false;
+static atomic_bool s_btn2_stopped_program;
 static bool s_display_active = false;
 static bool s_gesture_active = false;
 /* Telemetry-only ADC reader.  It is deliberately not part of xiaojing_hal_t:
@@ -1561,6 +1563,10 @@ static void publish_task_complete(uint32_t program_id, uint32_t generation)
     task_complete_event_t ev = { .program_id = program_id,
                                  .generation = generation,
                                  .prompt = VOICE_PROMPT_WASH_COMPLETE };
+    competition_demo_snapshot_t demo;
+    if (competition_demo_get_snapshot(&demo) && demo.completed &&
+        demo.program_id == program_id && demo.generation == generation)
+        ev.prompt = VOICE_PROMPT_DEMO_COMPLETE;
     if (xQueueSend(s_task_complete_queue, &ev, 0) != pdTRUE) {
         ESP_LOGW(TAG, "task_complete queue full, dropping event "
                  "prog=%u gen=%u", (unsigned)program_id,
@@ -2188,6 +2194,11 @@ static esp_err_t button_normal_sink(const button_sink_event_t *event,
     ESP_LOGI(TAG, "button event: id=%u type=%u seq=%" PRIu32,
              (unsigned)event->button_id, (unsigned)event->event_type,
              event->sequence);
+    if (event->button_id == BUTTON_ID_2 && atomic_load(&s_btn2_stopped_program)) {
+        if (event->event_type == BUTTON_EVENT_CLICK || event->event_type == BUTTON_EVENT_LONG_PRESS_RELEASE)
+            atomic_store(&s_btn2_stopped_program, false);
+        return ESP_OK;
+    }
     if (event->button_id == BUTTON_ID_1 &&
         event->event_type == BUTTON_EVENT_LONG_PRESS) {
         /* BTN1 长按 → 经 program_control 仲裁 → 语音后端切换。
@@ -2197,6 +2208,10 @@ static esp_err_t button_normal_sink(const button_sink_event_t *event,
     }
     if (event->button_id == BUTTON_ID_2 &&
         event->event_type == BUTTON_EVENT_LONG_PRESS) {
+        if (program_control_program_active()) {
+            pc_action_t action;
+            return program_control_request(PC_REQ_STOP, &action);
+        }
         if (s_display_active) {
             (void)display_service_show_page(DISPLAY_PAGE_VOICE);
         }
@@ -2317,6 +2332,11 @@ static esp_err_t button_urgent_sink(const button_sink_event_t *event,
                                       uint32_t timeout_ms, void *context) {
     (void)timeout_ms; (void)context;
     pc_action_t action = PC_ACTION_NONE;
+    if (event->button_id == BUTTON_ID_2 && event->event_type == BUTTON_EVENT_PRESS) {
+        bool active = program_control_program_active();
+        atomic_store(&s_btn2_stopped_program, active);
+        return active ? program_control_request(PC_REQ_STOP, &action) : ESP_OK;
+    }
     if (event->event_type == BUTTON_EVENT_LONG_PRESS) {
         /* BTN3 长按 → 经 program_control → 急停（safety_manager 闩锁） */
         return program_control_request(PC_REQ_EMERGENCY, &action);
@@ -3149,6 +3169,7 @@ esp_err_t app_bootstrap_init(app_bootstrap_result_t *result) {
             .debounce_ms = 30,
             .poll_interval_ms = 200,
             .long_press_ms = 2000,
+            .press_event_mask = (1U << BUTTON_RAW_BIT_BTN2),
             .long_press_mask = board_config_is_voice_enabled() ?
                 (uint8_t)((1U << BUTTON_RAW_BIT_BTN1) |
                           (1U << BUTTON_RAW_BIT_BTN2) |

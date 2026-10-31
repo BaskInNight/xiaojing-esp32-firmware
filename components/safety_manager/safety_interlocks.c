@@ -126,6 +126,25 @@ bool safety_all_mcp_known_off(const safety_mcp_output_state_t *mcp,
 
 /* ---- PTC 强制关断检查 ---- */
 
+static bool demo_live(const safety_inputs_t *in)
+{
+    return in->demo_program_id != 0 && in->demo_generation != 0 &&
+           in->now_ms < in->demo_deadline_ms && !in->fault_active &&
+           !in->emergency_stop_active;
+}
+
+/* Preserve known-state checks; only the owned indicator and dry relay may coexist. */
+static bool demo_outputs_off(const safety_inputs_t *in, bool allow_heat)
+{
+    safety_mcp_output_state_t outputs = in->mcp_outputs;
+    if (demo_live(in)) {
+        outputs.uv = false;
+        if (allow_heat && in->demo_dry_phase && in->position == DRUM_POS_270)
+            outputs.ptc_heater = false;
+    }
+    return safety_all_mcp_known_off(&outputs, in->mcp_known_mask);
+}
+
 bool safety_ptc_force_shutdown(const safety_inputs_t *inputs,
                                 const safety_interlock_config_t *config)
 {
@@ -308,13 +327,22 @@ void safety_interlock_check(const safety_inputs_t *inputs,
         return;
     }
 
+    /* A live demonstration owns the output set; unrelated ON requests stay closed. */
+    if (demo_live(inputs) &&
+        (op != SAFETY_OP_POSITION_MOTOR && op != SAFETY_OP_BL50 && op != SAFETY_OP_UV &&
+         !(op == SAFETY_OP_HOT_AIR_MODULE && inputs->demo_dry_phase))) {
+        decision->reason = SAFETY_REJECT_INVALID_PARAM;
+        decision->interlock_mask = SAFETY_ILK_INVALID_PARAM;
+        return;
+    }
+
     /* ---- 按操作类型检查（姿态门控移入各操作内） ---- */
 
     switch (op) {
     case SAFETY_OP_POSITION_MOTOR: {
         /* 寻位: 不要求当前姿态 known/fresh/stable
          * 但必须检查所有 MCP 输出为 KNOWN_OFF */
-        if (!safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask)) {
+        if (!demo_outputs_off(inputs, false)) {
             decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
             decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
             return;
@@ -337,7 +365,7 @@ void safety_interlock_check(const safety_inputs_t *inputs,
 
     case SAFETY_OP_BL50: {
         /* BL50 ON: 需要 fresh 稳定姿态 + required_position + MCP 全部 KNOWN_OFF */
-        if (!safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask)) {
+        if (!demo_outputs_off(inputs, true)) {
             decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
             decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
             return;
@@ -469,6 +497,14 @@ void safety_interlock_check(const safety_inputs_t *inputs,
     }
 
     case SAFETY_OP_UV: {
+        if (demo_live(inputs)) {
+            decision->allowed = demo_outputs_off(inputs, true);
+            if (!decision->allowed) {
+                decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
+                decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
+            }
+            break;
+        }
         /* UV: 需要 fresh 稳定 0°, 输出已知 */
         if (!check_position_fresh_and_known(inputs, config, decision)) return;
         if (inputs->position != DRUM_POS_0) {
@@ -623,8 +659,10 @@ void safety_interlock_check(const safety_inputs_t *inputs,
             decision->interlock_mask = SAFETY_ILK_POSITION_MOVING;
             return;
         }
-        /* 热风模块：所有 MCP 输出必须 KNOWN_OFF（含继电器自身） */
-        if (!safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask)) {
+        /* Only an owned dry stage can coexist with the indicator. */
+        if (!(demo_live(inputs) && inputs->demo_dry_phase
+                  ? demo_outputs_off(inputs, false)
+                  : safety_all_mcp_known_off(&inputs->mcp_outputs, inputs->mcp_known_mask))) {
             decision->reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
             decision->interlock_mask = SAFETY_ILK_OUTPUT_UNKNOWN;
             return;
@@ -701,6 +739,14 @@ bool safety_validate_active(const safety_inputs_t *inputs,
     }
 
     /* 2. Position check (fresh + known + stable + correct) */
+    if (operation == SAFETY_OP_UV && demo_live(inputs)) {
+        if (!safety_mcp_output_is_known(inputs->mcp_known_mask, SAFE_OUTPUT_UV) ||
+            !inputs->mcp_outputs.uv || !demo_outputs_off(inputs, true)) {
+            *reason = SAFETY_REJECT_OUTPUT_UNKNOWN;
+            return false;
+        }
+        return true;
+    }
     if (!inputs->position_sample_valid) {
         *reason = SAFETY_REJECT_POSITION_UNKNOWN;
         return false;

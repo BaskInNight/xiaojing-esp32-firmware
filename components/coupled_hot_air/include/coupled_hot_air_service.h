@@ -60,6 +60,7 @@ typedef enum {
 typedef struct {
     machine_request_id_t request_id;
     uint32_t duration_ms;   /* 固件固定；<= COUPLED_HOT_AIR_HARD_CAP_MS */
+    bool competition_demo; /* Up to 15s only while owned dry-stage lease is valid. */
 } coupled_hot_air_request_t;
 
 /* ---- 快照 ---- */

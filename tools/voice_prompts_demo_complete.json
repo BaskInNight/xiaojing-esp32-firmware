@@ -1,0 +1,5 @@
+{
+  "profile": "xiaojing-competition-demo-complete",
+  "style": "年轻成年女性的蜜糖音色，甜润清透，温暖、阳光、从容自信。用自然轻快的聊天语速，带微笑，像可靠的朋友完成工作后温柔告知。语句连贯，结尾轻盈落稳，不拖音，不逐字咬字，不播音腔、不夸张撒娇。只朗读正文，不添加字词。",
+  "prompts": [{"id": "demo_complete", "text": "演示完成。", "description": "比赛Demo成功归位且输出全部关闭后播报"}]
+}

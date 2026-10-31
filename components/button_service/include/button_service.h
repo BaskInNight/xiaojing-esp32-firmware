@@ -43,6 +43,7 @@ typedef struct {
     /* Optional per-button override; zero uses long_press_ms. */
     uint32_t long_press_ms_by_button[BUTTON_ID_COUNT];
     uint8_t long_press_mask;
+    uint8_t press_event_mask; /* Optional raw mask; PRESS goes through urgent sink. */
     const xiaojing_hal_t *hal;
     bool enable_internal_pullup;
     button_event_sink_t  normal_sink;

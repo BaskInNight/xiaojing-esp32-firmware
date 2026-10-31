@@ -23,6 +23,8 @@
 #include "detergent_service.h"
 #include "uv_service.h"
 #include "safety_manager.h"
+#include "competition_demo.h"
+#include "coupled_hot_air_service.h"
 #include "machine_types.h"
 #include "esp_log.h"
 #include <string.h>
@@ -117,6 +119,7 @@ static machine_event_type_t expected_event_for_step(wash_step_type_t step)
 static void route_machine_event(real_adapter_ctx_t *ra,
                                  const machine_event_t *ev)
 {
+    competition_demo_observe_event(ev);
     if (!ra || !ev || !adapter_state_lock(ra, pdMS_TO_TICKS(100))) return;
 
     wash_executor_t *exec = ra->exec;
@@ -258,6 +261,27 @@ static uint8_t get_bl50_pwm(real_adapter_ctx_t *ra, bl50_action_t action)
 
 /* ---- dispatch_step ---- */
 
+static void competition_terminal(const void *token_buf, bool success, uint32_t error, void *ctx)
+{
+    real_adapter_ctx_t *ra = ctx;
+    const terminal_token_t *token = token_buf;
+    if (!adapter_state_lock(ra, portMAX_DELAY)) return;
+    if (token->terminal_kind == TERMINAL_KIND_CANCEL_ACK) {
+        rollback_slot_locked(&ra->cancel, token);
+        /* Match by owner fields because normal kind is supplied by executor. */
+        if (ra->active.in_flight && ra->active.token.program_id == token->program_id &&
+            ra->active.token.generation == token->generation &&
+            ra->active.token.request_id == token->request_id) ra->active.in_flight = false;
+    } else rollback_slot_locked(&ra->active, token);
+    wash_executor_t *exec = ra->exec;
+    adapter_state_unlock(ra);
+    for (unsigned attempt = 0; exec && attempt < 20; ++attempt) {
+        if (wash_executor_publish_terminal(exec, token, sizeof(*token), success, error) == ESP_OK) return;
+        vTaskDelay(pdMS_TO_TICKS(20));
+    }
+    ESP_LOGE(TAG,"Competition terminal delivery failed");
+}
+
 static adapter_dispatch_result_t real_dispatch_step(
     void *ctx, const wash_step_t *step,
     const void *token_buf, uint32_t token_size)
@@ -286,6 +310,9 @@ static adapter_dispatch_result_t real_dispatch_step(
     esp_err_t err = ESP_ERR_NOT_SUPPORTED;
 
     switch (step->type) {
+    case STEP_COMPETITION_DEMO:
+        err = competition_demo_submit(token, token_size, competition_terminal, ra);
+        break;
     case STEP_MOVE_POSITION: {
         position_move_request_t req = {
             .request_id = mrid,
@@ -434,6 +461,9 @@ static bool real_cancel_step(
     esp_err_t err = ESP_ERR_NOT_SUPPORTED;
 
     switch ((wash_step_type_t)token->service_kind) {
+    case STEP_COMPETITION_DEMO:
+        err = competition_demo_cancel(token, token_size);
+        break;
     case STEP_MOVE_POSITION:
         err = position_service_cancel(mrid);
         break;
@@ -530,6 +560,8 @@ static void real_stop_all(void *ctx)
     if (!ra) return;
 
     /* Emergency stop: heater-critical first */
+    competition_demo_abort();
+    coupled_hot_air_service_emergency_stop();
     dry_service_emergency_stop();
     bl50_service_emergency_stop();
     position_service_emergency_stop();
@@ -640,6 +672,8 @@ esp_err_t real_adapter_start_consumer(real_adapter_ctx_t *ctx)
 esp_err_t real_adapter_stop_consumer(real_adapter_ctx_t *ctx)
 {
     if (!ctx) return ESP_ERR_INVALID_STATE;
+    esp_err_t demo_stop = competition_demo_shutdown();
+    if (demo_stop != ESP_OK) return demo_stop;
     if (!ctx->consumer_task) return ESP_OK;
 
     atomic_store_explicit(&ctx->consumer_stop, true, memory_order_release);

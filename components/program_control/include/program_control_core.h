@@ -104,6 +104,7 @@ typedef struct {
 
 /* 规范阶段表（长度恒为 DEFAULT_DEMO_PHASE_COUNT）。返回静态 const 表。 */
 const default_demo_phase_t *default_demo_phase_table(void);
+planner_report_t competition_demo_build_program(uint32_t program_id, wash_program_t *out);
 
 /* 编译 DEFAULT_DEMO_V1 → wash_program_t。
  * initial_position = 编译起点假设位置（默认 DEFAULT_DEMO_START_POSITION）。

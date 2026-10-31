@@ -48,6 +48,7 @@ esp_err_t uv_fsm_begin_request(uv_fsm_ctx_t *ctx, const uv_request_t *req,
 
     ctx->request_id = req->request_id;
     ctx->duration_ms = req->duration_ms;
+    ctx->competition_demo = req->competition_demo;
     ctx->state = UV_FSM_VALIDATING;
     ctx->state_enter_ms = now_ms;
     ctx->tick_ms = now_ms;
@@ -69,7 +70,15 @@ static void tick_validating(uv_fsm_ctx_t *ctx, const uv_fsm_event_t *evt,
                      FAULT_INTERNAL, FAULT_SEVERITY_RECOVERABLE);
         return;
     }
-    if (!evt->position_valid) {
+    if (ctx->competition_demo && evt->demo_indicator_allowed) {
+        ctx->state = UV_FSM_RUNNING;
+        ctx->state_enter_ms = evt->now_ms;
+        out->next_state = UV_FSM_RUNNING;
+        out->action = UV_ACTION_LAMP_ON;
+        ctx->pending_action = UV_ACTION_LAMP_ON;
+        return;
+    }
+    if (ctx->competition_demo || !evt->position_valid) {
         ctx->state = UV_FSM_FAULT;
         out->next_state = UV_FSM_FAULT;
         set_terminal(ctx, out, UV_TERMINAL_REJECTED,
@@ -108,6 +117,14 @@ static void tick_validating(uv_fsm_ctx_t *ctx, const uv_fsm_event_t *evt,
 static void tick_running(uv_fsm_ctx_t *ctx, const uv_fsm_event_t *evt,
                            uv_fsm_output_t *out)
 {
+    if (ctx->competition_demo && !evt->demo_indicator_allowed) {
+        ctx->state = UV_FSM_STOPPING;
+        ctx->terminal = UV_TERMINAL_TIMEOUT;
+        out->next_state = UV_FSM_STOPPING;
+        out->action = UV_ACTION_LAMP_OFF;
+        ctx->pending_action = UV_ACTION_LAMP_OFF;
+        return;
+    }
     if (elapsed_ms(evt->now_ms, ctx->state_enter_ms) >= ctx->duration_ms) {
         ctx->state = UV_FSM_STOPPING;
         out->next_state = UV_FSM_STOPPING;

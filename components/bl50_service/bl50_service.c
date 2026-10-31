@@ -317,9 +317,11 @@ static void bl50_task(void *arg)
                         calibrated = s_rt.config->position.direction_calibrated;
                     }
 
-                    esp_err_t err = bl50_fsm_begin_request(&s_rt.fsm,
-                        &cmd.request, home_pwm, home_timeout,
-                        max_action_ms, calibrated, is_fake);
+                    esp_err_t err = (cmd.request.action == BL50_ACTION_TUMBLE &&
+                                     !safety_manager_demo_dry_allowed())
+                        ? ESP_ERR_INVALID_STATE
+                        : bl50_fsm_begin_request(&s_rt.fsm, &cmd.request, home_pwm,
+                            home_timeout, max_action_ms, calibrated, is_fake);
                     if (err != ESP_OK) {
                         /* 拒绝请求，发布拒绝事件 */
                         machine_event_t event = {
@@ -589,6 +591,8 @@ check_result:
 esp_err_t bl50_service_run_async(const bl50_request_t *request)
 {
     if (!request) return ESP_ERR_INVALID_ARG;
+    if (request->action == BL50_ACTION_TUMBLE && !safety_manager_demo_dry_allowed())
+        return ESP_ERR_INVALID_STATE;
     if (!atomic_load_explicit(&s_ready, memory_order_acquire)) {
         return ESP_ERR_INVALID_STATE;
     }

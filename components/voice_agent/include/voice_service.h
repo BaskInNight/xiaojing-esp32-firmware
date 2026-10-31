@@ -37,6 +37,7 @@ typedef enum {
     VOICE_PROMPT_WASH_STARTED,
     VOICE_PROMPT_WASH_COMPLETE,
     VOICE_PROMPT_DEVICE_FAULT,
+    VOICE_PROMPT_DEMO_COMPLETE,
 } voice_prompt_id_t;
 
 /* Best-effort local announcement; reserves idle voice state without controlling hardware. */

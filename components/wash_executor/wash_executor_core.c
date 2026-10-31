@@ -366,6 +366,22 @@ static uint32_t handle_service_terminal(
                     core->phase = CORE_PHASE_IDLE;
                 }
             } else if (event->success) {
+                const wash_step_t *stopped = core_get_current_step(core);
+                if (stopped && stopped->type == STEP_COMPETITION_DEMO) {
+                    /* A user STOP is not permission to initiate a return move. */
+                    core->program_active = false;
+                    core_cmd_t term = {0};
+                    term.type = CORE_CMD_PUBLISH_PROGRAM_TERMINAL;
+                    term.program_id = core->program_id;
+                    term.terminal_success = false;
+                    term.terminal_result = core->last_event == WASH_EXEC_EVENT_ABORTED
+                        ? TERM_RESULT_ABORTED : TERM_RESULT_CANCELED;
+                    term.final_position_confirmed = false;
+                    emit_cmd(cmds, &count, capacity, &term);
+                    core->last_event = WASH_EXEC_EVENT_CANCELLED;
+                    core->phase = CORE_PHASE_IDLE;
+                    return count;
+                }
                 /* Cancel success — transition to RESETTING */
                 core->phase = CORE_PHASE_RESETTING;
                 uint16_t reset_req = core_next_request_id(core);

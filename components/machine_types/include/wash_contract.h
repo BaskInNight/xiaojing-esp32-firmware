@@ -85,6 +85,7 @@ typedef enum {
     STEP_SETTLE,             /* 定时无输出等待（水/衣物沉降） */
     STEP_AUDIT_UV_OFF,       /* 审计：UV 输出已确认 OFF */
     STEP_AUDIT_SAFE_OFF,     /* 审计：全部危险输出已确认 OFF */
+    STEP_COMPETITION_DEMO,   /* Built-in composite: owned indicator + motion + tumble/dry. */
 } wash_step_type_t;
 
 typedef enum {

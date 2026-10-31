@@ -69,6 +69,7 @@ static bool elapsed(uint32_t now, uint32_t start, uint32_t dur)
 }
 
 static int process_button(button_debounce_state_t *s, uint32_t debounce_ms,
+                           bool press_event_enabled,
                            bool long_press_enabled, uint32_t long_press_ms,
                            bool pressed, uint32_t now_ms,
                            button_id_t id, uint32_t *global_seq,
@@ -93,6 +94,12 @@ static int process_button(button_debounce_state_t *s, uint32_t debounce_ms,
             s->raw_pressed = true;
             s->state = BTN_STATE_PRESSED;
             s->press_timestamp = now_ms;  /* confirmed time */
+            if (press_event_enabled) {
+                s->sequence++; (*global_seq)++;
+                *out = (button_event_t){ .button_id = id, .event_type = BUTTON_EVENT_PRESS,
+                    .timestamp_ms = now_ms, .sequence = *global_seq };
+                return 1;
+            }
         }
         break;
 
@@ -178,6 +185,7 @@ int button_debounce_process(button_debounce_ctx_t *ctx,
         bool long_enabled =
             (ctx->long_press_mask & (uint8_t)(1U << B[i].bit)) != 0;
         count += process_button(&ctx->buttons[B[i].id], ctx->debounce_ms,
+                                 (ctx->press_event_mask & (1U << B[i].bit)) != 0,
                                  long_enabled, ctx->long_press_ms[B[i].id],
                                  p, now_ms, (button_id_t)B[i].id,
                                  &ctx->global_sequence, &events_out[count]);

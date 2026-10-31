@@ -323,6 +323,7 @@ static void cha_task(void *arg)
 
     TickType_t last_wake = xTaskGetTickCount();
     bool running = true;
+    bool active_demo_request = false;
     uint32_t stop_drain_count = 0;
     #define CHA_STOP_DRAIN_MAX  60  /* 60 * 50ms = 3s max drain */
 
@@ -384,6 +385,15 @@ static void cha_task(void *arg)
                 if (cmd.was_reserved) {
                     int64_t now = s_cctx.hal ? s_cctx.hal->now_ms() : 0;
                     cha_fsm_begin_request(fsm, &cmd.request, now);
+                    active_demo_request = cmd.request.competition_demo;
+                    /* A cancel may reach the notification mailbox before its queued RUN. */
+                    if (atomic_load(&s_cctx.cancel_request_id) == cmd.request.request_id) {
+                        cha_fsm_event_t pending_cancel = { .type = CHA_EVT_CANCEL,
+                            .now_ms = now, .cancel_request_id = cmd.request.request_id };
+                        cha_fsm_output_t canceled;
+                        cha_fsm_tick(fsm, &pending_cancel, &canceled);
+                        process_fsm_output(&canceled);
+                    }
                     break;
                 }
             }
@@ -417,7 +427,8 @@ static void cha_task(void *arg)
             .sht_valid = sht_ok,
             .sht_fresh = sht_ok && (sht.age_ms < machine_config_get()->dry.sht_stale_timeout_ms),
             .temperature_c = sht.temperature_c,
-            .fault_active = safety_ok && safety.fault_active,
+            .fault_active = !safety_ok || safety.fault_active ||
+                (active_demo_request && !safety_manager_demo_dry_allowed()),
             .emergency_active = safety_ok && safety.emergency_stop_active,
             .cooldown_remaining_ms = cooldown_remaining_ms(),
         };
@@ -692,7 +703,10 @@ esp_err_t coupled_hot_air_service_run_async(const coupled_hot_air_request_t *req
     if (!request) return ESP_ERR_INVALID_ARG;
     if (request->request_id == MACHINE_REQUEST_ID_INVALID) return ESP_ERR_INVALID_ARG;
     if (request->duration_ms == 0) return ESP_ERR_INVALID_ARG;
-    if (request->duration_ms > COUPLED_HOT_AIR_HARD_CAP_MS) return ESP_ERR_INVALID_ARG;
+    uint32_t cap = request->competition_demo ? 15000U : COUPLED_HOT_AIR_HARD_CAP_MS;
+    if (request->duration_ms > cap) return ESP_ERR_INVALID_ARG;
+    if (request->competition_demo && !safety_manager_demo_dry_allowed())
+        return ESP_ERR_INVALID_STATE;
 
     lc_lock();
     if (s_cctx.lifecycle != LC_RUNNING) { lc_unlock(); return ESP_ERR_INVALID_STATE; }

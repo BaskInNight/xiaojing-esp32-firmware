@@ -21,6 +21,7 @@ typedef enum {
     BUTTON_EVENT_LONG_PRESS_RELEASE,
     BUTTON_EVENT_DOUBLE_CLICK,  /* Reserved V2 */
     BUTTON_EVENT_COMBO,         /* Reserved V2 */
+    BUTTON_EVENT_PRESS,         /* Opt-in debounced press edge. */
 } button_event_type_t;
 
 typedef enum {
@@ -64,6 +65,7 @@ typedef struct {
     uint32_t debounce_ms;
     uint32_t long_press_ms[BUTTON_ID_COUNT];
     uint8_t long_press_mask;
+    uint8_t press_event_mask;
     uint32_t global_sequence;
 } button_debounce_ctx_t;
 

@@ -184,6 +184,11 @@ typedef struct {
     bool hot_air_on;
     int64_t hot_air_on_since_ms;    /* 热风模块开启时间 */
     int64_t hot_air_cooldown_until_ms; /* 冷却锁截止时刻；now < 该值 ⇒ COOLDOWN 拒绝 */
+    /* Built-in competition program lease; never persisted or exposed as a BLE setting. */
+    uint32_t demo_program_id;
+    uint32_t demo_generation;
+    int64_t demo_deadline_ms;
+    bool demo_dry_phase;
 } safety_inputs_t;
 
 /* ---- Safety Snapshot ---- */

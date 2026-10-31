@@ -30,6 +30,7 @@ DECLARE_PROMPT(not_heard);
 DECLARE_PROMPT(wash_started);
 DECLARE_PROMPT(wash_complete);
 DECLARE_PROMPT(device_fault);
+DECLARE_PROMPT(demo_complete);
 
 static uint16_t le16(const uint8_t *p)
 {
@@ -140,6 +141,7 @@ static const prompt_map_entry_t PROMPT_MAP[] = {
     {VOICE_PROMPT_WASH_STARTED, wash_started_start, wash_started_end},
     {VOICE_PROMPT_WASH_COMPLETE, wash_complete_start, wash_complete_end},
     {VOICE_PROMPT_DEVICE_FAULT, device_fault_start, device_fault_end},
+    {VOICE_PROMPT_DEMO_COMPLETE, demo_complete_start, demo_complete_end},
 };
 
 #define PROMPT_MAP_SIZE (sizeof(PROMPT_MAP) / sizeof(PROMPT_MAP[0]))

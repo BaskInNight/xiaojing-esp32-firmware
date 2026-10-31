@@ -336,7 +336,9 @@ static void deliver_urgent(btn_runtime_t *rt, const button_sink_event_t *ev)
     /* Try to commit immediately */
     if (xSemaphoreTake(rt->state_mtx, STATE_MTX_TIMEOUT) == pdTRUE) {
         try_apply_handoff(rt);
+#ifdef XIAOJING_TESTING
         bool now_pending = (rt->urgent_state == URGENT_PENDING);
+#endif
         xSemaphoreGive(rt->state_mtx);
 #ifdef XIAOJING_TESTING
         /* R1.8: Fire after PENDING committed, outside lock */
@@ -550,7 +552,7 @@ static void button_service_task(void *arg)
         for (int i = 0; i < n; i++) {
             button_sink_event_t sink_ev;
             build_sink_event(&events[i], stable_mask, &sink_ev);
-            if (events[i].button_id == BUTTON_ID_3) {
+            if (events[i].button_id == BUTTON_ID_3 || events[i].event_type == BUTTON_EVENT_PRESS) {
                 deliver_urgent(rt, &sink_ev);
                 urgent_attempted = true;
             } else {
@@ -657,6 +659,7 @@ esp_err_t button_service_init(const button_service_config_t *config)
     if (!s_rt.cfg.poll_interval_ms) s_rt.cfg.poll_interval_ms = BTN_POLL_FALLBACK_MS;
     if (!s_rt.cfg.long_press_ms) s_rt.cfg.long_press_ms = BTN_LONG_PRESS_DEFAULT_MS;
     button_debounce_init(&s_rt.debounce, s_rt.cfg.debounce_ms);
+    s_rt.debounce.press_event_mask = s_rt.cfg.press_event_mask;
     button_debounce_set_long_press(&s_rt.debounce,
                                    s_rt.cfg.long_press_mask,
                                    s_rt.cfg.long_press_ms);
